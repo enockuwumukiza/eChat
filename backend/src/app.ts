@@ -7,7 +7,7 @@ import { userRoutes } from "./routes/user.routes";
 import { groupRoutes } from "./routes/group.routes";
 import { messageRoutes } from "./routes/message.routes";
 import { app, server } from "./socket/socket";
-
+import { corsConfig } from "./config/corsConfig";
 dotenv.config();
 
 //built-in middlewares
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //custom middlewares
 
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(cookieParser());
 
 const PORT = process.env.PORT;

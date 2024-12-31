@@ -11,6 +11,15 @@ type FilePreview = {
   preview: string; 
 };
 
+export const renameFile = (name: string) => {
+  const nameCharsLength = name.split('').length;
+
+  let newName = nameCharsLength > 30 ? name.split('').slice(0, 30).join('') + "..." : name;
+  
+
+  return newName
+}
+
 export const handleDownload = async (url: string, fileName: string) => {
   try {
     const response = await fetch(url, { mode: 'cors' });
@@ -21,7 +30,7 @@ export const handleDownload = async (url: string, fileName: string) => {
 
     // Create and trigger a download link
     const anchor = document.createElement('a');
-    anchor.href = blobUrl;
+    anchor.href = url;
     anchor.download = fileName || 'download';
     document.body.appendChild(anchor);
     anchor.click();
@@ -39,7 +48,7 @@ export const handleDownload = async (url: string, fileName: string) => {
  */
 const FileLink = ({ fileUrl, fileName }: { fileUrl: { url: any }; fileName: string }) => {
   const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
+    const extension = fileName?.split('.')?.pop()?.toLowerCase();
 
     switch (extension) {
       case 'pdf':

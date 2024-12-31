@@ -16,6 +16,7 @@ export const uploadMedia = async (fileBuffer: Express.Multer.File, type: Resourc
         // Upload to Cloudinary
         const result = await cloudinary.v2.uploader.upload(fileBufferUrl.content, {
             resource_type: type,
+            folder:'media_files',
         });
 
         return result;

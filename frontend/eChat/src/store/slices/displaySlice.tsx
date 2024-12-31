@@ -10,7 +10,8 @@ interface IDisplaySlice {
     isGroupInfoShown: boolean,
     isGroupOptionsShown: boolean,
     isUserInfoShown: boolean,
-    isAddNewMemberShown:boolean,
+    isAddNewMemberShown: boolean,
+    isSingleMessageLoading:boolean,
 }
 
 const initialState: IDisplaySlice = {
@@ -23,7 +24,8 @@ const initialState: IDisplaySlice = {
     isGroupInfoShown: false,
     isGroupOptionsShown: false,
     isUserInfoShown: false,
-    isAddNewMemberShown:false,
+    isAddNewMemberShown: false,
+    isSingleMessageLoading:false,
 }
 
 const displaySlice = createSlice({
@@ -61,9 +63,12 @@ const displaySlice = createSlice({
         },
         setIsAddNewMemberShown: (state, action: PayloadAction<boolean>) => {
             state.isAddNewMemberShown = action.payload
+        },
+        setIsSingleMessageLoading: (state, action: PayloadAction<boolean>) => {
+            state.isSingleMessageLoading = action.payload
         }
     }
 })
 
-export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown } = displaySlice.actions;
+export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown, setIsSingleMessageLoading } = displaySlice.actions;
 export default displaySlice.reducer;

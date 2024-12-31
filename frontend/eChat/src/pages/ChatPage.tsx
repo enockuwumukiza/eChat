@@ -1,12 +1,11 @@
-import React, { useEffect, memo,useRef,useState } from 'react';
+import React, { useEffect, memo, useRef, useState } from 'react';
+import axios from 'axios'
 import { Videocam, Search, MoreVertOutlined, Call,Download } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Tooltip } from '@mui/material';
 import { RootState } from '../store/store';
 import MessageInput from '../components/MessageInput';
-import { useLazyGetGroupMembersQuery, useLazyGetGroupMessagesQuery} from '../store/slices/groupApiSlice';
-import { useLazyGetSingleMessageQuery } from '../store/slices/messagesApiSlice';
-import { setMessages, setGroupMessages } from '../store/slices/messageSlice';
+import { useLazyGetGroupMembersQuery } from '../store/slices/groupApiSlice';
 import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
 import { setNotifications } from '../store/slices/notificationSlice';
@@ -17,9 +16,8 @@ import { setOnlineUsers } from '../store/slices/socketSlice';
 import { handleDownload } from '../utils/donwloadFiles';
 import FileLink from '../utils/donwloadFiles';
 import { formatTime } from '../utils/formatTime';
-
-
-
+import AudioPlayer from '../utils/AudioPlayer';
+import { renameFile } from '../utils/donwloadFiles';
 
 const ChatPage: React.FC = () => {
 
@@ -31,8 +29,6 @@ const ChatPage: React.FC = () => {
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
   const groupId = useSelector((state: RootState) => state.group.groupId);
   const receiverInfo:any = useSelector((state: RootState) => state.message.receiverInfo);
-  const currentMessages = useSelector((state: RootState) => state.message.messages);
-  const currentGroupMessages = useSelector((state: RootState) => state.message.groupMessages);
  
   const groupsData: any = useSelector((state: RootState) => state.group.groupData);
 
@@ -42,11 +38,13 @@ const ChatPage: React.FC = () => {
 
   const onlineUsers = useSelector((state: RootState) => state.socket.onlineUsers);
 
+
   const isReceiverOnline = onlineUsers?.includes(receiverInfo?._id);
 
   const [displayMessages, setDisplayMessages] = useState<any[]>([]);
-  
+  const [displayGroupMessages, setDisplayGroupMessages] = useState<any[]>([]);
 
+  
   const messageRef = useRef<HTMLDivElement | null>(null);
 
   // Scroll to the latest message
@@ -54,16 +52,15 @@ const ChatPage: React.FC = () => {
     if (messageRef.current) {
       messageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [displayMessages]);
-
-  // WebSocket handling
+  }, [displayMessages, displayGroupMessages]);
+  
   useEffect(() => {
     if (authUser) {
       socket.connect();
 
       socket.on('receive-message', (data) => {
         if (data.chatType === 'Conversation') {
-          dispatch(setMessages([data]));
+          setDisplayMessages((prev) => [...prev, data])
          
         }
       });
@@ -71,8 +68,16 @@ const ChatPage: React.FC = () => {
         console.log(`From group socket: ${data}`);
       });
 
-      socket?.on('group-message', (data) => {
-          dispatch(setGroupMessages([data]));  
+      socket.on('group-message', (data) => {
+        if (data?.chatType === 'Group') {
+          setDisplayGroupMessages((prev:any) => {
+          const newMessages = [data].filter(
+            (msg) => !prev.some((existing:any) => existing._id === msg._id)
+          );
+
+          return [...prev, ...newMessages];
+        });
+        } 
         });
       
       socket.on('getOnlineUsers', (data: any) => {
@@ -80,7 +85,6 @@ const ChatPage: React.FC = () => {
        
       })
       socket.on('message-notification', (data: any) => {
-        console.log(`New message notification: ${JSON.stringify(data)}`)
         dispatch(setNotifications(data));
       });
       socket.on('group-added', (data: any) => {
@@ -103,11 +107,58 @@ const ChatPage: React.FC = () => {
   }, [socket]);
 
   // Fetch messages
-  const [triggerGetSingleMessage,{data:singleMessages}] = useLazyGetSingleMessageQuery();
-  const [triggerGetGroupMessages,{data:groupMessages}] = useLazyGetGroupMessagesQuery();
+
+  useEffect(() => {
+    (
+      async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/api/messages/single/${receiverInfo?._id}`, {
+            withCredentials: true,
+            headers: {
+            
+            }
+          });
+
+           if (response?.data?.messages) {
+             setDisplayMessages(response.data.messages);
+           } else {
+             setDisplayMessages([]);
+          }
+        } catch (error: any) {
+          console.error(`Error feching with axios: ${error}`)
+          
+        }
+      }
+    )();
+
+  }, [receiverInfo?._id]);
+  
+  useEffect(() => {
+    (
+      async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/api/groups/messages/${groupId}`, {
+            withCredentials: true,
+            headers: {
+            
+            }
+          });
+
+           if (response?.data?.messages) {
+             setDisplayGroupMessages(response?.data?.messages);
+           } else {
+             setDisplayGroupMessages([]);
+          }
+
+        } catch (error: any) {
+          console.error(`Error feching group data with axios: ${error}`)
+        }
+      }
+    )();
+
+  },[groupId]);
 
   
-
   const [triggerGetGroupMembers, { data: members }] = useLazyGetGroupMembersQuery();
 
   useEffect(() => {
@@ -116,28 +167,8 @@ const ChatPage: React.FC = () => {
       }
   }, [triggerGetGroupMembers, groupId]);
   
-  useEffect(() => {
-    if (receiverInfo?._id && !isGroupChat) {
-      triggerGetSingleMessage(receiverInfo?._id);
-      if (singleMessages?.messages) {
-          dispatch(setMessages(singleMessages?.messages));
-        }
-    }
-  }, [triggerGetSingleMessage, receiverInfo,singleMessages, dispatch]);
 
-  useEffect(() => {
-    if (groupId && isGroupChat && !isSingleChat) {
-      triggerGetGroupMessages(groupId);
-      if (groupMessages?.messages) {
-          dispatch(setGroupMessages(groupMessages?.messages));
-        }
-    }
-  }, [triggerGetGroupMessages, groupId, dispatch, groupMessages]);
-
-  useEffect(() => {
-    setDisplayMessages((isGroupChat) ? currentGroupMessages : currentMessages);
-  }, [currentGroupMessages, currentMessages, isSingleChat && receiverInfo, (isGroupChat && groupId)]);
-
+  const messagesToDisplay = (isGroupChat && groupId) ? displayGroupMessages : (isSingleChat && receiverInfo?._id) ? displayMessages : [];
 
   return (
     <div>
@@ -146,7 +177,7 @@ const ChatPage: React.FC = () => {
           <div className="fixed flex flex-col right-0 w-[41.6%] h-full bg-base-100 shadow-lg">
             {/* Header */}
             
-            <div className="sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-4 flex justify-between items-center shadow-md z-10">
+            <div className="sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-4 flex justify-between items-center shadow-md">
               <h6 className='absolute  text-sky-300 top-14 right-[80%]'>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
         <div className="flex items-center gap-4">
           <img
@@ -201,10 +232,10 @@ const ChatPage: React.FC = () => {
 
       {/* Chat Body */}
       <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4">
-        {displayMessages.length > 0 ? (
-                displayMessages.map((msg: any) => (
+        {(messagesToDisplay?.length > 0 ? (
+                messagesToDisplay?.map((msg: any) => (
             
-            <div key={msg._id} className={`chat ${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "chat-end" : "chat-start"}`}>
+            <div key={msg?._id} className={`chat ${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "chat-end" : "chat-start"}`}>
               <div className="chat-image avatar">
                 <div className="w-12 rounded-full">
                   <img
@@ -223,9 +254,10 @@ const ChatPage: React.FC = () => {
                 {msg?.messageType === 'text' ? generateAnchorTag(msg?.content) : msg?.messageType === 'image' ?
                   <img src={msg?.fileUrl?.url} />
                  : msg?.messageType === 'audio' ? 
-                    <audio  src={msg?.fileUrl?.url} controls/>
+                          <><audio src={msg?.fileUrl?.url} controls />
+                          <span className='text-sm italic text-blue-600'>{msg?.fileUrl?.name}</span></>
                   : msg?.messageType === 'video' ? 
-                      <video src={msg?.fileUrl?.url} controls /> 
+                            <><video src={msg?.fileUrl?.url} controls style={{ maxHeight: '200px' }} /> <span className='text-sm mx-w-[20px] italic text-blue-600'>{renameFile(msg?.fileUrl?.name) }</span></>
                             : <FileLink fileUrl={{ url: msg?.fileUrl?.url }} fileName={msg?.fileUrl?.name} />
                       }
                 {
@@ -252,13 +284,14 @@ const ChatPage: React.FC = () => {
 
           ))
         ) : (
-          <p>No messages available</p>
-        )}
+          <p>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>
+              ))
+              }
       </div>
 
       {/* Message Input */}
       <div className="p-4 bg-gray-800">
-        <MessageInput />
+        <MessageInput  setDisplayMessages={ setDisplayMessages} setDisplayGroupMessages={setDisplayGroupMessages} />
       </div>
     </div>
         ):<NoChatSelected/>

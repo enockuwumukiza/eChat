@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setgroupMessageInfo, setReceiverInfo } from '../store/slices/messageSlice';
 import { RootState } from '../store/store';
 import { setGroupId } from '../store/slices/groupSlice';
+import { setIsSingleMessageLoading } from '../store/slices/displaySlice';
 const ContactCard = ({ user }: any) => {
   
   const dispatch = useDispatch();
@@ -21,11 +22,11 @@ const ContactCard = ({ user }: any) => {
   const isOnline = onlineUsers?.includes(user?._id);
   const notificationsLength = notifications?.length
 
-  console.log(`Current notifications: ${JSON.stringify(notifications)}`);
   
   
     return (
-       <div
+      <div
+        
         key={user._id}
         onClick={() => {
           if (isSingleChat && !isGroupChat) {
@@ -38,7 +39,7 @@ const ContactCard = ({ user }: any) => {
         }
         className={`flex gap-5 bg-gray-${!isGroupChat && isSingleChat && user?._id === receiverInfo?._id ? "950" : "900"} hover:bg-gray-700 transition-all rounded-xl shadow-md p-4 cursor-pointer `}
     >
-        <div className="relative indicator">
+        <div className="relative indicator" >
           {
             isOnline && <span className="indicator-item indicator-start badge badge-primary"></span>
            }

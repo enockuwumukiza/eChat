@@ -368,11 +368,10 @@ const getSingleMessage = expressAsyncHandler(async (req: Request, res: Response)
   });
 
   if (!conversation) {
-    res.status(404).json({ message: 'Conversation not found' });
-    return;
+    res.status(HttpStatusCodes.OK).json([]);
   }
 
-  const messages = conversation.messages;
+  const messages = conversation?.messages;
 
   res.json({ messages });
 });

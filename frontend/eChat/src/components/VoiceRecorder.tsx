@@ -1,17 +1,32 @@
-import React, { useState, useRef } from 'react';
+import  { useState, useRef,useEffect } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { PlayArrow, Pause, Stop, Delete,Send } from '@mui/icons-material'; // Material UI icons
+import { PlayArrow, Pause,PlayCircle, Stop, Delete,Send } from '@mui/icons-material'; // Material UI icons
 
-const VoiceRecorder = () => {
-  const [isRecording, setIsRecording] = useState(false);
+const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAudioUrl,setShouldPlay}:{setAudio:any,isRecording:boolean, setIsRecording:any, audioUrl:any, setAudioUrl:any,setShouldPlay:any}) => {
+ 
   const [isPaused, setIsPaused] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioFile, setAudioFile] = useState<any>(null);
   const [recordingTime, setRecordingTime] = useState(0); 
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+
+
+  useEffect(() => {
+  return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current); // Clean up the timer
+      }
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.stop(); // Stop media recorder if component unmounts
+      }
+    };
+  }, []);
 
   const startRecording = async () => {
     try {
@@ -26,6 +41,9 @@ const VoiceRecorder = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudioBlob(audioBlob);
+        setAudio(audioUrl);
+        const audioFile = new File([audioBlob], `${Date.now()}.wav`, { type: "audio/wav" });
+        setAudio(audioFile);
         setAudioUrl(audioUrl);
         clearInterval(timerRef.current as NodeJS.Timeout); // Clear timer when recording stops
       };
@@ -82,30 +100,33 @@ const VoiceRecorder = () => {
       setIsPaused(false);
       setAudioUrl(null);
       setAudioBlob(null);
+      setAudio(null);
+      setShouldPlay(false);
       setRecordingTime(0);
       audioChunksRef.current = [];
       clearInterval(timerRef.current as NodeJS.Timeout); // Clear timer when cancelling
     }
   };
 
-  const uploadAudio = async () => {
-    if (!audioBlob) return;
-
-    const formData = new FormData();
-    formData.append('voiceNote', audioBlob, 'voiceNote.wav');
-
-    try {
-      const response = await fetch('/upload/voice', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-      console.log('Upload successful:', result);
-    } catch (error) {
-      console.error('Error uploading audio:', error);
+    const playAudio = () => {
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
+      setAudioFile(audio);
+      audio.play();
+      setIsPlaying(true);
+    } else {
+      console.warn("No audio to play.");
     }
   };
+
+
+  const pauseAudio = () => {
+    if (audioFile) {
+      setIsPlaying(false);
+      audioFile?.pause();
+    }
+  }
+
 
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -113,8 +134,9 @@ const VoiceRecorder = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
+
   return (
-    <div className="w-full mt-24 max-w-xs p-2 bg-white rounded-lg shadow-lg mx-auto">
+    <div className="fixed bottom-3 right-28 flex items-center justify-center w-[30%] rounded-lg bg-slate-950">
       <div className="flex justify-center items-center">
         {!isRecording && !audioUrl && (
           <Tooltip title="Start recording audio">
@@ -122,13 +144,25 @@ const VoiceRecorder = () => {
               color="primary"
               onClick={startRecording}
               disabled={isRecording}
-              className="w-12 h-12"
+              
             >
-              <PlayArrow fontSize="large" />
+              <span>Click to start recording</span>
             </IconButton>
           </Tooltip>
         )}
-
+        {
+          !isRecording && audioUrl && (
+            <Tooltip title="Play recorded audio">
+              <IconButton
+                color="primary"
+                onClick={isPlaying? pauseAudio: playAudio}
+                className="w-12 h-12"
+              >
+                {isPlaying ? <Pause fontSize="large" />: <PlayArrow fontSize="large" /> }
+              </IconButton>
+            </Tooltip>
+          )
+        }
         {isRecording && (
           <>
             <Tooltip title="Pause recording">
@@ -156,11 +190,11 @@ const VoiceRecorder = () => {
         {isPaused && (
           <Tooltip title="Resume recording">
             <IconButton
-              color="info"
+              color='primary'
               onClick={resumeRecording}
               className="w-12 h-12"
             >
-              <PlayArrow fontSize="large" />
+              <PlayCircle fontSize="large" />
             </IconButton>
           </Tooltip>
         )}
@@ -183,22 +217,12 @@ const VoiceRecorder = () => {
           </audio>
           <div className="flex ">
             
-           
-            <Tooltip title="Upload recorded audio">
-              <IconButton
-                color="success"
-                onClick={uploadAudio}
-                className="w-12 h-12"
-              >
-                <Send fontSize="large" />
-              </IconButton>
-            </Tooltip>
           </div>
         </div>
       )}
 
       {isRecording && (
-        <p className="absolute top-[18.4%] right-[55%] text-[16px] font-semibold text-sky-100">
+        <p className="absolute top-[18.4%] right-[80%] text-[16px] font-semibold text-green-700">
           {formatTime(recordingTime)}
         </p>
       )}
@@ -207,3 +231,4 @@ const VoiceRecorder = () => {
 };
 
 export default VoiceRecorder;
+

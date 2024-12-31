@@ -7,24 +7,24 @@ import EmojiPicker from 'emoji-picker-react'
 import { debounce } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-
 import { RootState } from '../store/store';
 import { useSendSingleMessageMutation, useSendGroupMessageMutation} from '../store/slices/messagesApiSlice';
 import { useAuth } from '../hooks/useAuth';
-import { setGroupMessages, setMessages } from '../store/slices/messageSlice';
 import { useSocket } from '../hooks/useSocket';
 
 import TypingIndicator from '../utils/TypingIndicator';
 import SendingAnimation from '../utils/SendingAnimation';
 
 import { renderPreview } from '../utils/FileUpload';
+import VoiceRecorder from './VoiceRecorder'
+import VideoRecorder from './VideoRecorder';
 
 type FilePreview = {
   file: File;
   preview: string; 
 };
 
-const MessageInput = () => {
+const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDisplayMessages:any, setDisplayGroupMessages:any}) => {
 
   const { authUser } = useAuth();
   const { socket } = useSocket();
@@ -32,6 +32,14 @@ const MessageInput = () => {
 
   const [messageInput, setMessageInput] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<FilePreview[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [shouldPlay, setShouldPlay] = useState<boolean>(false);
+  const [shoudlVideoShow, setShouldVideoShow] = useState<boolean>(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+
+
+  
   const [typingData, setTypingData] = useState<any>(null);
   const [typingGroupData, setTypingGroupData] = useState<any>(null);
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
@@ -61,8 +69,10 @@ const MessageInput = () => {
   const typerGroupName = useMemo(() => typingGroupData?.authName?.split(' ')[0]?.toUpperCase(), [typingGroupData]);
 
 
-  const [sendSingleMessage, {isLoading }] = useSendSingleMessageMutation();
+  const [sendSingleMessage, {isLoading,isSuccess }] = useSendSingleMessageMutation();
   const [sendGroupMessage, { isLoading: isGroupLoading }] = useSendGroupMessageMutation();
+
+
 
 
   useEffect(() => {
@@ -216,10 +226,16 @@ const MessageInput = () => {
     try {
 
       const response = await sendSingleMessage({ receiverId: receiverInfo?._id, data: formData }).unwrap();
-        dispatch(setMessages([response.message]));
-        setMessageInput('');
-      socket.emit('stop-single-typing', { receiverId: receiverInfo?._id });
+      setDisplayMessages((prev:any) => [...prev, response?.message])
+      setMessageInput('');
       setSelectedFiles([]);
+      setIsRecording(false);
+      setShouldPlay(false);
+      setAudio(null);
+      setVideo(null);
+      setNormalFile(null);
+      socket.emit('stop-single-typing', { receiverId: receiverInfo?._id });
+     
         toast.success('Message sent');
       
     } catch (error: any) {
@@ -244,9 +260,21 @@ const MessageInput = () => {
     try {
       if (formData) {
         const response = await sendGroupMessage({ groupId, data: formData }).unwrap();
-        dispatch(setGroupMessages([response.message]));
+        
+        setDisplayGroupMessages((prev:any) => {
+          const newMessages = [response.message].filter(
+            (msg) => !prev.some((existing:any) => existing._id === msg._id)
+          );
+          return [...prev, ...newMessages];
+        });
+
+
         setMessageInput('');
         setSelectedFiles([]);
+        setAudio(null);
+        setVideo(null);
+        setNormalFile(null);
+      
         socket.emit('stop-group-typing', { groupId });
         toast.success('Message sent');
       }
@@ -338,7 +366,7 @@ const MessageInput = () => {
       title={messageInput || selectedFiles?.length ? 'Send' : 'Voice note'}
       placement="top"
     >
-      {messageInput || selectedFiles?.length > 0 ? (
+      {messageInput || audio || video || selectedFiles?.length > 0 ? (
         <IconButton type='submit'>
           {isLoading || isGroupLoading ? (
             <span className="loading loading-spinner loading-lg"></span>
@@ -347,11 +375,30 @@ const MessageInput = () => {
           )}
         </IconButton>
       ) : (
-        <IconButton>
-          <Mic fontSize="large" htmlColor="white" />
+              <IconButton disabled={shouldPlay || shoudlVideoShow} onClick={() => {
+                // setIsRecording(!isRecording);
+                setShouldPlay(!shouldPlay);
+                
+               }}>
+          <Mic fontSize="large" htmlColor={isRecording ? "red":"white"} />
         </IconButton>
       )}
         </Tooltip>
+
+        {
+          !messageInput && (
+            <Tooltip
+          title="Record video"
+          placement="top"
+            >
+              
+          <IconButton disabled={shoudlVideoShow || shouldPlay}  onClick={() => setShouldVideoShow(!shoudlVideoShow)}>
+                <Videocam fontSize="large" htmlColor={shoudlVideoShow ? "red":"white"} />
+                
+          </IconButton>
+        </Tooltip>
+          )
+        }
 
         {
           showFileUpload && (
@@ -469,6 +516,13 @@ const MessageInput = () => {
 
         </div>
           )
+        }
+        {shouldPlay &&
+          <VoiceRecorder setAudio={setAudio} isRecording={isRecording} setIsRecording={setIsRecording} audioUrl={audioUrl} setAudioUrl={setAudioUrl} setShouldPlay={setShouldPlay} />
+        }
+
+        {
+          shoudlVideoShow && <VideoRecorder setVideo={ setVideo } setShouldVideoShow={setShouldVideoShow} />
         }
   </form>
         

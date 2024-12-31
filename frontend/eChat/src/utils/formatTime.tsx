@@ -6,7 +6,8 @@ export const formatTime = (timeString: string): string => {
     if (isNaN(inputDate.getTime())) {
         throw new Error("Invalid date string provided");
     }
-
+    try {
+        
     // Calculate the difference in days
     const timeDiff = now.getTime() - inputDate.getTime();
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
@@ -26,6 +27,9 @@ export const formatTime = (timeString: string): string => {
     } else {
         // If the time is more than one day ago
         return `${daysDiff} days ago`;
+    }
+    } catch (error:any) {
+        console.error(`Error formating time: ${error}`)
     }
 }
 
