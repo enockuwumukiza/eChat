@@ -16,7 +16,6 @@ import { setOnlineUsers } from '../store/slices/socketSlice';
 import { handleDownload } from '../utils/donwloadFiles';
 import FileLink from '../utils/donwloadFiles';
 import { formatTime } from '../utils/formatTime';
-import AudioPlayer from '../utils/AudioPlayer';
 import { renameFile } from '../utils/donwloadFiles';
 
 const ChatPage: React.FC = () => {
