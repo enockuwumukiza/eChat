@@ -34,10 +34,11 @@ const UserInfoModal: FC = () => {
           <Typography variant="h6" className="font-bold text-primary">
             <Button
               onClick={() => {
-                dispatch(setIsSingleChat(false));
-                dispatch(setIsGroupChat(false));
-                dispatch(setReceiverInfo(null));
                 handleClose();
+                // dispatch(setIsSingleChat(false));
+                // dispatch(setIsGroupChat(false));
+                dispatch(setReceiverInfo(null));
+                
               }}
             variant="contained"
             color="primary"

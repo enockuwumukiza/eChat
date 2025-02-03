@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { IconButton, Tooltip } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
-import { setIsGroupChat, setIsProfileModalOpen, setIsSingleChat } from '../store/slices/displaySlice';
+import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSingleChat } from '../store/slices/displaySlice';
 import { RootState } from '../store/store';
 import { useLogoutUserMutation } from '../store/slices/usersApiSlice';
 
@@ -27,7 +27,11 @@ const Sidebar: React.FC = () => {
   
 
   const isProfileModalOpen = useSelector((state: RootState) => state.display.isProfileModalOpen);
-  const groupsData:any = useSelector((state: RootState) => state.group.groupData);
+  const groupsData: any = useSelector((state: RootState) => state.group.groupData);
+  const isNotificationShown = useSelector((state: RootState) => state.display.isNotificationShown);
+
+
+  const notifications = useSelector((state: RootState) => state.notifications.notifications);
 
   const { authUser, logout } = useAuth();
 
@@ -67,38 +71,83 @@ const Sidebar: React.FC = () => {
     }
   }
 
+
+  console.log('notifications: ', notifications);
+
   return (
-    <div className='fixed bg-gray-950 text-white'
+    <div className='fixed hidden md:block bg-gray-950 text-white'
       style={{
         width: '25vw',
         maxWidth: '200px',
         height:'100vh'
     }}>
-      <div className='flex flex-col gap-28 m-2'>
-        <div className='flex flex-col gap-10'>
+      <div className='flex flex-col gap-20 m-2'>
+        <div className='flex flex-col gap-6'>
         <Tooltip title='messages'>
           <IconButton>
-            <Chat fontSize='large' htmlColor='white'/>
+              <Chat htmlColor='white'
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              />
           </IconButton>
         </Tooltip>
         <Tooltip title='groups'>
           <IconButton onClick={handleDisplayGroups}>
-            <Forum fontSize='large' htmlColor='white'/>
+              <Forum htmlColor='white'
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              />
           </IconButton>
           </Tooltip>
         <Tooltip title='contacts'>
           <IconButton onClick={handleDiplayContacts}>
-            <People fontSize='large' htmlColor='white'/>
+              <People htmlColor='white'
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              />
           </IconButton>
           </Tooltip>
         <Tooltip title='notifications'>
-          <IconButton>
-            <Notifications fontSize='large' htmlColor='white'/>
+          <IconButton onClick={() => dispatch(setIsNotificationShown(!isNotificationShown))}>
+              <Notifications htmlColor='white'
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              />
           </IconButton>
           </Tooltip>
-        
+          {
+            notifications.length > 0 && <div className='absolute top-[44%] left-24  bg-rose-800 h-7 w-7 rounded-full'><span className="text-white font-bold p-2 text-[16px] absolute -top-2 ">{ notifications.length }</span></div>
+        }
       </div>
-      <div className='flex flex-col gap-3'>
+      <div className='flex flex-col gap-2'>
           <Tooltip title='account' placement='left'>
           <IconButton className='' onClick={() => dispatch(setIsProfileModalOpen(!isProfileModalOpen))}>
               <img className='w-12 h-12 rounded-full' src={authUser?.user?.profilePicture } />
@@ -106,12 +155,32 @@ const Sidebar: React.FC = () => {
         </Tooltip>
         <Tooltip title='settings' placement='left'>
           <IconButton>
-            <Settings fontSize='large' htmlColor='white'/>
+              <Settings htmlColor='white'
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              />
           </IconButton>
           </Tooltip>
         <Tooltip title='logout' placement='left'>
           <IconButton onClick={handleLogout} >
-            <LogoutRounded fontSize='large' htmlColor='white'/>
+              <LogoutRounded htmlColor='white'
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              />
           </IconButton>
           </Tooltip>
       </div>

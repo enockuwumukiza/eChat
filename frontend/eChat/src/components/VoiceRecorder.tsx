@@ -136,7 +136,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
 
 
   return (
-    <div className="fixed bottom-3 right-28 flex items-center justify-center w-[30%] rounded-lg bg-slate-950">
+    <div className="fixed md:bottom-1 lg:bottom-3 md:right-[28%] lg:right-[8%] flex items-center justify-center w-[70%]  md:w-[60%] lg:w-[30%] md:h-[80px] lg:h-[50px] rounded-lg bg-slate-950">
       <div className="flex justify-center items-center">
         {!isRecording && !audioUrl && (
           <Tooltip title="Start recording audio">
@@ -146,7 +146,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
               disabled={isRecording}
               
             >
-              <span>Click to start recording</span>
+              <span className='font-bold md:text-4xl lg:text-xl'>Click to start recording</span>
             </IconButton>
           </Tooltip>
         )}
@@ -158,7 +158,28 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 onClick={isPlaying? pauseAudio: playAudio}
                 className="w-12 h-12"
               >
-                {isPlaying ? <Pause fontSize="large" />: <PlayArrow fontSize="large" /> }
+                {isPlaying ? <Pause
+                  
+                  sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+                
+                /> : <PlayArrow
+                  
+                  sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+                />}
               </IconButton>
             </Tooltip>
           )
@@ -172,7 +193,18 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 disabled={isPaused}
                 className="w-12 h-12"
               >
-                <Pause fontSize="large" />
+                <Pause
+                  
+                  sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+                
+                />
               </IconButton>
             </Tooltip>
             <Tooltip title="Stop recording">
@@ -181,7 +213,17 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 onClick={stopRecording}
                 className="w-12 h-12"
               >
-                <Stop fontSize="large" />
+                <Stop
+                
+                  sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+                />
               </IconButton>
             </Tooltip>
           </>
@@ -194,7 +236,18 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
               onClick={resumeRecording}
               className="w-12 h-12"
             >
-              <PlayCircle fontSize="large" />
+              <PlayCircle
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              
+              />
             </IconButton>
           </Tooltip>
         )}
@@ -208,7 +261,18 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 onClick={cancelRecording}
                 className="w-12 h-12"
               >
-                <Delete fontSize="large" />
+              <Delete
+                
+                sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+              
+              />
               </IconButton>
             </Tooltip>
           <audio controls className="w-full">
@@ -222,7 +286,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
       )}
 
       {isRecording && (
-        <p className="absolute top-[18.4%] right-[80%] text-[16px] font-semibold text-green-700">
+        <p className="absolute top-[18.4%] right-[80%] text-[25px] md:text-[30px] lg:text-[16px] font-semibold text-green-700">
           {formatTime(recordingTime)}
         </p>
       )}

@@ -5,7 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { RootState } from "../store/store";
 import { useSelector,useDispatch } from "react-redux";
 import { setIsAddNewMemberShown, setIsGroupChat, setIsGroupInfoShown } from "../store/slices/displaySlice";
-import { setGroupInfo } from "../store/slices/groupSlice";
+import { setGroupId, setGroupInfo } from "../store/slices/groupSlice";
 import { useProtectGroup } from "../hooks/useProtectGroup";
 
 const GroupOptionsModal: FC = () => {
@@ -54,9 +54,11 @@ const GroupOptionsModal: FC = () => {
             <Typography variant="h6" className="font-bold text-primary">
               <Button
                 onClick={() => {
-                  dispatch(setIsGroupChat(false));
-                  dispatch(setGroupInfo(null));
                   handleClose();
+                  dispatch(setGroupId(null))
+                  // dispatch(setIsGroupChat(false));
+                  // dispatch(setGroupInfo(null));
+                  
                 }}
               variant="contained"
               color="primary"

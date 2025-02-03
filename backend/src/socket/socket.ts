@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 import http from "http";
 import express, { Express } from "express";
+import { send } from "process";
 
 const app: Express = express();
 const server = http.createServer(app);
@@ -14,9 +15,8 @@ export const io = new Server(server, {
   },
 });
 
-// Map to keep track of userId to socketId mapping
+
 const userSocketMap: Record<string, string> = {};
-// Map to keep track of users' rooms (including both group and single chats)
 const userRoomMap: Record<string, string[]> = {};
 
 
@@ -54,11 +54,12 @@ export const handleLeaveRoom = (userId: string, roomId: string, socket: Socket) 
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
-  
+
 
   socket.broadcast.emit('user-connected', `New user is online socket_id : ${socket.id} possible user id ${getUserIdFromSocketId(socket?.id)}`);
 
-
+  
+  
   socket.on('single-typing', ({ authName, receiverId }) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
@@ -68,8 +69,6 @@ io.on("connection", (socket) => {
     }
   });
 
-
-  
    socket.on('group-typing', ({ authName, authId, groupId }) => {
     if (groupId && authId) {
       const memberSocket: Socket | undefined = io.sockets.sockets.get(getReceiverSocketId(authId as any));
@@ -79,14 +78,7 @@ io.on("connection", (socket) => {
       
     }
    });
-   socket.on('stop-group-typing', ({ groupId }) => {
-    if (groupId) {
-      // Notify other members that typing has stopped
-      socket.broadcast.emit('removeGroupTyping');
-      
-    }
-  });
-
+ 
   socket.on('stop-single-typing', ({ receiverId }) => {
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
@@ -98,20 +90,63 @@ io.on("connection", (socket) => {
     socket.broadcast.to(groupId).emit('removeGroupTyping');
   });
 
-  // Retrieve userId from handshake query
   const userId = socket.handshake.query.userId as string;
 
   if (userId) {
     userSocketMap[userId] = socket.id;
   }
+  
 
- 
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
+
+
+  //socket signaling
+
+  socket.on("callUser", ({ offer, sender, receiver,senderName }) => {
+       const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("callUser2", { offer, sender,receiver,senderName });
+    
+  });
+
+  socket.on("callVUser", ({ offer, sender, receiver,senderName }) => {
+       const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("callVUser2", { offer, sender,receiver,senderName });
+    
+  });
+
+  socket.on("callAnswered", ({ answer, sender, receiver }) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("callAnswered2", { answer });
+  });
+
+  socket.on("callVAnswered", ({ answer, sender, receiver }) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("callVAnswered2", { answer });
+  });
+
+  socket.on("iceCandidate", ({ candidate, sender, receiver }) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("iceCandidate", { candidate });
+  });
+
+  socket.on("iceVCandidate", ({ candidate, sender, receiver }) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("iceVCandidate", { candidate });
+  });
+
+  socket.on("endCall", ({ sender, receiver }) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("callEnded");
+  });
+
+  socket.on("endVCall", ({ sender, receiver }) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    socket.to(receiverSocketId).emit("callVEnded");
+  });
  
   socket.on("disconnect", () => {
     const userId:any = getUserIdFromSocketId(socket.id);  
-
     if (userRoomMap[userId]) {
      
       userRoomMap[userId].forEach(roomId => {
@@ -119,17 +154,16 @@ io.on("connection", (socket) => {
       });
     }
 
-    // Remove user from the map upon disconnection
     if (userId) {
       delete userSocketMap[userId];
     }
 
-    // Emit updated online users list
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 
+
+
+
 export { app, server };
 
-
-  

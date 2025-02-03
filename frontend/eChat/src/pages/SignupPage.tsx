@@ -54,7 +54,7 @@ const SignupPage: React.FC = () => {
   return (
       <div className='flex items-center justify-center flex-col'>
           <h1 className='font-bold text-3xl text-center mb-5'>Welcome!</h1>
-          <div className='flex flex-col gap-2 p-5 space-y-2 bg-sky-950 w-[40%] rounded-lg shadow-lg'>
+          <div className='flex flex-col gap-2 p-5 space-y-2 bg-sky-950 w-full sm:w-[80%] md:w-[60%] lg:w-[40%] rounded-lg shadow-lg'>
               <form className='space-y-2 mb-4' onSubmit={handleSubmit(onSubmit)}>
                   <div className='form-control'>
                       <label className='label'>

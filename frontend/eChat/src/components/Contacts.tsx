@@ -10,6 +10,7 @@ import { Divider } from "@mui/material";
 import GroupCard from "../excerpts/GroupCard";
 import ContactCard from "../excerpts/ContactCard";
 import { setGroupData } from "../store/slices/groupSlice";
+import { setUsers } from "../store/slices/userSlice";
 
 const Contacts: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,9 @@ const Contacts: React.FC = () => {
 
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
+  const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
+   
+  const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
  
 
   // API hooks
@@ -38,10 +42,16 @@ const Contacts: React.FC = () => {
   const userList = usersData?.users || [];
   const groupList = groupsData?.groups || [];
 
+  useEffect(() => {
+    if (userList) {
+      dispatch(setUsers(userList));
+    }
+  }, [userList, dispatch]);
 
   if (isLoading) {
     return (
-      <div className="absolute left-[30%] top-80">
+      <div className={``}>
+         <div className="absolute left-[30%] top-80">
         <div>
           <span className="loading loading-ring loading-lg"></span>
           <motion.div
@@ -60,14 +70,16 @@ const Contacts: React.FC = () => {
           </motion.div>
         </div>
       </div>
+     </div>
     )
   }
   
 
   return (
-    <div
-      className="fixed left-52 top-56 bg-gray-900 text-gray-50 w-[45%] h-[80%] p-6 rounded-lg overflow-y-auto shadow-lg"
-      style={{ maxHeight: "65vh" }}
+    <div className="">
+      <div
+        className={`fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-56 bg-gray-900 text-gray-50 w-full sm:w-[100%] md:w-[81%] lg:w-[44.6%] h-[100%] md:max-h-[80%] lg:max-h-[70%] p-10 rounded-lg overflow-y-auto shadow-lg -mt-2 `}
+     
     >
       {isSingleChat && !isGroupChat ? (
         userList.length > 0 ? (
@@ -90,6 +102,7 @@ const Contacts: React.FC = () => {
       ) : (
         <div className="text-center text-gray-400">No groups found</div>
       )}
+    </div>
     </div>
   );
 };

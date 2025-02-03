@@ -85,8 +85,11 @@ const GroupChat = () => {
   const DisplayFoundUsers = () => {
     return (
         <div
-          className='fixed left-52 top-96 bg-slate-950 text-white w-[44.5%] z-10 h-[70%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto mb-5'
-          style={{ maxHeight: "50vh" }}
+          className='fixed left-0 md:left-48 lg:left-52 top-96 md:top-96 lg:top-80 bg-slate-950 text-white w-[100%] md:w-[74%] lg:w-[44.5%] z-10 max-h-[100%] md:max-h-[100%] lg:max-h-[60%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto'
+          
+        style={{
+          maxHeight:"60vh"
+        }}
         >
           {
              foundUsers?.length > 0 ? (foundUsers?.map((user:any, index:any) => (
@@ -122,7 +125,7 @@ const GroupChat = () => {
   
   return (
     <React.Fragment>
-          <motion.div className="fixed left-52 -ml-2 flex flex-col gap-3 bg-teal-950 p-2 w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
+          <motion.div className="fixed left-0 md:left-52 md:-ml-2 flex flex-col gap-3 bg-teal-950 p-2 w-[100%] md:w-[73%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
             
               initial={{ x: '-130%' }}
               animate={{ x: '0%' }}
@@ -132,10 +135,18 @@ const GroupChat = () => {
         {/* Header */}
 
         <div>
-          <Input type="text" placeholder='group name'
+          <Input type="text" sx={{
+            fontSize: {
+                        xs: "20px",
+                        sm: "25px",
+                        md: "27px",
+                        lg: "20px",
+            },
+            color:"white"
+          }} placeholder='group name'
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
-            className='text-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all' />
+            className='text-xl text-white transition-all' />
         </div>
         <div className="flex items-center gap-4">
           <IconButton className="hover:bg-sky-800 transition-all" onClick={closeNewGroup}>
@@ -150,19 +161,31 @@ const GroupChat = () => {
 
             placeholder="Search name or number"
             value={searchInput}
+
+             sx={{
+                fontSize: {
+                            xs: "20px",
+                            sm: "25px",
+                            md: "27px",
+                            lg: "20px",
+                },
+                color:"white"
+          }}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full pl-14 pr-4 py-2 bg-sky-800 rounded-lg text-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
           />
         </div>
 
-        <div className='grid bg-emerald-900 grid-cols-3 gap-2 p-2 rounded-3xl overflow-y-auto'>
+        <div className='grid bg-emerald-900 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-2 p-2 rounded-3xl overflow-y-auto' style={{
+          maxHeight:"30vh"
+        }}>
           
           {
             selectedUsers.length > 0 && (
               selectedUsers?.map((user: any, index: any) => (
                 <div key={index} className='flex gap-2 bg-sky-800 align-middle rounded-lg'>
                   <img className='h-10 w-10 object-fill rounded-full' src={user?.profilePicture} alt={user?.name} />
-                  <span className='mt-2'>{ user?.name}</span>
+                  <span className='mt-1 text-sm'>{ user?.name}</span>
                   <Tooltip title='remove' placement='top'>
                     <IconButton onClick={() => removeSelectedUser(user)}>
                       <Cancel fontSize='medium' htmlColor='white'/>
@@ -174,7 +197,7 @@ const GroupChat = () => {
           }
          
           {
-            selectedUsers?.length > 1 && <div className='pt-20'>
+            selectedUsers?.length > 1 && <div className='pt-2'>
               <button className='btn btn-primary max-w-full '  onClick={createNewGroup} >Create</button>
             </div>
           }

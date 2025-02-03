@@ -14,6 +14,7 @@ import GroupInfo from "../miscellaneous/GroupInfo";
 import UserInfoModal from "../miscellaneous/UserInfoModal";
 import GroupOptionsModal from "../miscellaneous/GroupOptions";
 import AddMemberToGroup from "../miscellaneous/AddMemberToGroup";
+import NotificationModal from "../miscellaneous/NotificationModal";
 // import FoundUsers from "../miscellaneous/FoundUsers";
 
 const Home: React.FC = () => {
@@ -21,18 +22,17 @@ const Home: React.FC = () => {
     isNewChatShown,
     isCreateGroupShown,
     isMoreOptionsShown,
-    isAddNewMemberShown
+    isAddNewMemberShown,
+    isNotificationShown
   } = useSelector((state: RootState) => state.display);
 
-  // const { searchQuery, searchedUsers } = useSelector(
-  //   (state: RootState) => state.search
-  // );
 
   return (
     <React.Fragment>
       <div className="relative">
         {!isNewChatShown && !isCreateGroupShown && <Header />}
         {isMoreOptionsShown && <MoreOptions />}
+       
         <Sidebar />
         <ProfileModal />
         <GroupInfo />
@@ -44,6 +44,7 @@ const Home: React.FC = () => {
         </AnimatePresence>
         <AnimatePresence>{isCreateGroupShown && <GroupChat />}</AnimatePresence>
         {!isNewChatShown && !isCreateGroupShown && <Contacts />}
+        {isNotificationShown && <NotificationModal />}
         <ChatPage />
         {/* { <FoundUsers />} */}
       </div>

@@ -176,13 +176,20 @@ const loginUser = expressAsyncHandler(async (req: Request, res: Response): Promi
 
   generateToken(user, res);
 
-  const userId = user?._id
+  const userId = user?._id;
+
+  if (!userId) {
+    res.status(HttpStatusCodes.UNAUTHORIZED).json({
+      message: 'user is not authenticated'
+    });
+    return;
+  }
 
   const groups = await Group.find({ "members.userId": userId });
 
-  if (req?.user && req?.user?._id) {
+  if (userId) {
     
-      const userSocketId = getReceiverSocketId(req?.user?._id as string);
+      const userSocketId = getReceiverSocketId(user?._id as string);
         if (userSocketId && groups && groups.length > 0) {
           groups.forEach((group) => {
             io.to(userSocketId).emit("group-created", { groupName: group.name });

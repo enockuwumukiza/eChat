@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 
 interface IDisplaySlice {
     isGroupChat: boolean,
@@ -11,7 +11,13 @@ interface IDisplaySlice {
     isGroupOptionsShown: boolean,
     isUserInfoShown: boolean,
     isAddNewMemberShown: boolean,
-    isSingleMessageLoading:boolean,
+    isNotificationShown:boolean,
+    isSingleMessageLoading: boolean,
+    isAudioCallEnabled: boolean,
+    isChatPageShown: boolean,
+    callerData: any,
+    isVideoCallEnabled: boolean,
+    currentWindowWidth:number,
 }
 
 const initialState: IDisplaySlice = {
@@ -25,8 +31,15 @@ const initialState: IDisplaySlice = {
     isGroupOptionsShown: false,
     isUserInfoShown: false,
     isAddNewMemberShown: false,
-    isSingleMessageLoading:false,
+    isSingleMessageLoading: false,
+    isAudioCallEnabled: false,
+    callerData: [],
+    isVideoCallEnabled:false,
+    isNotificationShown: false,
+    currentWindowWidth: window.innerWidth,
+    isChatPageShown: JSON.parse(localStorage.getItem('chatState') || 'true') || window.innerWidth > 1280 ? true : false,
 }
+
 
 const displaySlice = createSlice({
     name: 'display',
@@ -42,6 +55,9 @@ const displaySlice = createSlice({
         },
         setIsProfileModalOpen: (state, action: PayloadAction<boolean>) => {
             state.isProfileModalOpen = action.payload
+        },
+        setIsNotificationShown: (state, action: PayloadAction<boolean>) => {
+            state.isNotificationShown = action.payload
         },
         setIsGroupInfoShown: (state, action: PayloadAction<boolean>) => {
             state.isGroupInfoShown = action.payload
@@ -66,9 +82,29 @@ const displaySlice = createSlice({
         },
         setIsSingleMessageLoading: (state, action: PayloadAction<boolean>) => {
             state.isSingleMessageLoading = action.payload
+        },
+        setIsAudioCallEnabled: (state, action: PayloadAction<boolean>) => {
+            state.isAudioCallEnabled = action.payload;
+        },
+        setCallerData: (state, action: PayloadAction<any>) => {  
+            state.callerData = action.payload;
+        },
+        setIsVideoCallEnabled:(state, action:PayloadAction<boolean>) =>{
+            state.isVideoCallEnabled = action.payload;
+        },
+        setCurrentWindowWidth: (state, action: PayloadAction<number>) => {
+            {
+                state.currentWindowWidth = action.payload;
+            }
+        },
+        setIsChatPageShown: (state, action: PayloadAction<boolean>) => {
+            {
+                state.isChatPageShown = action.payload;
+                localStorage.setItem('chatState', JSON.stringify(action.payload));
+            }
         }
     }
 })
 
-export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown, setIsSingleMessageLoading } = displaySlice.actions;
+export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown,setIsNotificationShown, setIsSingleMessageLoading, setIsAudioCallEnabled, setCallerData,setIsVideoCallEnabled, setCurrentWindowWidth, setIsChatPageShown } = displaySlice.actions;
 export default displaySlice.reducer;

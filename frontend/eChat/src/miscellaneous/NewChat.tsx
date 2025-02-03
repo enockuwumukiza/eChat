@@ -9,9 +9,13 @@ import { motion } from 'framer-motion'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { setIsCreateGroupShown, setIsMoreOptionsShown, setIsNewChatShown } from '../store/slices/displaySlice';
+import { useAuth } from '../hooks/useAuth';
 
 
 const NewChat = () => {
+
+  const { authUser } = useAuth();
+
     const dispatch = useDispatch();
     const isCreateGroupShown = useSelector((state: RootState) => state.display.isCreateGroupShown);
 
@@ -27,7 +31,7 @@ const NewChat = () => {
 
   return (
     <React.Fragment>
-          <motion.div className="fixed left-52 -ml-2 flex flex-col gap-6 bg-sky-900 p-6 w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
+          <motion.div className="fixed lg:left-52 lg:-ml-2 flex flex-col lg:gap-6 bg-sky-900 p-6 w-[100%] md:w-[100%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
             
               initial={{ x: '-130%' }}
               animate={{ x: '0%' }}
@@ -41,7 +45,7 @@ const NewChat = () => {
           <IconButton className="hover:bg-sky-800 transition-all" onClick={closeNewChat}>
             <ArrowBack fontSize="large" htmlColor="white" />
           </IconButton>
-          <p className="text-2xl font-semibold">New Chat</p>
+          <p className="text-2xl md:text-3xl lg:text-xl font-semibold">New Chat</p>
         </div>
 
         {/* Search Bar */}
@@ -49,7 +53,7 @@ const NewChat = () => {
           <input
             type="text"
             placeholder="Search name or number"
-            className="w-full pl-14 pr-4 py-2 bg-sky-800 rounded-lg text-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+            className="w-full pl-14 pr-4 py-2 bg-sky-800 rounded-lg text-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
           />
           <IconButton className="absolute bottom-12" onClick={closeNewChat}>
             <ArrowBack fontSize="large" htmlColor="white" />
@@ -63,7 +67,7 @@ const NewChat = () => {
             <div className="bg-teal-600 p-3 rounded-full"  >
               <GroupAdd fontSize="large" htmlColor="white" />
             </div>
-            <span className="text-lg font-semibold">New Group</span>
+            <span className="text-2xl md:text-3xl lg:text-xl font-semibold">New Group</span>
           </div>
           <Divider className="border-gray-600" />
 
@@ -72,7 +76,7 @@ const NewChat = () => {
             <div className="bg-teal-600 p-3 rounded-full">
               <PersonAdd fontSize="large" htmlColor="white" />
             </div>
-            <span className="text-lg font-semibold">New Contact</span>
+            <span className="text-2xl md:text-3xl lg:text-xl font-semibold">New Contact</span>
           </div>
           <Divider className="border-gray-600" />
         </div>
@@ -81,10 +85,10 @@ const NewChat = () => {
         <div className="flex items-center gap-4 mt-6">
           <img
             className="w-14 h-14 rounded-full object-cover"
-            src="https://media.istockphoto.com/id/1581299863/de/foto/mann-arbeitet-am-computer-in-gro%C3%9Fem-fabriklager.jpg?s=612x612&w=0&k=20&c=FOSh7Fomsv2U3qiWgRMILas6xY1xrOmilzTO7aYCz_w="
+            src={ authUser?.user?.profilePicture || `https://media.istockphoto.com/id/1581299863/de/foto/mann-arbeitet-am-computer-in-gro%C3%9Fem-fabriklager.jpg?s=612x612&w=0&k=20&c=FOSh7Fomsv2U3qiWgRMILas6xY1xrOmilzTO7aYCz_w=`}
             alt="Profile"
           />
-          <span className="text-xl font-semibold">Enoch</span>
+          <span className="text-2xl md:text-3xl lg:text-xl font-semibold">{ authUser?.user?.name }</span>
         </div>
       </motion.div>
     </React.Fragment>

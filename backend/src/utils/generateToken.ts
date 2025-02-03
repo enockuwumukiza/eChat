@@ -5,7 +5,7 @@ import { IUser } from '../models/user.model';
 import { JwtPayload } from 'jsonwebtoken';
 dotenv.config();
 
-export const generateToken = (user: IUser, res: Response):string => {
+export const generateToken = (user: IUser, res: Response):string=> {
     try {
         // Generate the JWT token
         const token = jwt.sign(

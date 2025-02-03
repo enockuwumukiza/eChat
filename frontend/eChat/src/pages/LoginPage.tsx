@@ -43,9 +43,9 @@ const LoginPage: React.FC = () => {
     }
 
   return (
-      <div className='flex items-center justify-center flex-col h-screen'>
-          <h1 className='font-bold text-3xl text-center mb-5'>Welcome Back!</h1>
-          <div className='flex flex-col gap-2 p-5 space-y-2 bg-sky-950 w-[40%] rounded-lg shadow-lg'>
+      <div className='flex items-center justify-center flex-col h-screen px-4 sm:px-6 md:px-8'>
+          <h1 className='font-bold text-xl md:text-3xl lg:text-4xl text-center mb-5'>Welcome Back!</h1>
+          <div className='flex flex-col gap-2 p-5 space-y-2 bg-sky-950 w-full sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[40%] rounded-lg shadow-lg'>
               <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
                   <div className='form-control'>
                       <label className='label'>

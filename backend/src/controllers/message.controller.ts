@@ -177,10 +177,13 @@ const sendGroupMessage = expressAsyncHandler(async (req: Request, res: Response)
 
 // Send a single message
 const sendSingleMessage = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { content } = req.body;
+  const { content,status } = req.body;
   const { receiverId } = req.params;
   const senderId = req?.user?._id;
   let messageType: string = 'text';
+
+  const receiver = await User.findById(receiverId);
+  const receiverName = receiver?.name;
 
   if (!senderId) {
     res.status(HttpStatusCodes.UNAUTHORIZED).json({
@@ -313,6 +316,7 @@ const sendSingleMessage = expressAsyncHandler(async (req: Request, res: Response
       messageType,
       receiver: receiverId,
       content,
+      status,
       fileUrl
     });
 
@@ -328,7 +332,7 @@ const sendSingleMessage = expressAsyncHandler(async (req: Request, res: Response
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('receive-message', message);
-      io.to(receiverSocketId).emit('message-notification', {sender:req.user?._id});
+      io.to(receiverSocketId).emit('message-notification', { message: `new message from ${receiverName}`,sender:req?.user?._id, receiver:receiverId });
 
 
     } else {

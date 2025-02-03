@@ -150,7 +150,7 @@ const VideoRecorder = ({setVideo, setShouldVideoShow}:{setVideo:any, setShouldVi
 
     return (
         <div>
-             <div className="absolute bottom-5 flex flex-col items-center bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-xl p-2 space-y-2 mx-auto w-[110%] -left-[130%] overflow-y-auto" style={{
+             <div className="absolute bottom-24 lg:bottom-5 flex flex-col items-center bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-xl p-2 space-y-2 mx-auto w-[100%] lg:w-[110%] left-0 lg:-left-[130%] overflow-y-auto" style={{
                 zIndex: '9999',
                  maxHeight:'100vh'
         }}>

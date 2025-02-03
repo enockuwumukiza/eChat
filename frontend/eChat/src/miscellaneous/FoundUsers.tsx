@@ -2,10 +2,10 @@ import React from 'react';
 import { Divider } from '@mui/material';
 import { RootState } from '../store/store';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { setCurrentWindowWidth,setIsChatPageShown } from '../store/slices/displaySlice';
 import { setReceiverInfo } from '../store/slices/messageSlice';
 
-const FoundUsers: React.FC = () => {
+const FoundUsers: React.FC<any> = ({ setSearchInput }) => {
 
   const [ isShown, setIsShown ] = React.useState<boolean>(true)
 
@@ -15,8 +15,8 @@ const FoundUsers: React.FC = () => {
   
   return (
     <div
-      className={`${isShown ? 'fixed' : 'hidden'} left-52 top-56 bg-gradient-to-br from-indigo-700 via-purple-800 to-blue-900 text-white w-[44.5%] z-10 h-[80%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto`}
-      style={{ maxHeight: "65vh" }}
+      className={`${isShown ? 'fixed' : 'hidden'} left-0 md:left-48 lg:left-52 top-56 bg-gradient-to-br from-indigo-700 via-purple-800 to-blue-900 text-white w-[100%] md:w-[75%] lg:w-[43%] z-10 max-h-[100%] md:max-h-[100%] lg:max-h-[80%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto`}
+     
     >
       {userList.length > 0 ? (userList.map((user:any, index:any) => (
         <React.Fragment key={index}>
@@ -25,6 +25,8 @@ const FoundUsers: React.FC = () => {
             onClick={() => {
               dispatch(setReceiverInfo(user));
               setIsShown(false);
+              setSearchInput('');
+              dispatch(setIsChatPageShown(true));
 
             }
             }

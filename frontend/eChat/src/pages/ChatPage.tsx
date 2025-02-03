@@ -1,6 +1,6 @@
 import React, { useEffect, memo, useRef, useState } from 'react';
 import axios from 'axios'
-import { Videocam, Search, MoreVertOutlined, Call,Download } from '@mui/icons-material';
+import { Videocam, Search, MoreVertOutlined, Call,Download,DoneAllOutlined,Group, ArrowBack } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Tooltip } from '@mui/material';
 import { RootState } from '../store/store';
@@ -9,7 +9,7 @@ import { useLazyGetGroupMembersQuery } from '../store/slices/groupApiSlice';
 import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
 import { setNotifications } from '../store/slices/notificationSlice';
-import {  setIsGroupOptionsShown, setIsUserInfoShown } from '../store/slices/displaySlice';
+import {  setIsGroupOptionsShown, setIsUserInfoShown,setIsChatPageShown } from '../store/slices/displaySlice';
 import NoChatSelected from '../utils/NoChatSelected';
 import  generateAnchorTag  from '../utils/anchorTagGenerator';
 import { setOnlineUsers } from '../store/slices/socketSlice';
@@ -17,6 +17,10 @@ import { handleDownload } from '../utils/donwloadFiles';
 import FileLink from '../utils/donwloadFiles';
 import { formatTime } from '../utils/formatTime';
 import { renameFile } from '../utils/donwloadFiles';
+import { setIsAudioCallEnabled, setIsVideoCallEnabled } from '../store/slices/displaySlice';
+import incomingMsgNotification from '../../public/sounds/incoming-msg-notification.mp3'
+import Header from '../components/Header';
+import SimpleHeader from '../components/SimpleHeader';
 
 const ChatPage: React.FC = () => {
 
@@ -30,10 +34,14 @@ const ChatPage: React.FC = () => {
   const receiverInfo:any = useSelector((state: RootState) => state.message.receiverInfo);
  
   const groupsData: any = useSelector((state: RootState) => state.group.groupData);
+  const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
+  const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
 
   
   const isUserInfoShown = useSelector((state: RootState) => state.display.isUserInfoShown);
   const isGroupOptionsShown = useSelector((state: RootState) => state.display.isGroupOptionsShown);
+  const isAudioCallEnabled = useSelector((state: RootState) => state.display.isAudioCallEnabled);
+  const isVideoCallEnabled = useSelector((state: RootState) => state.display.isVideoCallEnabled);
 
   const onlineUsers = useSelector((state: RootState) => state.socket.onlineUsers);
 
@@ -45,6 +53,8 @@ const ChatPage: React.FC = () => {
 
   
   const messageRef = useRef<HTMLDivElement | null>(null);
+  const incomingMsgNotificationRef = useRef<HTMLAudioElement | null>(null);
+  
 
   // Scroll to the latest message
   useEffect(() => {
@@ -58,9 +68,12 @@ const ChatPage: React.FC = () => {
       socket.connect();
 
       socket.on('receive-message', (data) => {
+        if (incomingMsgNotificationRef.current) {
+          incomingMsgNotificationRef.current.src = incomingMsgNotification;
+          incomingMsgNotificationRef.current.play();
+        }
         if (data.chatType === 'Conversation') {
           setDisplayMessages((prev) => [...prev, data])
-         
         }
       });
       socket.on('member-joined', (data: any) => {
@@ -68,6 +81,7 @@ const ChatPage: React.FC = () => {
       });
 
       socket.on('group-message', (data) => {
+
         if (data?.chatType === 'Group') {
           setDisplayGroupMessages((prev:any) => {
           const newMessages = [data].filter(
@@ -169,51 +183,143 @@ const ChatPage: React.FC = () => {
 
   const messagesToDisplay = (isGroupChat && groupId) ? displayGroupMessages : (isSingleChat && receiverInfo?._id) ? displayMessages : [];
 
+
+  const NotChatShouldShow = () => {
+    return Number(currentWindowWidth) > 1280 ? <NoChatSelected /> : <>
+      <SimpleHeader/>
+    </>
+  }
+
   return (
-    <div>
+    <div className={ isChatPageShown ? "":"hidden" }>
+      <div className={`${Number(currentWindowWidth) > 1280 ? "" : '-left-[4%] '}`} >
       {
         (isSingleChat && receiverInfo) || (isGroupChat && groupId) ? (
-          <div className="fixed flex flex-col right-0 w-[41.6%] h-full bg-base-100 shadow-lg">
+          <div className={`fixed ${Number(currentWindowWidth) > 1280 ? "h-full":'h-[120%] -left-4 px-3 md:left-0 md:px-0'}  flex-col right-0 sm:w-[100%] md:w-[100%] lg:w-[41.6%] bg-base-100 shadow-lg cursor-pointer `}>
             {/* Header */}
-            
-            <div className="sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-4 flex justify-between items-center shadow-md">
-              <h6 className='absolute  text-sky-300 top-14 right-[80%]'>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
-        <div className="flex items-center gap-4">
-          <img
-            className="w-12 h-12 rounded-full"
-            src={receiverInfo?.profilePicture || '/default-avatar.png'}
+             
+              <div className={`sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-10 md:p-8 lg:p-4 flex justify-between items-center shadow-md`}>
+              <h6 className='absolute  text-sky-300 top-[57%] md:top-[60%] lg:top-14 right-[59%] md:right-[68%] lg:right-[78%] text-[25px] md:text-[33px] lg:text-[16px] '>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
+                <div className="flex justify-start -ml-10 md:-ml-0">
+              
+             {
+                isChatPageShown && Number(currentWindowWidth) < 1280 && <Tooltip title="Go Back">
+                  <IconButton className='' onClick={() => dispatch(setIsChatPageShown(false))}>
+                        <ArrowBack htmlColor='white'
+                        
+                          sx={{
+                          fontSize: {
+                            xs: "30px",
+                            sm: "40px",
+                            md: "70px",
+                            lg: "35px",
+                            },
+                            marginTop:"-10px"
+                          }}
+                        
+                          
+                        />
+                  </IconButton>
+                </Tooltip>
+            }
+          
+          {
+                  isSingleChat && receiverInfo ? <img
+            className="w-12 h-12 rounded-full mr-3 md:mr-4 lg:mr-0"
+            src={ receiverInfo?.profilePicture || '/default-avatar.png'}
             alt="Chat Avatar"
-          />
+                    /> : isGroupChat && groupId ? <Group htmlColor=''
+                        
+                        sx={{
+                          fontSize: {
+                            xs: "30px",
+                            sm: "40px",
+                            md: "70px",
+                            lg: "35px",
+                          },
+                          marginRight:"10px"
+                        }}
+                    /> : ""
+          }
           <div>
             {isGroupChat && !isSingleChat ? (
-              <div className="flex flex-wrap gap-2 text-sm text-white">
-                {members?.groupMembers?.members?.map((member: any, index: any) => (
-                  <span key={index} className="bg-teal-800 rounded-md px-2 py-1">
+              <div className="absolute flex gap-1 text-xs md:text-lg text-white items-center">
+                {members?.groupMembers?.members?.slice(0, 3)?.map((member: any, index: any) => (
+                  <span 
+                    key={index} 
+                    className="bg-teal-800 px-0 lg:px-2 py-1 rounded-md hover:bg-teal-700 transition-all duration-300"
+                    title={member?.userId?.name} // Shows full name on hover
+                  >
                     {member?.userId?.name.split(' ')[0]}
                   </span>
                 ))}
+
+                {members?.groupMembers?.members?.length > 3 && (
+                  <span className="font-semibold text-sm bg-gray-700 px-2 py-1 rounded-md">
+                    +{members?.groupMembers?.members?.length - 3}
+                  </span>
+                )}
               </div>
+
             ) : (
-              <h1 className="text-xl font-bold text-white">
-                {receiverInfo?.name.split(' ')[0]}
+              <h1 className="text-xl md:text-4xl lg:text-xl font-bold text-white ml-1 mt-2 md:ml-2 md:mb-2 lg:ml-3 lg:mt-3">
+                {receiverInfo?.name.split(' ')[0].split('').length > 10 ? `${receiverInfo?.name.split(' ')[0].slice(0, 8)}...` : receiverInfo?.name.split(' ')[0]} 
               </h1>
             )}
           </div>
         </div>
-        <div className="flex gap-4">
-          <Tooltip title="Video Call" placement="top">
-            <IconButton className="hover:bg-teal-800">
-              <Videocam fontSize="medium" htmlColor="white" />
+        <div className={`flex  absolute right-0 gap-1 sm:gap-1 md:gap-2 lg:gap-4`}>
+                  {
+                    isSingleChat && !isGroupChat &&
+
+                    <Tooltip title="Video Call" placement="top">
+                    <IconButton className={`hover:bg-teal-800`} onClick={() => dispatch(setIsVideoCallEnabled(!isVideoCallEnabled))}>
+                      <Videocam htmlColor="white"
+                        
+                        sx={{
+                          fontSize: {
+                            xs: "30px",
+                            sm: "40px",
+                            md: "70px",
+                            lg: "35px",
+                          },
+                        }}
+                      />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Voice Call" placement="top">
-            <IconButton className="hover:bg-teal-800">
-              <Call fontSize="medium" htmlColor="white" />
+          }
+                  {
+                    isSingleChat && !isGroupChat &&
+                      <Tooltip
+                    title="Voice Call" placement="top">
+                    <IconButton className={`hover:bg-teal-800`}   onClick={() => dispatch(setIsAudioCallEnabled(!isAudioCallEnabled))}>
+                      <Call htmlColor="white"
+                        
+                        sx={{
+                          fontSize: {
+                            xs: "30px",
+                            sm: "40px",
+                            md: "70px",
+                            lg: "35px",
+                          },
+                        }}
+                      />
             </IconButton>
           </Tooltip>
+                }
           <Tooltip title="Search" placement="top">
             <IconButton className="hover:bg-teal-800">
-              <Search fontSize="medium" htmlColor="white" />
+                      <Search htmlColor="white"
+                      
+                        sx={{
+                          fontSize: {
+                            xs: "30px",
+                            sm: "40px",
+                            md: "70px",
+                            lg: "35px",
+                          },
+                        }}
+                      />
             </IconButton>
           </Tooltip>
           <Tooltip title="More Options" placement="top">
@@ -223,20 +329,30 @@ const ChatPage: React.FC = () => {
                 
               }}
               className="hover:bg-teal-800">
-              <MoreVertOutlined fontSize="medium" htmlColor="white" />
+                      <MoreVertOutlined htmlColor="white"
+              
+                        sx={{
+                          fontSize: {
+                            xs: "30px",
+                            sm: "40px",
+                            md: "70px",
+                            lg: "35px",
+                          },
+                        }}
+                      />
             </IconButton>
           </Tooltip>
         </div>
       </div>
 
       {/* Chat Body */}
-      <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4">
+      <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4 pb-14">
         {(messagesToDisplay?.length > 0 ? (
                 messagesToDisplay?.map((msg: any) => (
             
             <div key={msg?._id} className={`chat ${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "chat-end" : "chat-start"}`}>
               <div className="chat-image avatar">
-                <div className="w-12 rounded-full">
+                <div className="w-12 md:w-20 lg:w-12 rounded-full">
                   <img
                     alt="User Avatar"
                     src={msg?.sender?.profilePicture || "https://media.istockphoto.com/id/1750451240/photo/sleeping-girl-sitting-on-the-bed-in-the-room.webp?a=1&b=1&s=612x612&w=0&k=20&c=Hc3ERVBXnML49koFzJn1McA-lLHbfS97jsxSPKhsDpo="}
@@ -244,12 +360,12 @@ const ChatPage: React.FC = () => {
                 </div>
               </div>
               <div className="chat-header text-white">
-                {msg?.sender?.name === authUser?.user?.name ? "You" : msg?.sender?.name}
+                      {msg?.sender?.name === authUser?.user?.name ? <span className="font-semibold italic text-sky-700">You</span> : <span className="font-semibold italic text-sky-700">{msg?.sender?.name.split(' ')[0]}</span>}
                 <span className="text-xs font-bold ml-2">
                   {formatTime(msg?.createdAt)}
                 </span>
               </div>
-              <div className={`chat-bubble bg-${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "teal-800" : "gray-950"} text-white shadow-md`}>
+              <div className={`chat-bubble bg-${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "teal-800" : "gray-950"} text-white shadow-md text-xl md:text-3xl lg:text-xl`}>
                 {msg?.messageType === 'text' ? generateAnchorTag(msg?.content) : msg?.messageType === 'image' ?
                   <img src={msg?.fileUrl?.url} />
                  : msg?.messageType === 'audio' ? 
@@ -273,9 +389,10 @@ const ChatPage: React.FC = () => {
                 }
               </div>
               <div className="chat-footer text-gray-400 text-xs">
-                {msg?.status === "sent" ? "Delivered" : "Pending"}
-              </div>
-              <div ref={messageRef} />
+                {msg?.status === "sent" && msg?.sender?._id === authUser?.user?._id ? <DoneAllOutlined/> : ""}
+                    </div>
+                    <audio className='hidden' ref={incomingMsgNotificationRef}/>
+              <div ref={messageRef}/>
               
                   </div>
                   
@@ -283,7 +400,7 @@ const ChatPage: React.FC = () => {
 
           ))
         ) : (
-          <p>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>
+          isGroupChat && groupId ? <p>No messages available </p>: isSingleChat && receiverInfo ? <p>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>:""
               ))
               }
       </div>
@@ -293,8 +410,10 @@ const ChatPage: React.FC = () => {
         <MessageInput  setDisplayMessages={ setDisplayMessages} setDisplayGroupMessages={setDisplayGroupMessages} />
       </div>
     </div>
-        ):<NoChatSelected/>
+          ) : <NotChatShouldShow/>
+          
       }
+    </div>
     </div>
   );
 };

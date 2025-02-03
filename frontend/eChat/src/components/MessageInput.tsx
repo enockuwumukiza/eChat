@@ -18,6 +18,9 @@ import SendingAnimation from '../utils/SendingAnimation';
 import { renderPreview } from '../utils/FileUpload';
 import VoiceRecorder from './VoiceRecorder'
 import VideoRecorder from './VideoRecorder';
+import VoiceCall from '../audio-chats/VoiceCall';
+import VideoCall from '../audio-chats/VideoCall';
+import messageNotification from '../../public/sounds/message-notification.mp3'
 
 type FilePreview = {
   file: File;
@@ -58,12 +61,22 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   // refferences
   const pickerRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLDivElement | null>(null);
+  const msgNotificationRef = useRef<HTMLAudioElement | null>(null);
   
 
   const receiverInfo: any = useSelector((state: RootState) => state.message.receiverInfo);
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const groupId = useSelector((state: RootState) => state.group.groupId);
+  const isAudioCallEnabled = useSelector((state: RootState) => state.display.isAudioCallEnabled);
+  const isVideoCallEnabled = useSelector((state: RootState) => state.display.isVideoCallEnabled);
+  const callerData = useSelector((state: RootState) => state.display.callerData);
+
+  const onlineUsers = useSelector((state: RootState) => state.socket.onlineUsers);
+  
+  const isReceiverOnline = onlineUsers?.includes(receiverInfo?._id);
+  
+
 
   const typerName = useMemo(() => typingData?.authName?.split(' ')[0]?.toUpperCase(), [typingData]);
   const typerGroupName = useMemo(() => typingGroupData?.authName?.split(' ')[0]?.toUpperCase(), [typingGroupData]);
@@ -214,6 +227,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
     if (messageInput.trim() !== '') {
       formData.append('content', messageInput.trim());
     }
+    
       if (normalFile) formData.append('normalFile', normalFile);
       if (audio) formData.append('audio', audio);
       if (video) formData.append('video', video);
@@ -307,11 +321,17 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
     } else if(isSingleChat){
       await handleSendMessage();
     }
+    if (msgNotificationRef.current) {
+      msgNotificationRef.current.src = messageNotification;
+      msgNotificationRef.current.play();
+    }
   };
   
 
+  
+
   return (
-      <div className="fixed bottom-0 right-0 flex items-center justify-center w-[41.6%] bg-gradient-to-r from-purple-900 via-green-950 to-teal-950 py-3">
+    <div className={`fixed bottom-0 right-0 flex items-center justify-between md:justify-around lg:justify-around w-full sm:w-[100%] md:w-[100%] lg:w-[41.6%] bg-gradient-to-r from-purple-900 via-green-950 to-teal-950 py-3`}>
     {isSingleChat && typingData ? (
       <div className="relative">
         <TypingIndicator name={typerName} />
@@ -332,12 +352,21 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   )}
 
   <Tooltip title="Emoji" placement="top">
-    <IconButton onClick={() => setShowEmoji(!showEmoji)}>
-      <Mood fontSize="large" htmlColor="white" />
+    <IconButton className='w-10 text-5xl' onClick={() => setShowEmoji(!showEmoji)}>
+          <Mood htmlColor="white"
+            sx={{
+              fontSize: {
+                xs: "30px",
+                sm: "40px",
+                md: "70px",
+                lg: "35px",
+              },
+            }}
+          />
     </IconButton>
   </Tooltip>
 
-      <form onSubmit={handleSubmit} className="flex items-center gap-3">
+      <form onSubmit={handleSubmit} className="flex items-center gap-1 md:gap-5 lg:gap-3 px-0">
        
       <Tooltip
       title="Upload"
@@ -345,7 +374,17 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
         >
           
       <IconButton onClick={() => setShowFileUpload(!showFileUpload)}>
-            <AddCircle fontSize="large" htmlColor="white" />
+            <AddCircle htmlColor="white"
+              sx={{
+                fontSize: {
+                  xs: "30px",
+                  sm: "40px",
+                  md: "70px",
+                  lg: "35px",
+                },
+                }}
+              
+            />
             
       </IconButton>
     </Tooltip>
@@ -358,7 +397,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
         typingTimeout.current = setTimeout(stopTyping, 2000);
       }}
-      className="input input-bordered w-96 text-white font-bold p-2"
+      className="input md:h-[70px] lg:h-[50px] input-bordered w-60 md:w-96 lg:w-80 text-white font-bold lg:p-2 text-[24px] md:text-[35px] lg:text-[17px] text-center pt-3 md:pt-4 lg:pt-2 "
       placeholder="Type a message"
     />
 
@@ -371,29 +410,59 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           {isLoading || isGroupLoading ? (
             <span className="loading loading-spinner loading-lg"></span>
           ) : (
-            <Send fontSize="large" htmlColor="white" />
+                  <Send htmlColor="white"
+                    
+                    sx={{
+                      fontSize: {
+                        xs: "30px",
+                        sm: "40px",
+                        md: "70px",
+                        lg: "35px",
+                      },
+                    }}
+                  />
           )}
         </IconButton>
       ) : (
-              <IconButton disabled={shouldPlay || shoudlVideoShow} onClick={() => {
+              <IconButton className="p-0" disabled={shouldPlay || shoudlVideoShow} onClick={() => {
                 // setIsRecording(!isRecording);
                 setShouldPlay(!shouldPlay);
                 
                }}>
-          <Mic fontSize="large" htmlColor={isRecording ? "red":"white"} />
+                <Mic htmlColor={isRecording ? "red" : "white"}
+                  
+                  sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+                />
         </IconButton>
       )}
         </Tooltip>
 
         {
-          !messageInput && (
+        !messageInput && (
             <Tooltip
           title="Record video"
           placement="top"
             >
               
-          <IconButton disabled={shoudlVideoShow || shouldPlay}  onClick={() => setShouldVideoShow(!shoudlVideoShow)}>
-                <Videocam fontSize="large" htmlColor={shoudlVideoShow ? "red":"white"} />
+          <IconButton className="right-2 md:right-4 lg:right-6" disabled={shoudlVideoShow || shouldPlay}  onClick={() => setShouldVideoShow(!shoudlVideoShow)}>
+                <Videocam htmlColor={shoudlVideoShow ? "red" : "white"}
+                  
+                  sx={{
+                    fontSize: {
+                      xs: "30px",
+                      sm: "40px",
+                      md: "70px",
+                      lg: "35px",
+                    },
+                  }}
+                />
                 
           </IconButton>
         </Tooltip>
@@ -402,7 +471,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
 
         {
           showFileUpload && (
-            <div ref={fileInputRef} className="absolute bottom-32 left-5 bg-slate-950 rounded-3xl flex flex-col  items-center space-y-6 p-6">
+            <div ref={fileInputRef} className="absolute bottom-32 left-5 bg-slate-950 rounded-3xl flex flex-col items-center space-y-6 p-6">
               {/* Document Upload */}
               <div className="flex items-center space-x-2 text-slate-100 hover:text-sky-900 transition ease-out hover:translate-y-1 hover:scale-105 hover:opacity-90 duration-300 delay-100">
                 <Tooltip title="Attach Document" placement="top">
@@ -524,7 +593,17 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
         {
           shoudlVideoShow && <VideoRecorder setVideo={ setVideo } setShouldVideoShow={setShouldVideoShow} />
         }
-  </form>
+        <audio className='hidden' ref={msgNotificationRef}/>
+      </form>
+      
+      {/* <div className="video-audio-calls">
+        <div>
+         <VoiceCall/>
+        </div>
+        <div>
+          <VideoCall/>
+        </div>
+      </div> */}
         
 </div>
 

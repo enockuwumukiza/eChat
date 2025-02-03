@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setGroupInfo, setGroupId } from '../store/slices/groupSlice';
 import { RootState } from '../store/store';
 import { setReceiverInfo } from '../store/slices/messageSlice';
+import { setCurrentWindowWidth, setIsChatPageShown, setIsGroupChat } from '../store/slices/displaySlice';
 
 const GroupCard = ({ group }: any) => {
   const dispatch = useDispatch();
@@ -18,11 +19,13 @@ const GroupCard = ({ group }: any) => {
     <div
       key={group._id}
       onClick={() => {
-        if (isGroupChat && !isSingleChat) {
-          dispatch(setGroupInfo(group));
-          dispatch(setReceiverInfo(null))
-          dispatch(setGroupId(group?._id))
-        }
+        dispatch(setIsGroupChat(true))
+        dispatch(setGroupId(group?._id));
+        dispatch(setIsChatPageShown(true));
+
+        dispatch(setGroupInfo(group));
+      // dispatch(setReceiverInfo(null))
+          
         
       }}
       className={`flex items-center gap-5 bg-${isGroupChat && !isSingleChat && group?._id === groupId ? "teal-950":"gray-950"} hover:from-gray-700 hover:via-gray-600 hover:to-gray-700 transition-all duration-300 rounded-xl shadow-lg p-4 cursor-pointer transform hover:scale-105`}
