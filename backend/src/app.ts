@@ -17,7 +17,7 @@ dotenv.config();
 //built-in middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../../frontend/eChat/dist")))
+app.use(express.static(path.join(__dirname, "..","..","frontend","eChat","dist")))
 
 //custom middlewares
 
