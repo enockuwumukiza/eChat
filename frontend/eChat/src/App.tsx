@@ -1,19 +1,19 @@
-import React ,{ Suspense} from 'react'
+import React ,{ Suspense, lazy } from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { RootState } from './store/store'
-import ChatPage from './pages/ChatPage'
+const  ChatPage = lazy(()  => import( './pages/ChatPage'))
 import Home from './pages/Home'
-import LoginPage from './pages/LoginPage'
-import SignupPage from './pages/SignupPage'
-import NotFoundPage from './pages/NotFoundPage'
+const  LoginPage = lazy(()  => import( './pages/LoginPage'))
+const  SignupPage = lazy(()  => import( './pages/SignupPage'))
+const  NotFoundPage = lazy(()  => import( './pages/NotFoundPage'))
 import Loader from './utils/Loader'
 import { useAuth } from './hooks/useAuth'
-import NewChat from './miscellaneous/NewChat'
-import InternetStatus from './utils/InternetStatus'
-import VideoCall from './audio-chats/VideoCall'
-import VoiceCall from './audio-chats/VoiceCall'
+const  NewChat = lazy(()  => import( './miscellaneous/NewChat'))
+const  InternetStatus = lazy(()  => import( './utils/InternetStatus'))
+const  VideoCall = lazy(()  => import( './audio-chats/VideoCall'))
+const  VoiceCall = lazy(()  => import( './audio-chats/VoiceCall'))
 import { useListenNotifications } from './hooks/useListenNotifications'
 
 
