@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { AddCircle, ArrowBack, MoreVertOutlined, Search, Cancel, Forum, People } from '@mui/icons-material';
+import { AddCircle, ArrowBack, MoreVertOutlined, Search, Cancel, Forum, People, Notifications } from '@mui/icons-material';
 import { Divider, IconButton, Tooltip } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { RootState } from '../store/store';
-import { setIsMoreOptionsShown, setIsNewChatShown,setIsGroupChat, setIsSingleChat } from '../store/slices/displaySlice';
+import { setIsMoreOptionsShown,setIsNotificationShown, setIsNewChatShown,setIsGroupChat, setIsSingleChat } from '../store/slices/displaySlice';
 import FoundUsers from '../miscellaneous/FoundUsers';
 import { useLazySearchUsersQuery } from '../store/slices/usersApiSlice';
 import { useDebounce } from 'use-debounce';
@@ -22,10 +22,12 @@ const Header: React.FC = () => {
     const isNewChatShown = useSelector((state: RootState) => state.display.isNewChatShown);
     const isMoreOptionsShown = useSelector((state: RootState) => state.display.isMoreOptionsShown);
     const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
+    const isNotificationShown = useSelector((state: RootState) => state.display.isNotificationShown);
 
    
     const groupsData: any = useSelector((state: RootState) => state.group.groupData);
     const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
+    const notifications = useSelector((state: RootState) => state.notifications.notifications);
       
 
     const [triggerGetSearchedUsers, { data: usersFound, isLoading }] = useLazySearchUsersQuery();
@@ -78,7 +80,7 @@ const Header: React.FC = () => {
             <div className={`${Number(currentWindowWidth) > 1280? 'flex' : isChatPageShown ? 'hidden':'flex'}`}>
                 <div className="fixed sm:left-0 md:left-48 lg:left-52 -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-full  sm:w-[110%] md:w-[82%] lg:w-[45%] shadow-lg shadow-gray-800">
                 <div className="flex gap-x-8 md:gap-x-40 lg:gap-x-70">
-                    <h2 className="text-2xl font-bold">Chats</h2>
+                    <h2 className="text-2xl font-bold text-white">Chats</h2>
                     <div className="flex gap-3 lg:gap-10">
                         <Tooltip title="new chat">
                             <IconButton onClick={() => dispatch(setIsNewChatShown(!isNewChatShown))}>
@@ -104,7 +106,27 @@ const Header: React.FC = () => {
                                 <MoreVertOutlined htmlColor="white" fontSize="large" />
                             </IconButton>
                         </Tooltip>
-                    </div>
+                        </div>
+                        <div className='flex md:hidden lg:hidden absolute right-[5%]'>
+                            <Tooltip title='notifications'>
+                                <IconButton onClick={() => dispatch(setIsNotificationShown(!isNotificationShown))}>
+                                    <Notifications htmlColor='white'
+                                    
+                                    sx={{
+                                        fontSize: {
+                                            xs: "30px",
+                                            sm: "40px",
+                                            md: "70px",
+                                            lg: "35px",
+                                        },
+                                        }}
+                                    />
+                                </IconButton>
+                                </Tooltip>
+                                {
+                                notifications.length > 0 && <div className='absolute top-[0%] left-[47%]  bg-rose-800 h-7 w-7 rounded-full'><span className="text-white font-bold p-2 text-[16px] absolute -top-2 ">{ notifications.length }</span></div>
+                            }
+                        </div>
                 </div>
                 <Divider />
                 <div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import MessageCard from './MessageCard';
 
 // Enhanced regex to detect a URL or domain-like structure
 const isLink = (message: string): boolean => {
@@ -27,7 +28,7 @@ const generateAnchorTag = (message: string): React.ReactNode => {
         rel="noopener noreferrer"
         className="text-blue-600 hover:text-blue-800 visited:text-purple-600 underline"
       >
-        {message}
+        { message }
       </a>
     );
   }

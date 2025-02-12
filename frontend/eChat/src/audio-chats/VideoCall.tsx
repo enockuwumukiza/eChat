@@ -24,17 +24,6 @@ import incomingVideoCallRingtone from '../../public/sounds/incoming-call-rington
 import { setReceiverInfo } from "../store/slices/messageSlice";
 
 
-interface ReceiverInfo {
-  _id: string;
-  name: string;
-}
-
-interface ReduxState {
-  message: {
-    receiverInfo: ReceiverInfo;
-  };
-}
-
 const VideoCall: React.FC = () => {
 
   const dispatch = useDispatch();
@@ -56,10 +45,22 @@ const VideoCall: React.FC = () => {
   const [isCallAnswered, setIsCallAnswered] = useState<boolean>(false);
   const [microphoneEnabled, setMicrophoneEnabled] = useState(true);
   const [speakerEnabled, setSpeakerEnabled] = useState(true);
+  const [ isRecording,setIsRecording ] = useState<boolean>(false);
+  const [recordingTime, setRecordingTime] = useState<number>(0);
+  const [calleeRecordingTime, setCalleeRecordingTime] = useState<number>(0);
+  const [videoBlob,setvideoBlob] = useState<Blob | null>(null);
+  const [videoUrl, setvideoUrl] = useState<string | null>(null);
+  const [calleevideoBlob,setCalleevideoBlob] = useState<Blob | null>(null);
+  const [calleevideoUrl, setCalleevideoUrl] = useState<string | null>(null);
+
+  const [calleeaudioBlob,setCalleeAudioBlob] = useState<Blob | null>(null);
+    const [calleeaudioUrl, setCalleeAudioUrl] = useState<string | null>(null);
   
 
   const [isMuted, setIsMuted] = React.useState(false);
   const [isCameraOn, setIsCameraOn] = React.useState(false);
+
+
 
   
 
@@ -68,12 +69,16 @@ const VideoCall: React.FC = () => {
   const localStream = useRef<MediaStream | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);  
 
-  const ongoingVideoCallRingtoneRef = useRef<HTMLAudioElement | null>(null);
-  const incomingVideoCallRingtoneRef = useRef<HTMLAudioElement | null>(null);
+  const ongoingVideoCallRingtoneRef = useRef<HTMLVideoElement | null>(null);
+  const incomingVideoCallRingtoneRef = useRef<HTMLVideoElement | null>(null);
 
   const videoChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  const calleeAudioChunks = useRef<Blob[]>([]);
+  const calleeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const calleeMediaRecorder = useRef<MediaRecorder | null>(null);
 
   const configuration: RTCConfiguration = {
     iceServers: [
@@ -125,15 +130,20 @@ const VideoCall: React.FC = () => {
       }
     });
 
-    socket.on("callVEnded", () => {
+    socket.once("callVEnded", () => {
       dispatch(setIsVideoCallEnabled(false));
       setIsCallAnswered(false);
 
      if (ongoingVideoCallRingtoneRef.current) {
           ongoingVideoCallRingtoneRef.current.pause();
           ongoingVideoCallRingtoneRef.current.currentTime = 0;
-        }
+      }
+      
+      
+      setCaller(null);
+    
       endCall();
+      
     });
 
     return () => {
@@ -232,12 +242,73 @@ const VideoCall: React.FC = () => {
       });
       setIsCalling(true);
 
-    if (isCalling && !isCallGoingOn || !isCallAnswered) {
+    if (isCalling && (!isCallGoingOn && !isCallAnswered)) {
           setTimeout(() => {
             endCall();
-            toast.info('call not answered!');
+            toast.info('video call not answered!');
+
+            socket.emit("missedVCall", {
+            type: "missed_v_call",
+            sender: {
+              id: authUser?.user?._id,
+              name: authUser?.user?.name,
+              photo:authUser?.user?.profilePicture
+            },
+            receiver: {
+              id: receiverInfo?._id,
+              name: receiverInfo?.name,
+              photo: receiverInfo?.profilePicture
+            }
+          })
           },60000)
-        }
+      }
+      
+
+      if (localStream.current) {
+            
+              mediaRecorderRef.current = new MediaRecorder(localStream.current);
+              mediaRecorderRef.current.ondataavailable = event => {
+                videoChunksRef.current.push(event.data);
+              }
+      
+              mediaRecorderRef.current.onstop = () => {
+                const videoBlob = new Blob(videoChunksRef.current, {
+                  type: 'video/wav'
+                });
+                const videoUrl = URL.createObjectURL(videoBlob);
+      
+                setvideoBlob(videoBlob);
+                setvideoUrl(videoUrl);
+                clearInterval(timerRef.current as NodeJS.Timeout);
+              }
+      
+              mediaRecorderRef.current.start();
+              setIsRecording(true);
+      
+              timerRef.current = setInterval(() => {
+                setRecordingTime((prev) => prev + 1);
+              }, 1000);
+            
+            if (isCalling && !isCallGoingOn && !isCallAnswered) {
+              setTimeout(() => {
+                endCall();
+                toast.info('call not answered!');
+                socket.emit("missedCall", {
+                  type: "missed_call",
+                  sender: {
+                    id: authUser?.user?._id,
+                    name: authUser?.user?.name,
+                    photo:authUser?.user?.profilePicture
+                  },
+                  receiver: {
+                    id: receiverInfo?._id,
+                    name: receiverInfo?.name,
+                    photo: receiverInfo?.profilePicture
+                  }
+                })
+              },60000)
+            }
+            }
     } catch (error) {
       toast.error("Failed to initiate call.");
     }
@@ -267,6 +338,33 @@ const VideoCall: React.FC = () => {
         sender: authUser?.user?._id,
         receiver: receiverInfo?._id ? receiverInfo?._id : customSender,
       });
+
+
+       if (remoteStream.current) {
+      
+        calleeMediaRecorder.current = new MediaRecorder(remoteStream.current);
+        calleeMediaRecorder.current.ondataavailable = event => {
+          calleeAudioChunks.current.push(event.data);
+        }
+
+        calleeMediaRecorder.current.onstop = () => {
+          const audioBlob = new Blob(videoChunksRef.current, {
+            type: 'audio/wav'
+          });
+          const audioUrl = URL.createObjectURL(audioBlob);
+
+          setCalleeAudioBlob(audioBlob);
+          setCalleeAudioUrl(audioUrl);
+          clearInterval(calleeTimerRef.current as NodeJS.Timeout);
+        }
+
+        calleeMediaRecorder.current.start();
+        setIsRecording(true);
+
+        calleeTimerRef.current = setInterval(() => {
+          setCalleeRecordingTime((prev) => prev + 1);
+        }, 1000);
+    }
 
       setIsReceivingCall(false);
       setIsCallGoingOn(true);
@@ -300,6 +398,13 @@ const VideoCall: React.FC = () => {
     });
     setIsCallGoingOn(false);
     dispatch(setIsVideoCallEnabled(false));
+
+    toast.info("call ended");
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+
   };
 
   const toggleMic = () => {
@@ -333,6 +438,11 @@ const VideoCall: React.FC = () => {
     }
   };
 
+   const formatTime = (timeInSeconds: number) => {
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = timeInSeconds % 60;
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
   
    if (isCallAnswered || isCallGoingOn) {
     if (ongoingVideoCallRingtoneRef.current) {
@@ -366,6 +476,10 @@ const VideoCall: React.FC = () => {
         >
           <MdClose className="text-3xl" />
         </button>
+
+          { isCallAnswered || isCallGoingOn &&
+          <h1 className="absolute text-xl md:text-2xl font-bold left-[39%] mb-4">Talking to <span className="text-sky-400 italic">{receiverInfo?.name}</span> </h1>
+      }
        </div>
        
         <p className="absolute top-0 text-white text-lg font-semibold lg:mt-4">
@@ -379,7 +493,7 @@ const VideoCall: React.FC = () => {
         ref={localVideoRef}
         autoPlay
         muted={isMuted}
-        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white -left-[0.2%] md:left-[9%] lg:left-[5.4%] top-[65%] md:top-[0%] lg:top-[0%] ${
+        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white -left-[0.50%] md:left-[9%] lg:left-[5.4%] top-[65%] md:top-[0%] lg:top-[0%] ${
           isCameraOn ? "bg-gray-800 opacity-70" : ""
         } transition-all transform hover:scale-105 absolute top-4 left-4 z-10`}
         style={{
@@ -417,13 +531,13 @@ const VideoCall: React.FC = () => {
        </div>
        
        <div className="hidden">
-          <audio className="hidden" ref={ongoingVideoCallRingtoneRef} loop ></audio>
-          <audio className="hidden" ref={incomingVideoCallRingtoneRef} loop ></audio>
+          <video className="hidden" ref={ongoingVideoCallRingtoneRef} loop ></video>
+          <video className="hidden" ref={incomingVideoCallRingtoneRef} loop ></video>
         </div>
 
 
       {/* Controls */}
-      <div className="flex mt-3 justify-center gap-4 items-center w-full">
+      <div className="flex mt-3 justify-center gap-2 md:gap-3 lg:gap-4 items-center w-full">
         {/* Mic Control */}
         <button
           onClick={toggleMic}
@@ -481,7 +595,7 @@ const VideoCall: React.FC = () => {
               isCalling ? "bg-red-600" : "bg-green-600"
             } text-white px-6 py-2 rounded-full shadow-md flex items-center gap-2 hover:shadow-lg`}
           >
-            {isCalling || isCallGoingOn ? (
+            {isCalling || isCallGoingOn || isCallAnswered ? (
               <>
                 <MdCallEnd className="text-2xl" /> End Call
               </>
@@ -491,14 +605,24 @@ const VideoCall: React.FC = () => {
               </>
             )}
           </button>
-        )}
+         )}
+         
+        
+       </div>
+
+
+      <div className="flex flex-col absolute bottom-[1%] lg:bottom-[4%] pt-10 right-[45%] lg:right-[10%] gap-5 justify-center">
+        
+        {
+        isCallGoingOn && <span className="bg-slate-950 text-center  rounded-lg w-16 mx-auto mt-5 text-xl">{formatTime(calleeRecordingTime)}</span>
+      }
+      { isCallAnswered &&
+        <span className="bg-slate-950 text-center  rounded-lg w-16 mx-auto mt-5 px-5 ">{formatTime(recordingTime  && recordingTime - 3)}</span>
+      }
       </div>
     </div>
   );
 };
 
 export default VideoCall;
-
-
-
 

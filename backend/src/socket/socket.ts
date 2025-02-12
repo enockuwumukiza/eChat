@@ -137,13 +137,29 @@ io.on("connection", (socket) => {
 
   socket.on("endCall", ({ sender, receiver }) => {
     const receiverSocketId = getReceiverSocketId(receiver);
-    socket.to(receiverSocketId).emit("callEnded");
+    const senderSocketId = getReceiverSocketId(sender);
+    if (receiverSocketId) {
+      socket.to(receiverSocketId).emit("callEnded");
+    }
+    if (senderSocketId) {
+      socket.to(senderSocketId).emit('callEnded');
+    }
   });
 
   socket.on("endVCall", ({ sender, receiver }) => {
     const receiverSocketId = getReceiverSocketId(receiver);
     socket.to(receiverSocketId).emit("callVEnded");
   });
+
+  socket.on('missedCall', (data: any) => {
+    const receiverSocketId = getReceiverSocketId(data.receiver?.id);
+    socket.to(receiverSocketId).emit('missed_call', data);
+  });
+
+  socket.on('missedVCall', (data: any) => {
+    const receiverSocketId = getReceiverSocketId(data.receiver?.id);
+    socket.to(receiverSocketId).emit('missed_v_call', data);
+  })
  
   socket.on("disconnect", () => {
     const userId:any = getUserIdFromSocketId(socket.id);  

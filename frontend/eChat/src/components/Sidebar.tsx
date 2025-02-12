@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 import { IconButton, Tooltip } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
-import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSingleChat } from '../store/slices/displaySlice';
+import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSettingsShown, setIsSingleChat } from '../store/slices/displaySlice';
 import { RootState } from '../store/store';
 import { useLogoutUserMutation } from '../store/slices/usersApiSlice';
 
@@ -29,6 +29,7 @@ const Sidebar: React.FC = () => {
   const isProfileModalOpen = useSelector((state: RootState) => state.display.isProfileModalOpen);
   const groupsData: any = useSelector((state: RootState) => state.group.groupData);
   const isNotificationShown = useSelector((state: RootState) => state.display.isNotificationShown);
+  const isSettingsShown = useSelector((state: RootState) => state.display.isSettingsShown);
 
 
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
@@ -67,12 +68,10 @@ const Sidebar: React.FC = () => {
 
     } catch (error: any) {
       toast.error(error?.data?.message || error?.message || 'error logging out');
-      console.log(`Error logging out: ${error}`)
+      
     }
   }
 
-
-  console.log('notifications: ', notifications);
 
   return (
     <div className='fixed hidden md:block bg-gray-950 text-white'
@@ -144,7 +143,7 @@ const Sidebar: React.FC = () => {
           </IconButton>
           </Tooltip>
           {
-            notifications.length > 0 && <div className='absolute top-[44%] left-24  bg-rose-800 h-7 w-7 rounded-full'><span className="text-white font-bold p-2 text-[16px] absolute -top-2 ">{ notifications.length }</span></div>
+            notifications.length > 0 && <div className='absolute top-[40%] left-[47%]  bg-rose-800 h-7 w-7 rounded-full'><span className="text-white font-bold p-2 text-[16px] absolute -top-2 ">{ notifications.length }</span></div>
         }
       </div>
       <div className='flex flex-col gap-2'>
@@ -154,7 +153,7 @@ const Sidebar: React.FC = () => {
           </IconButton>
         </Tooltip>
         <Tooltip title='settings' placement='left'>
-          <IconButton>
+          <IconButton onClick={() => dispatch(setIsSettingsShown(!isSettingsShown))}>
               <Settings htmlColor='white'
                 
                 sx={{

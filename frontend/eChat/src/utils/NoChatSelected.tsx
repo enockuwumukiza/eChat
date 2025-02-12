@@ -11,7 +11,7 @@ const NoChatSelected = () => {
 
     return (
         <div className="hidden md:block"> {/* Hide on mobile */}
-            <div className={`absolute right-0 hidden md:flex lg:flex flex-col justify-center items-center h-full bg-base-200 p-8 rounded-xl shadow-xl mx-auto w-full sm:w-[0%] md:w-[25%] lg:w-[35%] xl:w-[39.6%]`}>
+            <div className={`absolute right-0 hidden md:flex lg:flex flex-col justify-center items-center h-full bg-base-300 p-8 rounded-xl shadow-xl mx-auto w-full sm:w-[0%] md:w-[25%] lg:w-[35%] xl:w-[39.6%]`}>
                 {/* Icon with DaisyUI */}
                 <div className="flex justify-center items-center bg-primary text-white p-6 rounded-full mb-6 shadow-md">
                     <AiOutlineMessage className="h-16 w-16" />
@@ -26,13 +26,13 @@ const NoChatSelected = () => {
                 </p>
 
                 {/* Button */}
-                <Link to="/chats" className="w-full">
+                <Link to="/" className="w-full">
                     <Button
                         variant="contained"
                         color="primary"
                         className="w-full py-3 text-lg font-semibold rounded-full shadow-md hover:bg-blue-600 transition duration-300"
                     >
-                        View Chats
+                        Select chat to get started
                     </Button>
                 </Link>
             </div>

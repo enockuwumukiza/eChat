@@ -104,7 +104,7 @@ const GroupChat = () => {
               />
               <div>
                 <span className="block text-lg font-semibold">{user?.name}</span>
-                <span className="block text-sm text-gray-300">{user?.message}</span>
+                <span className="block text-sm font-bold text-sky-300 text-gray-300">{user?.phone}</span>
               </div>
             </div>
             {index < foundUsers?.length - 1 && (

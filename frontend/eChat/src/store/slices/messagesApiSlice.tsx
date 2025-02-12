@@ -73,6 +73,14 @@ const messagesApiSlice = apiSlice.injectEndpoints({
             }),
             providesTags: (result, error, id) => [{ type: 'Messages', id }],
         }),
+        getLastMessage: builder.query({
+            query: (id) => ({
+                url: `${MESSAGE_URL}/last/${id}`,
+                method: 'GET',
+                credentials: 'include',
+            }),
+            providesTags: (result, error, id) => [{ type: 'Messages', id }],
+        }),
 
         // Search Messages
         searchMessages: builder.mutation({
@@ -115,6 +123,7 @@ export const {
     useToggleLikeMessageMutation,
     useTogglePinMessageMutation,
     useLazyGetSingleMessageQuery,
+    useLazyGetLastMessageQuery,
     useSearchMessagesMutation,
     usePrefetch,
     useLazyGetMessagesByChatQuery,

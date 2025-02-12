@@ -78,7 +78,7 @@ const Contacts: React.FC = () => {
   return (
     <div className="">
       <div
-        className={`fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-56 bg-gray-900 text-gray-50 w-full sm:w-[100%] md:w-[81%] lg:w-[44.6%] h-[100%] md:max-h-[80%] lg:max-h-[70%] p-10 rounded-lg overflow-y-auto shadow-lg -mt-2 `}
+        className={`fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-56 bg-gray-900 text-gray-50 w-full sm:w-[100%] md:w-[81%] lg:w-[45%] h-[100%] md:max-h-[80%] lg:max-h-[70%] p-10 overflow-y-auto shadow-lg -mt-2 `}
      
     >
       {isSingleChat && !isGroupChat ? (

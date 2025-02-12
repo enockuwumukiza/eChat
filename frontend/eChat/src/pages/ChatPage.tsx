@@ -1,6 +1,6 @@
 import React, { useEffect, memo, useRef, useState } from 'react';
 import axios from 'axios'
-import { Videocam, Search, MoreVertOutlined, Call,Download,DoneAllOutlined,Group, ArrowBack } from '@mui/icons-material';
+import { Videocam, Search, MoreVertOutlined, Call,Download,DoneAllOutlined,Group, Favorite,ArrowBack } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Tooltip } from '@mui/material';
 import { RootState } from '../store/store';
@@ -8,7 +8,6 @@ import MessageInput from '../components/MessageInput';
 import { useLazyGetGroupMembersQuery } from '../store/slices/groupApiSlice';
 import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
-import { setNotifications } from '../store/slices/notificationSlice';
 import {  setIsGroupOptionsShown, setIsUserInfoShown,setIsChatPageShown } from '../store/slices/displaySlice';
 import NoChatSelected from '../utils/NoChatSelected';
 import  generateAnchorTag  from '../utils/anchorTagGenerator';
@@ -19,8 +18,12 @@ import { formatTime } from '../utils/formatTime';
 import { renameFile } from '../utils/donwloadFiles';
 import { setIsAudioCallEnabled, setIsVideoCallEnabled } from '../store/slices/displaySlice';
 import incomingMsgNotification from '../../public/sounds/incoming-msg-notification.mp3'
-import Header from '../components/Header';
 import SimpleHeader from '../components/SimpleHeader';
+import MessageCard from '../utils/MessageCard';
+import { useDeleteMessageMutation } from '../store/slices/messagesApiSlice';
+import { toast } from 'react-toastify';
+import PinnedMessage from '../utils/PinnedMessage';
+import MessageSkeleton from '../utils/MessageSkeleton';
 
 const ChatPage: React.FC = () => {
 
@@ -51,10 +54,16 @@ const ChatPage: React.FC = () => {
   const [displayMessages, setDisplayMessages] = useState<any[]>([]);
   const [displayGroupMessages, setDisplayGroupMessages] = useState<any[]>([]);
 
+  const [isMessageHoveredId, setIsMessageHoveredId] = useState<string | null>(null);
+
+  const [mesesageLoading, setMessageLoading] = useState<boolean>(false);
+
   
   const messageRef = useRef<HTMLDivElement | null>(null);
   const incomingMsgNotificationRef = useRef<HTMLAudioElement | null>(null);
   
+
+  const [deleteMessage,{ isLoading }] = useDeleteMessageMutation();
 
   // Scroll to the latest message
   useEffect(() => {
@@ -96,10 +105,8 @@ const ChatPage: React.FC = () => {
       socket.on('getOnlineUsers', (data: any) => {
         dispatch(setOnlineUsers(data));
        
-      })
-      socket.on('message-notification', (data: any) => {
-        dispatch(setNotifications(data));
       });
+      
       socket.on('group-added', (data: any) => {
         console.log(`Member added to group: ${JSON.stringify(data)} `)
       });
@@ -125,7 +132,10 @@ const ChatPage: React.FC = () => {
     (
       async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/api/messages/single/${receiverInfo?._id}`, {
+          if (receiverInfo?._id) {
+            setDisplayMessages([]);
+            setMessageLoading(true);
+            const response = await axios.get(`http://localhost:5000/api/messages/single/${receiverInfo?._id}`, {
             withCredentials: true,
             headers: {
             
@@ -134,8 +144,12 @@ const ChatPage: React.FC = () => {
 
            if (response?.data?.messages) {
              setDisplayMessages(response.data.messages);
+             setMessageLoading(false);
            } else {
              setDisplayMessages([]);
+             setMessageLoading(false);
+            }
+            
           }
         } catch (error: any) {
           console.error(`Error feching with axios: ${error}`)
@@ -150,7 +164,11 @@ const ChatPage: React.FC = () => {
     (
       async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/api/groups/messages/${groupId}`, {
+          
+          if (groupId) {
+            setDisplayGroupMessages([]);
+            setMessageLoading(true);
+            const response = await axios.get(`http://localhost:5000/api/groups/messages/${groupId}`, {
             withCredentials: true,
             headers: {
             
@@ -159,8 +177,12 @@ const ChatPage: React.FC = () => {
 
            if (response?.data?.messages) {
              setDisplayGroupMessages(response?.data?.messages);
+             setMessageLoading(false);
            } else {
              setDisplayGroupMessages([]);
+             setMessageLoading(false);
+            }
+            
           }
 
         } catch (error: any) {
@@ -182,6 +204,8 @@ const ChatPage: React.FC = () => {
   
 
   const messagesToDisplay = (isGroupChat && groupId) ? displayGroupMessages : (isSingleChat && receiverInfo?._id) ? displayMessages : [];
+
+
 
 
   const NotChatShouldShow = () => {
@@ -346,11 +370,31 @@ const ChatPage: React.FC = () => {
       </div>
 
       {/* Chat Body */}
-      <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4 pb-14">
-        {(messagesToDisplay?.length > 0 ? (
-                messagesToDisplay?.map((msg: any) => (
-            
-            <div key={msg?._id} className={`chat ${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "chat-end" : "chat-start"}`}>
+              <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4 pb-14">
+                {
+                  mesesageLoading && <MessageSkeleton/>
+                }
+                {(messagesToDisplay?.length > 0 ? (
+                  
+                
+                messagesToDisplay?.map((msg: any, index:any) => (
+                  
+                  <div key={index}>
+                    
+                      {
+                          msg?.isPinned && <PinnedMessage 
+                              message={{ text: msg?.content }} 
+                              onUnpin={() => console.log("Message unpinned")} 
+                              onDelete={() => console.log("Message deleted")} 
+                            />
+
+                        }
+                    
+                     <div key={msg?._id} className={`chat ${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "chat-end" : "chat-start"}`}
+                    
+                    
+                  
+                  >
               <div className="chat-image avatar">
                 <div className="w-12 md:w-20 lg:w-12 rounded-full">
                   <img
@@ -365,7 +409,20 @@ const ChatPage: React.FC = () => {
                   {formatTime(msg?.createdAt)}
                 </span>
               </div>
-              <div className={`chat-bubble bg-${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "teal-800" : "gray-950"} text-white shadow-md text-xl md:text-3xl lg:text-xl`}>
+                    <div className={`chat-bubble bg-${msg?.sender?._id === authUser?.user?._id || msg?.sender === authUser?.user?._id ? "teal-800" : "gray-950"} text-white shadow-md text-xl md:text-3xl lg:text-xl`}
+                      
+                      onMouseEnter={() => setIsMessageHoveredId(msg?._id)}
+                     onMouseLeave={() => setIsMessageHoveredId(null)}
+                      >
+                       
+                        {
+                          isMessageHoveredId && isMessageHoveredId === msg?._id && <MessageCard msg={msg} id={msg?._id} isGroupChat={isGroupChat} isSingleChat={isSingleChat} setDisplayMessages={setDisplayMessages} setDisplayGroupMessages={setDisplayGroupMessages}  />
+                        }
+                        {
+                          msg?.isLiked && <Favorite  className="text-red-500 mr-2" />
+                        }
+
+                      
                 {msg?.messageType === 'text' ? generateAnchorTag(msg?.content) : msg?.messageType === 'image' ?
                   <img src={msg?.fileUrl?.url} />
                  : msg?.messageType === 'audio' ? 
@@ -394,13 +451,16 @@ const ChatPage: React.FC = () => {
                     <audio className='hidden' ref={incomingMsgNotificationRef}/>
               <div ref={messageRef}/>
               
+                    </div>
+                    
+                    
                   </div>
                   
             
 
           ))
         ) : (
-          isGroupChat && groupId ? <p>No messages available </p>: isSingleChat && receiverInfo ? <p>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>:""
+          isGroupChat && groupId ? <p>No messages available </p>: isSingleChat && receiverInfo ? <p className='text-slate-200'>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>:""
               ))
               }
       </div>

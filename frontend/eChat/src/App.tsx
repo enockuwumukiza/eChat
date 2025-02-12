@@ -1,4 +1,4 @@
-import React ,{ Suspense,useEffect} from 'react'
+import React ,{ Suspense,useEffect, useState} from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useSelector } from 'react-redux'
@@ -12,20 +12,21 @@ import Loader from './utils/Loader'
 import { useAuth } from './hooks/useAuth'
 import NewChat from './miscellaneous/NewChat'
 import InternetStatus from './utils/InternetStatus'
-import SendingAnimation from './utils/SendingAnimation'
 import VideoCall from './audio-chats/VideoCall'
 import VoiceCall from './audio-chats/VoiceCall'
-import NotificationModal from './miscellaneous/NotificationModal'
+import { useListenNotifications } from './hooks/useListenNotifications'
 
-import SimpleHeader from './components/SimpleHeader'
 
 
 const App: React.FC = () => {
+
+  useListenNotifications();
 
   
 
   const { authUser } = useAuth();
   const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
+
 
 
   
@@ -39,12 +40,7 @@ const App: React.FC = () => {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/new' element={<NewChat />} />
         <Route path='*' element={<NotFoundPage />} />
-        <Route path='/send' element={<SendingAnimation />} />
-        <Route path='/video' element={<VideoCall />} />
-        <Route path='/voice' element={<VoiceCall />} />
-        <Route path='/notify' element={<NotificationModal />} />
-        <Route path='/head' element={<SimpleHeader/>} />
-        
+      
       </Routes>
       <VoiceCall />
       <VideoCall/>

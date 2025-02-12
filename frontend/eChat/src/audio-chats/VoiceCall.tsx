@@ -1,19 +1,22 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useReducer } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSocket } from "../hooks/useSocket";
 import { useAuth } from "../hooks/useAuth";
 import { useSelector,useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { MdCall, MdCallEnd, MdCallReceived, MdMic, MdMicOff, MdVolumeOff, MdVolumeUp, MdClose } from "react-icons/md";
 import { RootState } from "../store/store";
-import { setCallerData, setIsAudioCallEnabled } from "../store/slices/displaySlice";
+import { setIsAudioCallEnabled } from "../store/slices/displaySlice";
 import { setReceiverInfo } from "../store/slices/messageSlice";
 import ongoingCallRingtone from '../../public/sounds/ongoing-call-ringtone.mp3'
 import incomingCallRingtone from '../../public/sounds/incoming-call-ringtone.mp3'
 
 
+
 const VoiceCall: React.FC = () => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { socket } = useSocket();
   const { authUser } = useAuth();
@@ -26,6 +29,9 @@ const VoiceCall: React.FC = () => {
   const [isCalling, setIsCalling] = useState(false);
   const [isReceivingCall, setIsReceivingCall] = useState(false);
   const [isCallAnswered, setIsCallAnswered] = useState<boolean>(false);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [refresh, setForceRefresh] = useState<number>(0);
+
   const [customSender, setCustomSender] = useState<any>(null);
   const [caller, setCaller] = useState<string | null>(null);
   const [isCallGoingOn, setIsCallGoingOn] = useState<boolean>(false);
@@ -119,6 +125,9 @@ const VoiceCall: React.FC = () => {
           setIsCallAnswered(true);
           setIsCalling(false);
 
+
+          console.log('on callAnswered audio call enabled: ', isAudioCallEnabled);
+
            if (ongoingCallRingtoneRef.current) {
             ongoingCallRingtoneRef.current.pause();
             ongoingCallRingtoneRef.current.currentTime = 0; // Reset to beginning
@@ -140,26 +149,13 @@ const VoiceCall: React.FC = () => {
 
       });
 
-      socket.on("callEnded", () => {
-        endCall();
-        
-         if (ongoingCallRingtoneRef.current) {
-          ongoingCallRingtoneRef.current.pause();
-          ongoingCallRingtoneRef.current.currentTime = 0;
-        }
-
-        dispatch(setIsAudioCallEnabled(false));
-        setIsCallAnswered(false);
-        
-        
-
-      });
+      socket.on("callEnded", handleCallEnd);
 
       return () => {
         socket.off("callUser2");
         socket.off("callAnswered2");
         socket.off("iceCandidate");
-        socket.off("callEnded");
+        socket.off("callEnded", handleCallEnd);
       };
     }, [socket, peerConnection]);
   
@@ -172,6 +168,70 @@ const VoiceCall: React.FC = () => {
       })
       }
     },[customSender])
+
+  
+ 
+  
+  
+  const handleCallEnd = () => {
+    
+     if (ongoingCallRingtoneRef.current) {
+          ongoingCallRingtoneRef.current.pause();
+          ongoingCallRingtoneRef.current.currentTime = 0;
+        }
+
+      endCall();
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+    
+    
+  };
+
+  
+
+  const resetCallStates = () => {
+    setPeerConnection(null);
+    setIsCalling(false);
+    setIsReceivingCall(false);
+    setIsCallAnswered(false);
+    setCustomSender(null);
+    setCaller(null);
+    setIsCallGoingOn(false);
+    setIsRecording(false);
+    setRecordingTime(0);
+    setCalleeRecordingTime(0);
+    setAudioBlob(null);
+    setAudioUrl(null);
+    setCalleeAudioBlob(null);
+    setCalleeAudioUrl(null);
+    setIncomingOffer(null);
+    setMicrophoneEnabled(true);
+    setSpeakerEnabled(true);
+    
+    if (localStream.current) {
+      localStream.current.getTracks().forEach((track) => track.stop());
+      localStream.current = null;
+    }
+    if (remoteStream.current) {
+      remoteStream.current.getTracks().forEach((track) => track.stop());
+      remoteStream.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    if (ongoingCallRingtoneRef.current) {
+      ongoingCallRingtoneRef.current.pause();
+      ongoingCallRingtoneRef.current.currentTime = 0;
+    }
+    if (incomingCallRingtoneRef.current) {
+      incomingCallRingtoneRef.current.pause();
+      incomingCallRingtoneRef.current.currentTime = 0;
+    }
+    dispatch(setIsAudioCallEnabled(false));
+    // dispatch(setReceiverInfo(null));
+  };
 
 
   const toggleMicrophone = () => {
@@ -232,6 +292,29 @@ const VoiceCall: React.FC = () => {
 
   const callUser = async () => {
 
+
+
+
+    if (!receiverInfo) {
+      toast.error("No receiver selected!");
+      return;
+    }
+
+    const pc = createPeerConnection();
+
+    try {
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      socket.emit("callUser", {
+        offer,
+        sender: authUser?.user,
+        receiver: receiverInfo._id,
+      });
+      
+      setIsCalling(true);
+
+      
     if (ongoingCallRingtoneRef.current) {
         ongoingCallRingtoneRef.current.src = ongoingCallRingtone;
         ongoingCallRingtoneRef.current.play();
@@ -267,33 +350,30 @@ const VoiceCall: React.FC = () => {
         setTimeout(() => {
           endCall();
           toast.info('call not answered!');
+          socket.emit("missedCall", {
+            type: "missed_call",
+            sender: {
+              id: authUser?.user?._id,
+              name: authUser?.user?.name,
+              photo:authUser?.user?.profilePicture
+            },
+            receiver: {
+              id: receiverInfo?._id,
+              name: receiverInfo?.name,
+              photo: receiverInfo?.profilePicture
+            }
+          })
         },60000)
       }
-    }
-    if (!receiverInfo) {
-      toast.error("No receiver selected!");
-      return;
-    }
-
-    const pc = createPeerConnection();
-
-    try {
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-
-      socket.emit("callUser", {
-        offer,
-        sender: authUser?.user,
-        receiver: receiverInfo._id,
-      });
+      }
       
-      setIsCalling(true);
     } catch (error) {
       toast.error("Failed to initiate call.");
     }
   };
 
   const acceptCall = async () => {
+    
     if (!incomingOffer) return;
 
     if (ongoingCallRingtoneRef.current) {
@@ -312,7 +392,8 @@ const VoiceCall: React.FC = () => {
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      socket.emit("callAnswered", {
+      if (pc) {
+        socket.emit("callAnswered", {
         answer,
         sender: authUser?.user?._id,
         receiver: receiverInfo?._id ? receiverInfo?._id : customSender,
@@ -346,44 +427,65 @@ const VoiceCall: React.FC = () => {
 
       setIsReceivingCall(false);
       setIsCallGoingOn(true);
+        
+      } else {
+        toast.info("no peer connection")
+      }
       
     } catch (error) {
       toast.error("Failed to accept call.");
     }
   };
 
+
   const endCall = () => {
-    peerConnection?.close();
+  if (peerConnection) {
+    peerConnection.onicecandidate = null;
+    peerConnection.ontrack = null;
+    peerConnection.close();
     setPeerConnection(null);
-    setIsCalling(false);
-    setIsReceivingCall(false);
+  }
+
+  if (localStream.current) {
+    localStream.current.getTracks().forEach(track => track.stop());
+    localStream.current = null;
+  }
+
+  if (remoteStream.current) {
+    remoteStream.current.getTracks().forEach(track => track.stop());
+    remoteStream.current = null;
+  }
 
     if (ongoingCallRingtoneRef.current) {
       ongoingCallRingtoneRef.current.pause();
-      ongoingCallRingtoneRef.current = null;
+      ongoingCallRingtoneRef.current.currentTime = 0;
     }
+
     if (incomingCallRingtoneRef.current) {
       incomingCallRingtoneRef.current.pause();
-      incomingCallRingtoneRef.current = null;
+      incomingCallRingtoneRef.current.currentTime = 0;
     }
 
-    localStream.current?.getTracks().forEach((track) => track.stop());
-    remoteStream.current?.getTracks().forEach((track) => track.stop());
-
-    if (timerRef.current) {
-    clearInterval(timerRef.current);
-    timerRef.current = null;
-    }
-    setIsRecording(false);
-
-    socket.emit("endCall", {
+    if (isCalling || caller || isCallAnswered || isCallGoingOn) {
+      socket.emit("endCall", {
       sender: authUser?.user?._id,
       receiver: receiverInfo?._id,
     });
+    }
 
-    setIsCallGoingOn(false);
+
+    
+
+    toast.info("Call ended");
+
+
+    resetCallStates();
+
+
     
   };
+
+
 
   const formatTime = (timeInSeconds: number) => {
       const minutes = Math.floor(timeInSeconds / 60);
@@ -413,7 +515,7 @@ const VoiceCall: React.FC = () => {
               setAudioUrl(null);
               setAudioBlob(null);
               setCaller(null);
-              endCall();
+              handleCallEnd();
               
             }
               
@@ -450,8 +552,9 @@ const VoiceCall: React.FC = () => {
               toast.info('call ended');
 
               setTimeout(() => {
-                setRecordingTime(0);
-                endCall();
+                
+                handleCallEnd();
+                
 
               },2000)
             }}
@@ -480,31 +583,12 @@ const VoiceCall: React.FC = () => {
         {
           isCallGoingOn && <span className="bg-slate-950 text-center  rounded-lg w-16 mx-auto mt-5">{formatTime(calleeRecordingTime)}</span>
         }
-        { calleeaudioUrl &&
-          <div className="flex flex-col justify-center">
-              <audio src={calleeaudioUrl} controls >
-                    Your browser does not support the audio element.
-                </audio>
-                <span className="ml-16">
-                  <a href={calleeaudioUrl} download={calleeaudioBlob} className="text-blue-400"> download this voice chat</a>
-                </span>
-            </div>
-       }
+        
          
         <div className="flex flex-col gap-5 justify-center">
           {
             isCallAnswered && <span className="bg-slate-950 text-center  rounded-lg w-16 mx-auto mt-5">{formatTime(recordingTime  && recordingTime - 3)}</span>
           }
-          { audioUrl &&
-          <div className="flex flex-col justify-center">
-              <audio src={audioUrl} controls >
-                  Your browser does not support the audio element.
-              </audio>
-              <span className="ml-16">
-                <a href={audioUrl} download={audioBlob} className="text-blue-400"> download this voice chat</a>
-              </span>
-          </div>
-        }
          </div>
       </div>
     </div>
@@ -512,3 +596,6 @@ const VoiceCall: React.FC = () => {
 };
 
 export default VoiceCall;
+
+
+// the problem is with endcall on socket

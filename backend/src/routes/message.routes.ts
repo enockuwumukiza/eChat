@@ -10,6 +10,7 @@ import {
     deleteMessage,
     markMessagesAsRead,
     getSingleMessage,
+    getLastMessage,
 } from '../controllers/message.controller'
 import { uploaderForChats } from "../middlewares/uploader";
 
@@ -22,6 +23,7 @@ messageRoutes.put('/read/:id', verifyToken, markMessagesAsRead);
 messageRoutes.put('/like/:id', verifyToken, toggleLikeMessage);
 messageRoutes.put('/pin/:id', verifyToken, togglePinMessage);
 messageRoutes.get('/single/:id', verifyToken, getSingleMessage);
+messageRoutes.get('/last/:id', verifyToken, getLastMessage);
 messageRoutes.post('/search/:id', verifyToken, searchMessages);
 messageRoutes.route('/:id')
     .get(verifyToken, getMessagesByChat);

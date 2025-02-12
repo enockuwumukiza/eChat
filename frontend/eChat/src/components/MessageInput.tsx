@@ -68,13 +68,8 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const groupId = useSelector((state: RootState) => state.group.groupId);
-  const isAudioCallEnabled = useSelector((state: RootState) => state.display.isAudioCallEnabled);
-  const isVideoCallEnabled = useSelector((state: RootState) => state.display.isVideoCallEnabled);
-  const callerData = useSelector((state: RootState) => state.display.callerData);
 
   const onlineUsers = useSelector((state: RootState) => state.socket.onlineUsers);
-  
-  const isReceiverOnline = onlineUsers?.includes(receiverInfo?._id);
   
 
 
@@ -328,6 +323,29 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   };
   
 
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      if (messageInput.trim() !== "") {
+        
+        try {
+        if (isGroupChat) {
+          await handleSendGroupMessage();
+        } else if (isSingleChat) {
+          await handleSendMessage();
+        }
+
+        if (msgNotificationRef.current) {
+          msgNotificationRef.current.src = messageNotification;
+          msgNotificationRef.current.play();
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
+        }
+        
+      }
+    }
+  };
+
   
 
   return (
@@ -396,7 +414,10 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
         typingHandler();
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
         typingTimeout.current = setTimeout(stopTyping, 2000);
-      }}
+          }}
+          
+          onKeyDown={handleKeyDown}
+          
       className="input md:h-[70px] lg:h-[50px] input-bordered w-60 md:w-96 lg:w-80 text-white font-bold lg:p-2 text-[24px] md:text-[35px] lg:text-[17px] text-center pt-3 md:pt-4 lg:pt-2 "
       placeholder="Type a message"
     />
@@ -594,17 +615,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           shoudlVideoShow && <VideoRecorder setVideo={ setVideo } setShouldVideoShow={setShouldVideoShow} />
         }
         <audio className='hidden' ref={msgNotificationRef}/>
-      </form>
-      
-      {/* <div className="video-audio-calls">
-        <div>
-         <VoiceCall/>
-        </div>
-        <div>
-          <VideoCall/>
-        </div>
-      </div> */}
-        
+      </form>        
 </div>
 
   );

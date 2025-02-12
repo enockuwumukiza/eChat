@@ -126,6 +126,64 @@ const updateUser = expressAsyncHandler(async (req: Request, res: Response): Prom
   res.json({ user });
 });
 
+const updateUserProfile = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const id = req?.user?._id;
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    res.status(HttpStatusCodes.NOT_FOUND).json({ message: `User with ID ${id} not found` });
+    return; // Stop execution after sending response
+  }
+
+  user.name = req?.body?.name || user?.name;
+  user.email = req?.body?.email || user?.email;
+  user.phone = req?.body?.phone || user?.phone;
+  user.status = req?.body?.status || user?.status;
+
+  if (req.file) {
+    try {
+      const uploadToCloudinary = (fileBuffer: Buffer) =>
+        new Promise<string>((resolve, reject) => {
+          const uploadStream = cloudinary.v2.uploader.upload_stream(
+            {
+              resource_type: "image",
+              folder: "user_files",
+            },
+            (error, result) => {
+              if (error) {
+                return reject(error);
+              }
+              resolve(result?.secure_url || "");
+            }
+          );
+          uploadStream.end(fileBuffer);
+        });
+
+      // Ensure `profilePicture` is only updated if upload succeeds
+      const imageUrl = await uploadToCloudinary(req.file.buffer);
+      if (imageUrl) {
+        user.profilePicture = imageUrl;
+      }
+    } catch (error) {
+      res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: "Failed to update profile picture",
+        error,
+      });
+      return;
+    }
+  }
+
+  await user.save();
+
+  
+  generateToken(user, res); 
+
+  
+  res.json({ user });
+});
+
+
 const getUserById = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const user = await User.findByIdAndDelete(id);
@@ -221,4 +279,4 @@ const logoutUser = expressAsyncHandler(async (req: Request, res: Response): Prom
   res.json({ message: 'logged out successfully' });
 });
 
-export { registerUser, loginUser, updateUser, deleteUser, logoutUser, getUserById, getAllUsers,searchUsers };
+export { registerUser, loginUser, updateUser,updateUserProfile, deleteUser, logoutUser, getUserById, getAllUsers,searchUsers };

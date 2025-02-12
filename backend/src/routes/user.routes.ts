@@ -1,6 +1,6 @@
 import express, { Express, } from "express";
 import { verifyToken } from "../middlewares/VerifyToken";
-import { registerUser, loginUser, updateUser, deleteUser, logoutUser, getUserById, getAllUsers, searchUsers } from "../controllers/user.controller";
+import { registerUser, loginUser, updateUser, deleteUser, logoutUser, getUserById, getAllUsers, searchUsers, updateUserProfile } from "../controllers/user.controller";
 import { uploader } from "../middlewares/uploader";
 
 const userRoutes = express.Router();
@@ -12,11 +12,12 @@ userRoutes.route('/')
 userRoutes.post('/login', loginUser);
 userRoutes.post('/logout', logoutUser);
 userRoutes.get('/search', verifyToken, searchUsers);
+userRoutes.put('/update', verifyToken, uploader, updateUserProfile);
 
 userRoutes.route('/:id')
     .get(verifyToken, getUserById)
     .put(verifyToken, updateUser)
-    .delete(verifyToken, deleteUser)
+    .delete(verifyToken, deleteUser);
 
 
 export {

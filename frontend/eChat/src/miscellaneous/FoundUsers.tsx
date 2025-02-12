@@ -38,7 +38,7 @@ const FoundUsers: React.FC<any> = ({ setSearchInput }) => {
             />
             <div>
               <span className="block text-lg font-semibold">{user.name}</span>
-              <span className="block text-sm text-gray-300">{user.message}</span>
+              <span className="block text-sm font-bold italic text-sky-300 text-gray-300">{user.phone}</span>
             </div>
           </div>
           {index < userList.length - 1 && (

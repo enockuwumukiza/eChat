@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useRegisterUserMutation } from '../store/slices/usersApiSlice'
+import PhoneNumberInput from '../utils/PhoneInput'
 
 const schema  = yup.object().shape({
     name: yup.string().required('name is required'),
@@ -21,9 +22,11 @@ const SignupPage: React.FC = () => {
     const [ registerUser, ] = useRegisterUserMutation();
 
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit,control, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(schema)
     });
+
+    const [phone, setPhone] = useState("");
 
 
     const onSubmit = async (data: any) => {
@@ -80,13 +83,18 @@ const SignupPage: React.FC = () => {
                           errors.email && <span className='text-red-500'>{errors.email.message }</span>
                     }
                   </div>
-                  <div className='form-control'>
+                  <div className='form-control relative'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Phone</span>
+                          <span className=' label-text font-semibold text-xl'>Phone</span>
                       </label>
-                      <input type='tel'
-                          {...register('phone')}
-                          className={`input input-bordered font-semibold ${ errors.phone && 'input-error'}`}
+                      <Controller
+                          
+                          name='phone'
+                          control={control}
+
+                          render={({ field }) => (
+                              <PhoneNumberInput {...field} />
+                          )}
                       />
                       {
                           errors.phone && <span className='text-red-500'>{errors.phone.message }</span>

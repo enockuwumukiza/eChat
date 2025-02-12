@@ -184,6 +184,7 @@ const sendSingleMessage = expressAsyncHandler(async (req: Request, res: Response
 
   const receiver = await User.findById(receiverId);
   const receiverName = receiver?.name;
+  const receiverImage = receiver?.profilePicture;
 
   if (!senderId) {
     res.status(HttpStatusCodes.UNAUTHORIZED).json({
@@ -332,7 +333,7 @@ const sendSingleMessage = expressAsyncHandler(async (req: Request, res: Response
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('receive-message', message);
-      io.to(receiverSocketId).emit('message-notification', { message: `new message from ${receiverName}`,sender:req?.user?._id, receiver:receiverId });
+      io.to(receiverSocketId).emit('message-notification', { message: message?.content,sender:req?.user?._id, receiver:{id:receiverId, name:receiverName, photo:receiverImage} });
 
 
     } else {
@@ -371,13 +372,36 @@ const getSingleMessage = expressAsyncHandler(async (req: Request, res: Response)
     ],
   });
 
-  if (!conversation) {
-    res.status(HttpStatusCodes.OK).json([]);
-  }
+  // if (!conversation) {
+  //   res.status(HttpStatusCodes.OK).json([]);
+  // }
 
   const messages = conversation?.messages;
 
   res.json({ messages });
+});
+
+const getLastMessage = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { id: userToChat } = req.params;
+  const senderId = req?.user?._id;
+
+  // Find the conversation between the sender and receiver
+  const conversation = await Conversation.findOne({
+    participants: {
+      $all: [senderId, userToChat],
+    },
+  }).populate({
+    path: 'latestMessage', // Populate messages
+   
+  });
+
+  // if (!conversation) {
+  //   res.status(HttpStatusCodes.OK).json([]);
+  // }
+
+
+  const latestMessage = conversation?.latestMessage;
+  res.json({ latestMessage });
 });
 
 
@@ -386,8 +410,8 @@ const getMessagesByChat = expressAsyncHandler(async (req: Request, res: Response
   const { id: chatId } = req.params;
 
   const messages = await Message.find({ chat: chatId, isDeleted: false })
-    .populate('sender', 'name avatar')
-    .populate('receiver', 'name avatar')
+    .populate('sender', 'name profilePicture')
+    .populate('receiver', 'name profilePicture')
     .sort({ createdAt: 1 });
 
   if (!messages.length) {
@@ -402,15 +426,14 @@ const getMessagesByChat = expressAsyncHandler(async (req: Request, res: Response
 const deleteMessage = expressAsyncHandler(async (req: Request, res: Response) => {
   const { id: messageId } = req.params;
 
-  const message = await Message.findById(messageId);
+  const message = await Message.findByIdAndDelete(messageId)
   if (!message) {
     res.status(HttpStatusCodes.NOT_FOUND).json({ message: 'Message not found.' });
     return;
   }
 
   message.isDeleted = true;
-  await message.save();
-
+ 
   res.status(HttpStatusCodes.OK).json({ message: 'Message deleted successfully.' });
 });
 
@@ -513,6 +536,7 @@ export {
   togglePinMessage,
   markMessagesAsRead,
   getSingleMessage,
+  getLastMessage,
   searchMessages,
 };
 
