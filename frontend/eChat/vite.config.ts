@@ -13,6 +13,20 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            // Bundle all node_modules dependencies into separate chunks
+            return 'vendor';
+          }
+          // You can add other logic for manual chunking here
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,  // Increase the chunk size limit if needed
+  },
   
   
 });
