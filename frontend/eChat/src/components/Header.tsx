@@ -79,7 +79,7 @@ const Header: React.FC = () => {
         <React.Fragment>
             <div className={`${Number(currentWindowWidth) > 1280? 'flex' : isChatPageShown ? 'hidden':'flex'}`}>
                 <div className="fixed sm:left-0 md:left-48 lg:left-52 -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-full  sm:w-[110%] md:w-[82%] lg:w-[45%] shadow-lg shadow-gray-800">
-                <div className="flex gap-x-8 md:gap-x-40 lg:gap-x-70">
+                <div className="flex gap-x-4 sm:gap-x-8 md:gap-x-40 lg:gap-x-70">
                     <h2 className="text-2xl font-bold text-white">Chats</h2>
                     <div className="flex gap-3 lg:gap-10">
                         <Tooltip title="new chat">
