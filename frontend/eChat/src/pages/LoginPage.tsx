@@ -49,7 +49,7 @@ const LoginPage: React.FC = () => {
               <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
                   <div className='form-control'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Email</span>
+                          <span className='label-text font-semibold text-xl text-white'>Email</span>
                       </label>
                       <input type="email"
                           {...register('email')}
@@ -61,7 +61,7 @@ const LoginPage: React.FC = () => {
                   </div>
                   <div className='form-control'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Password</span>
+                          <span className='label-text font-semibold text-xl text-white'>Password</span>
                       </label>
                       <input type={`password`}
                           {...register('password')}
@@ -84,7 +84,7 @@ const LoginPage: React.FC = () => {
 
               </form>
               <div className='flex items-center justify-center gap-5'>
-                  <p className='text-lg font-serif'>No account ?</p>
+                  <p className='text-lg font-serif text-white'>No account ?</p>
                   <div>
                       <Link to={'/signup'}>
                           <button className='btn btn-secondary font-medium'>Signup</button>

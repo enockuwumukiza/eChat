@@ -59,7 +59,7 @@ const SignupPage: React.FC = () => {
               <form className='space-y-2 mb-4' onSubmit={handleSubmit(onSubmit)}>
                   <div className='form-control'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Name</span>
+                          <span className='label-text font-semibold text-xl text-white'>Name</span>
                       </label>
                       <input type="text"
                           {...register('name')}
@@ -71,7 +71,7 @@ const SignupPage: React.FC = () => {
                   </div>
                   <div className='form-control'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Email</span>
+                          <span className='label-text font-semibold text-xl text-white'>Email</span>
                       </label>
                       <input type="text"
                           {...register('email')}
@@ -83,7 +83,7 @@ const SignupPage: React.FC = () => {
                   </div>
                   <div className='form-control relative'>
                       <label className='label'>
-                          <span className=' label-text font-semibold text-xl'>Phone</span>
+                          <span className=' label-text font-semibold text-xl text-white'>Phone</span>
                       </label>
                       <Controller
                           
@@ -100,7 +100,7 @@ const SignupPage: React.FC = () => {
                   </div>
                   <div className='form-control'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Password</span>
+                          <span className='label-text font-semibold text-xl text-white'>Password</span>
                       </label>
                       <input type={`password`}
                           {...register('password')}
@@ -112,7 +112,7 @@ const SignupPage: React.FC = () => {
                   </div>
                   <div className='form-control'>
                       <label className='label'>
-                          <span className='label-text font-semibold text-xl'>Photo</span>
+                          <span className='label-text font-semibold text-xl text-white'>Photo</span>
                       </label>
                       <input type='file'
                             accept='image/*'
@@ -134,7 +134,7 @@ const SignupPage: React.FC = () => {
 
               </form>
               <div className='flex items-center justify-center gap-5'>
-                  <p className='text-lg font-serif'>Already have an account ?</p>
+                  <p className='text-lg font-serif text-white'>Already have an account ?</p>
                   <div>
                       <Link to={'/login'}>
                           <button className='btn btn-secondary font-medium'>Login</button>
