@@ -19,13 +19,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsConfig));
 app.use(cookieParser());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 app.use('/api/users', userRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/messages', messageRoutes);
 
 
+app.get('/',(req:Request, res:Response) =>{
+    res.send("<h1>Welcome to eChat</h1>")
+})
 
 export {
     app, PORT, server
