@@ -2,12 +2,12 @@
   "name": "chatapp",
   "version": "1.0.0",
   "description": "This is the real-time chat application built using the MERN stack with TypeScript",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
     "dev": "concurrently \"tsc --watch\" \"nodemon\"",
-    "start": "ts-node backend/src/index.ts",
-    "build": "tsc",
+    "start": "node dist/index.js",
+    "build": "tsc && cp -r src/views dist/views",
     "postinstall": "tsc"
   },
   "keywords": [
