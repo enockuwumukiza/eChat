@@ -7,7 +7,7 @@ import { RootState } from '../store/store';
 import { setGroupId } from '../store/slices/groupSlice';
 import { setCurrentWindowWidth, setIsChatPageShown } from '../store/slices/displaySlice';
 import { useLazyGetLastMessageQuery } from '../store/slices/messagesApiSlice';
-import { useAuth } from '../hooks/useAuth';
+
 
 const ContactCard = ({ user }: any) => {
 
@@ -23,14 +23,12 @@ const ContactCard = ({ user }: any) => {
 
   const [windowWidth, setWidth] = useState(window.innerWidth);  
 
-  const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
 
   const [msgNotifications, setMsgNotifications] = useState<number>(0)
   
  
 
   const isOnline = onlineUsers?.includes(user?._id);
-  const notificationsLength = notifications?.length;
   const messageNotifications = notifications.filter((not:any) => not.type === 'message_notification');
 
   const [triggerGetLatestMessage,{data:latestMessage, isLoading}] = useLazyGetLastMessageQuery();

@@ -20,8 +20,6 @@ import { setIsAudioCallEnabled, setIsVideoCallEnabled } from '../store/slices/di
 import incomingMsgNotification from '../../public/sounds/incoming-msg-notification.mp3'
 import SimpleHeader from '../components/SimpleHeader';
 import MessageCard from '../utils/MessageCard';
-import { useDeleteMessageMutation } from '../store/slices/messagesApiSlice';
-import { toast } from 'react-toastify';
 import PinnedMessage from '../utils/PinnedMessage';
 import MessageSkeleton from '../utils/MessageSkeleton';
 
@@ -63,7 +61,7 @@ const ChatPage: React.FC = () => {
   const incomingMsgNotificationRef = useRef<HTMLAudioElement | null>(null);
   
 
-  const [deleteMessage,{ isLoading }] = useDeleteMessageMutation();
+
 
   // Scroll to the latest message
   useEffect(() => {

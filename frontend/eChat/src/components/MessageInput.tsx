@@ -5,7 +5,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import React, { useState, memo, useMemo, useEffect, useRef, FormEvent } from 'react';
 import EmojiPicker from 'emoji-picker-react'
 import { debounce } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { RootState } from '../store/store';
 import { useSendSingleMessageMutation, useSendGroupMessageMutation} from '../store/slices/messagesApiSlice';
@@ -18,8 +18,6 @@ import SendingAnimation from '../utils/SendingAnimation';
 import { renderPreview } from '../utils/FileUpload';
 import VoiceRecorder from './VoiceRecorder'
 import VideoRecorder from './VideoRecorder';
-import VoiceCall from '../audio-chats/VoiceCall';
-import VideoCall from '../audio-chats/VideoCall';
 import messageNotification from '../../public/sounds/message-notification.mp3'
 
 type FilePreview = {
@@ -31,7 +29,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
 
   const { authUser } = useAuth();
   const { socket } = useSocket();
-  const dispatch = useDispatch();
+ 
 
   const [messageInput, setMessageInput] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<FilePreview[]>([]);
@@ -69,7 +67,6 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const groupId = useSelector((state: RootState) => state.group.groupId);
 
-  const onlineUsers = useSelector((state: RootState) => state.socket.onlineUsers);
   
 
 
@@ -77,7 +74,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   const typerGroupName = useMemo(() => typingGroupData?.authName?.split(' ')[0]?.toUpperCase(), [typingGroupData]);
 
 
-  const [sendSingleMessage, {isLoading,isSuccess }] = useSendSingleMessageMutation();
+  const [sendSingleMessage, {isLoading}] = useSendSingleMessageMutation();
   const [sendGroupMessage, { isLoading: isGroupLoading }] = useSendGroupMessageMutation();
 
 

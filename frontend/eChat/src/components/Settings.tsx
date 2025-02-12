@@ -1,4 +1,4 @@
-import React, { useState, useRef,useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -16,13 +16,12 @@ import {
   FormControl,
   Grid,
 } from '@mui/material';
-import { 
-  Settings as SettingsIcon, 
+import {  
   Save as SaveIcon, 
   Close as CloseIcon 
 } from '@mui/icons-material';
 
-import AvatarEditor from 'react-avatar-editor';
+
 
 
 import { useAuth } from '../hooks/useAuth';

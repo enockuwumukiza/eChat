@@ -2,8 +2,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { setGroupInfo, setGroupId } from '../store/slices/groupSlice';
 import { RootState } from '../store/store';
-import { setReceiverInfo } from '../store/slices/messageSlice';
-import { setCurrentWindowWidth, setIsChatPageShown, setIsGroupChat } from '../store/slices/displaySlice';
+import {  setIsChatPageShown, setIsGroupChat } from '../store/slices/displaySlice';
 
 const GroupCard = ({ group }: any) => {
   const dispatch = useDispatch();

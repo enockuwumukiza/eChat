@@ -18,7 +18,7 @@ const groupsSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             }),
-            invalidatesTags: (result, error, { groupId }) => [{ type: 'GroupMembers', id: groupId }], // Invalidate group members
+            invalidatesTags: ({ groupId }) => [{ type: 'GroupMembers', id: groupId }], // Invalidate group members
         }),
         removeGroupMember: builder.mutation({
             query: ({ groupId, data }) => ({
@@ -26,7 +26,7 @@ const groupsSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             }),
-            invalidatesTags: (result, error, { groupId }) => [{ type: 'GroupMembers', id: groupId }], // Invalidate group members
+            invalidatesTags: ({ groupId }) => [{ type: 'GroupMembers', id: groupId }], // Invalidate group members
         }),
         getGroups: builder.query({
             query: () => GROUP_URL,
@@ -38,11 +38,11 @@ const groupsSlice = apiSlice.injectEndpoints({
         }),
         getGroupMembers: builder.query({
             query: (groupId) => `${GROUP_URL}/members/${groupId}`,
-            providesTags: (result, error, groupId) => [{ type: 'GroupMembers', id: groupId }], // Provide tag for group members
+            providesTags: (groupId) => [{ type: 'GroupMembers', id: groupId }], // Provide tag for group members
         }),
         getGroupMessages: builder.query({
             query: (groupId) => `${GROUP_URL}/messages/${groupId}`,
-            providesTags: (result, error, groupId) => [{ type: 'GroupMessages', id: groupId }], // Provide tag for messages
+            providesTags: ( groupId) => [{ type: 'GroupMessages', id: groupId }], // Provide tag for messages
         }),
     }),
 });

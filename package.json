@@ -7,10 +7,9 @@
   "scripts": {
     "dev": "concurrently \"tsc --watch\" \"nodemon\"",
     "start": "node backend/dist/index.js",
-    "build": "tsc",
+    "build": "tsc && npm install --prefix frontend/eChat && npm run build --prefix frontend/eChat && mkdir -p backend/dist/client && mv frontend/eChat/dist/* backend/dist/client",
     "postinstall": "tsc"
   },
-
   "keywords": [
     "socket",
     "messages"

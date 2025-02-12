@@ -26,7 +26,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 
             }),
             // Invalidate cached messages for that user after sending a message
-            invalidatesTags: (result, error, { receiverId }) => [
+            invalidatesTags: ( { receiverId }) => [
                 { type: 'Messages', id: receiverId }
             ],
         }),
@@ -39,7 +39,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 credentials: 'include',
             }),
             // Invalidate the cache for that message
-            invalidatesTags: (result, error, id) => [{ type: 'Messages', id }],
+            invalidatesTags: ( id) => [{ type: 'Messages', id }],
         }),
 
         // Toggle Like on Message
@@ -50,7 +50,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 credentials: 'include',
             }),
             // Invalidate the cache for the liked message
-            invalidatesTags: (result, error, id) => [{ type: 'Messages', id }],
+            invalidatesTags: ( id) => [{ type: 'Messages', id }],
         }),
 
         // Toggle Pin on Message
@@ -61,7 +61,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 credentials: 'include',
             }),
             // Invalidate the cache for the pinned message
-            invalidatesTags: (result, error, id) => [{ type: 'Messages', id }],
+            invalidatesTags: ( id) => [{ type: 'Messages', id }],
         }),
 
         // Get Single Message
@@ -71,7 +71,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
                 credentials: 'include',
             }),
-            providesTags: (result, error, id) => [{ type: 'Messages', id }],
+            providesTags: ( id) => [{ type: 'Messages', id }],
         }),
         getLastMessage: builder.query({
             query: (id) => ({
@@ -79,7 +79,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
                 credentials: 'include',
             }),
-            providesTags: (result, error, id) => [{ type: 'Messages', id }],
+            providesTags: ( id) => [{ type: 'Messages', id }],
         }),
 
         // Search Messages
@@ -99,7 +99,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
                 credentials: 'include',
             }),
-            providesTags: (result, error, id) => [{ type: 'Messages', id: `chat-${id}` }],
+            providesTags: ( id) => [{ type: 'Messages', id: `chat-${id}` }],
         }),
 
         // Delete Message
@@ -110,7 +110,7 @@ const messagesApiSlice = apiSlice.injectEndpoints({
                 credentials: 'include',
             }),
             // Invalidate the cache for the deleted message
-            invalidatesTags: (result, error, id) => [{ type: 'Messages', id }],
+            invalidatesTags: ( id) => [{ type: 'Messages', id }],
         }),
     }),
 });

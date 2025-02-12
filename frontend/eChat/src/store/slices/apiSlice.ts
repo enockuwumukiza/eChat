@@ -6,5 +6,5 @@ export const apiSlice = createApi({
     baseQuery,
     reducerPath: 'api',
     tagTypes: ['User','Groups', 'Messages','GroupMembers', 'GroupMessages'],
-    endpoints: (builder) => ({})
+    endpoints: () => ({})
 });

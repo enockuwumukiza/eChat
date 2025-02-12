@@ -18,9 +18,7 @@ const Contacts: React.FC = () => {
 
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
-  const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
-   
-  const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
+ 
  
 
   // API hooks

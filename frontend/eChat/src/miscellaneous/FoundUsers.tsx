@@ -2,7 +2,7 @@ import React from 'react';
 import { Divider } from '@mui/material';
 import { RootState } from '../store/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentWindowWidth,setIsChatPageShown } from '../store/slices/displaySlice';
+import { setIsChatPageShown } from '../store/slices/displaySlice';
 import { setReceiverInfo } from '../store/slices/messageSlice';
 
 const FoundUsers: React.FC<any> = ({ setSearchInput }) => {
@@ -38,7 +38,7 @@ const FoundUsers: React.FC<any> = ({ setSearchInput }) => {
             />
             <div>
               <span className="block text-lg font-semibold">{user.name}</span>
-              <span className="block text-sm font-bold italic text-sky-300 text-gray-300">{user.phone}</span>
+              <span className="block text-sm font-bold italic text-sky-300">{user.phone}</span>
             </div>
           </div>
           {index < userList.length - 1 && (

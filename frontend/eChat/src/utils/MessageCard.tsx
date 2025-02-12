@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { MoreVert, Favorite, FavoriteBorder, PushPin, PushPinOutlined, Delete } from "@mui/icons-material";
-import { useDeleteMessageMutation,useToggleLikeMessageMutation, useTogglePinMessageMutation } from "../store/slices/messagesApiSlice";
+import { useDeleteMessageMutation,useToggleLikeMessageMutation} from "../store/slices/messagesApiSlice";
 import { toast } from "react-toastify";
 
 const MessageCard = ({msg, id,isGroupChat, isSingleChat,setDisplayGroupMessages, setDisplayMessages }: { id: any, isGroupChat:boolean, isSingleChat:boolean, setDisplayMessages:any, setDisplayGroupMessages:any, msg:any }) => {
@@ -9,7 +9,7 @@ const MessageCard = ({msg, id,isGroupChat, isSingleChat,setDisplayGroupMessages,
   const [liked, setLiked] = useState(false);
   const [pinned, setPinned] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [isHovered, setIsHovered] = useState(false);
+    
   
   const handleOpenMenu = (event:any) => setAnchorEl(event.currentTarget);
     const handleCloseMenu = () => setAnchorEl(null);
@@ -18,7 +18,7 @@ const MessageCard = ({msg, id,isGroupChat, isSingleChat,setDisplayGroupMessages,
   
   const [toggleLikeMessage] = useToggleLikeMessageMutation();
   
-    const [togglePinMessage ] = useTogglePinMessageMutation();
+  
     
 
 

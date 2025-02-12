@@ -1,12 +1,8 @@
-import express, { Request, Response } from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cloudinary from "cloudinary";
-import { Server, Socket } from "socket.io";
-import { PORT, app, server } from "./app";
+import { PORT,  server } from "./app";
 import { dbConnection } from "./config/dbConfig";
-import mongoose from "mongoose";
+
 dotenv.config();
 
 // Cloudinary configuration

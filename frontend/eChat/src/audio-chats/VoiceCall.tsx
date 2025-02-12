@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useSocket } from "../hooks/useSocket";
 import { useAuth } from "../hooks/useAuth";
 import { useSelector,useDispatch } from "react-redux";
@@ -16,32 +15,24 @@ import incomingCallRingtone from '../../public/sounds/incoming-call-ringtone.mp3
 const VoiceCall: React.FC = () => {
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+;
 
   const { socket } = useSocket();
   const { authUser } = useAuth();
   const receiverInfo: any = useSelector((state: RootState) => state.message.receiverInfo);
   const isAudioCallEnabled: boolean = useSelector((state: RootState) => state.display.isAudioCallEnabled);
-  const callerData: any = useSelector((state: RootState) => state.display.callerData);
   const availableUsers: any = useSelector((state: RootState) => state.users.users);
 
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
   const [isCalling, setIsCalling] = useState(false);
   const [isReceivingCall, setIsReceivingCall] = useState(false);
   const [isCallAnswered, setIsCallAnswered] = useState<boolean>(false);
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const [refresh, setForceRefresh] = useState<number>(0);
-
   const [customSender, setCustomSender] = useState<any>(null);
   const [caller, setCaller] = useState<string | null>(null);
   const [isCallGoingOn, setIsCallGoingOn] = useState<boolean>(false);
-  const [ isRecording,setIsRecording ] = useState<boolean>(false);
+
   const [recordingTime, setRecordingTime] = useState<number>(0);
   const [calleeRecordingTime, setCalleeRecordingTime] = useState<number>(0);
-  const [audioBlob,setAudioBlob] = useState<Blob | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [calleeaudioBlob,setCalleeAudioBlob] = useState<Blob | null>(null);
-  const [calleeaudioUrl, setCalleeAudioUrl] = useState<string | null>(null);
   const [incomingOffer, setIncomingOffer] = useState<RTCSessionDescriptionInit | null>(null);
   const [microphoneEnabled, setMicrophoneEnabled] = useState(true);
   const [speakerEnabled, setSpeakerEnabled] = useState(true);
@@ -199,13 +190,8 @@ const VoiceCall: React.FC = () => {
     setCustomSender(null);
     setCaller(null);
     setIsCallGoingOn(false);
-    setIsRecording(false);
     setRecordingTime(0);
     setCalleeRecordingTime(0);
-    setAudioBlob(null);
-    setAudioUrl(null);
-    setCalleeAudioBlob(null);
-    setCalleeAudioUrl(null);
     setIncomingOffer(null);
     setMicrophoneEnabled(true);
     setSpeakerEnabled(true);
@@ -329,18 +315,12 @@ const VoiceCall: React.FC = () => {
         }
 
         mediaRecorderRef.current.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, {
-            type: 'audio/wav'
-          });
-          const audioUrl = URL.createObjectURL(audioBlob);
-
-          setAudioBlob(audioBlob);
-          setAudioUrl(audioUrl);
+    
           clearInterval(timerRef.current as NodeJS.Timeout);
         }
 
         mediaRecorderRef.current.start();
-        setIsRecording(true);
+     
 
         timerRef.current = setInterval(() => {
           setRecordingTime((prev) => prev + 1);
@@ -407,18 +387,13 @@ const VoiceCall: React.FC = () => {
         }
 
         calleeMediaRecorder.current.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, {
-            type: 'audio/wav'
-          });
-          const audioUrl = URL.createObjectURL(audioBlob);
+         
 
-          setCalleeAudioBlob(audioBlob);
-          setCalleeAudioUrl(audioUrl);
           clearInterval(calleeTimerRef.current as NodeJS.Timeout);
         }
 
         calleeMediaRecorder.current.start();
-        setIsRecording(true);
+       
 
         calleeTimerRef.current = setInterval(() => {
           setCalleeRecordingTime((prev) => prev + 1);
@@ -512,8 +487,7 @@ const VoiceCall: React.FC = () => {
           className="bg-white absolute top-0 right-0 text-red-600 rounded-full p-2 shadow-lg hover:bg-red-100"
             onClick={() => {
               dispatch(setIsAudioCallEnabled(false));
-              setAudioUrl(null);
-              setAudioBlob(null);
+              
               setCaller(null);
               handleCallEnd();
               

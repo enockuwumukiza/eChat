@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { CountryCode, getCountries, getCountryCallingCode, getExampleNumber, Examples } from "libphonenumber-js";
+import { CountryCode, getCountries, getExampleNumber, Examples } from "libphonenumber-js";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { Controller, useFormContext } from "react-hook-form";
+
 
 interface PhoneNumberInputProps {
   name: string;
@@ -10,7 +10,7 @@ interface PhoneNumberInputProps {
   onChange: (phone: string) => void;
 }
 
-const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({ name, value, onChange }) => {
+const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({  value, onChange }) => {
   const [countryCode, setCountryCode] = useState<string>("us");
 
   // Detect user's country
@@ -30,11 +30,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({ name, value, onChan
     detectCountry();
   }, []);
 
-  // Get Area Code from Country Code
-  const getAreaCode = (code: string) => {
-    const areaCode = getCountryCallingCode(code);
-    return areaCode ? `+${areaCode}` : "";
-  };
+  
 
   // Example phone number for selected country
   const exampleNumber = getExampleNumber(countryCode.toUpperCase() as CountryCode, {} as Examples);

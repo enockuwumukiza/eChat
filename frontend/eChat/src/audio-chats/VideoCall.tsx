@@ -45,16 +45,9 @@ const VideoCall: React.FC = () => {
   const [isCallAnswered, setIsCallAnswered] = useState<boolean>(false);
   const [microphoneEnabled, setMicrophoneEnabled] = useState(true);
   const [speakerEnabled, setSpeakerEnabled] = useState(true);
-  const [ isRecording,setIsRecording ] = useState<boolean>(false);
   const [recordingTime, setRecordingTime] = useState<number>(0);
   const [calleeRecordingTime, setCalleeRecordingTime] = useState<number>(0);
-  const [videoBlob,setvideoBlob] = useState<Blob | null>(null);
-  const [videoUrl, setvideoUrl] = useState<string | null>(null);
-  const [calleevideoBlob,setCalleevideoBlob] = useState<Blob | null>(null);
-  const [calleevideoUrl, setCalleevideoUrl] = useState<string | null>(null);
 
-  const [calleeaudioBlob,setCalleeAudioBlob] = useState<Blob | null>(null);
-    const [calleeaudioUrl, setCalleeAudioUrl] = useState<string | null>(null);
   
 
   const [isMuted, setIsMuted] = React.useState(false);
@@ -272,18 +265,14 @@ const VideoCall: React.FC = () => {
               }
       
               mediaRecorderRef.current.onstop = () => {
-                const videoBlob = new Blob(videoChunksRef.current, {
-                  type: 'video/wav'
-                });
-                const videoUrl = URL.createObjectURL(videoBlob);
+               
+               
       
-                setvideoBlob(videoBlob);
-                setvideoUrl(videoUrl);
                 clearInterval(timerRef.current as NodeJS.Timeout);
               }
       
               mediaRecorderRef.current.start();
-              setIsRecording(true);
+              
       
               timerRef.current = setInterval(() => {
                 setRecordingTime((prev) => prev + 1);
@@ -348,18 +337,14 @@ const VideoCall: React.FC = () => {
         }
 
         calleeMediaRecorder.current.onstop = () => {
-          const audioBlob = new Blob(videoChunksRef.current, {
-            type: 'audio/wav'
-          });
-          const audioUrl = URL.createObjectURL(audioBlob);
+         
 
-          setCalleeAudioBlob(audioBlob);
-          setCalleeAudioUrl(audioUrl);
+  
           clearInterval(calleeTimerRef.current as NodeJS.Timeout);
         }
 
         calleeMediaRecorder.current.start();
-        setIsRecording(true);
+        
 
         calleeTimerRef.current = setInterval(() => {
           setCalleeRecordingTime((prev) => prev + 1);

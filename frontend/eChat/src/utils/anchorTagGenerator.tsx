@@ -1,5 +1,5 @@
 import React from 'react';
-import MessageCard from './MessageCard';
+
 
 // Enhanced regex to detect a URL or domain-like structure
 const isLink = (message: string): boolean => {

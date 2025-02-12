@@ -3,7 +3,6 @@ import { Modal, Box, Typography, IconButton, Avatar, Divider, Button } from "@mu
 import { Close } from "@mui/icons-material";
 import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../store/store";
-import { setIsGroupChat, setIsSingleChat } from "../store/slices/displaySlice";
 import { setReceiverInfo } from "../store/slices/messageSlice";
 const UserInfoModal: FC = () => {
 

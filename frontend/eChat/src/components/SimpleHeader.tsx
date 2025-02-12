@@ -21,11 +21,11 @@ const SimpleHeader: React.FC = () => {
 
     const isNewChatShown = useSelector((state: RootState) => state.display.isNewChatShown);
     const isMoreOptionsShown = useSelector((state: RootState) => state.display.isMoreOptionsShown);
-    const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
+    
 
    
     const groupsData: any = useSelector((state: RootState) => state.group.groupData);
-    const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
+    
       
 
     const [triggerGetSearchedUsers, { data: usersFound, isLoading }] = useLazySearchUsersQuery();

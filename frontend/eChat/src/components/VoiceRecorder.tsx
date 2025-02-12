@@ -1,12 +1,11 @@
 import  { useState, useRef,useEffect } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { PlayArrow, Pause,PlayCircle, Stop, Delete,Send } from '@mui/icons-material'; // Material UI icons
+import { PlayArrow, Pause,PlayCircle, Stop, Delete } from '@mui/icons-material'; // Material UI icons
 
 const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAudioUrl,setShouldPlay}:{setAudio:any,isRecording:boolean, setIsRecording:any, audioUrl:any, setAudioUrl:any,setShouldPlay:any}) => {
  
   const [isPaused, setIsPaused] = useState(false);
   
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioFile, setAudioFile] = useState<any>(null);
   const [recordingTime, setRecordingTime] = useState(0); 
@@ -40,7 +39,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
       mediaRecorderRef.current.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
-        setAudioBlob(audioBlob);
+      
         setAudio(audioUrl);
         const audioFile = new File([audioBlob], `${Date.now()}.wav`, { type: "audio/wav" });
         setAudio(audioFile);
@@ -99,7 +98,6 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
       setIsRecording(false);
       setIsPaused(false);
       setAudioUrl(null);
-      setAudioBlob(null);
       setAudio(null);
       setShouldPlay(false);
       setRecordingTime(0);

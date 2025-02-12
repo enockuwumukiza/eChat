@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { toast } from 'react-toastify'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -25,8 +25,6 @@ const SignupPage: React.FC = () => {
     const { register, handleSubmit,control, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(schema)
     });
-
-    const [phone, setPhone] = useState("");
 
 
     const onSubmit = async (data: any) => {

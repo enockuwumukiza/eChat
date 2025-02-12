@@ -4,8 +4,8 @@ import { Close, Visibility, PersonAdd } from "@mui/icons-material";
 import { useAuth } from "../hooks/useAuth";
 import { RootState } from "../store/store";
 import { useSelector,useDispatch } from "react-redux";
-import { setIsAddNewMemberShown, setIsGroupChat, setIsGroupInfoShown } from "../store/slices/displaySlice";
-import { setGroupId, setGroupInfo } from "../store/slices/groupSlice";
+import { setIsAddNewMemberShown, setIsGroupInfoShown } from "../store/slices/displaySlice";
+import { setGroupId} from "../store/slices/groupSlice";
 import { useProtectGroup } from "../hooks/useProtectGroup";
 
 const GroupOptionsModal: FC = () => {

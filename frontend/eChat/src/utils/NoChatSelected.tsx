@@ -1,13 +1,12 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom'; 
 import { Button } from '@mui/material'; 
 import { AiOutlineMessage } from 'react-icons/ai'; 
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+
 
 
 const NoChatSelected = () => {
-    const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
+  
 
     return (
         <div className="hidden md:block"> {/* Hide on mobile */}
