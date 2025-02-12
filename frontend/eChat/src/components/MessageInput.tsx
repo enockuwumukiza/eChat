@@ -415,8 +415,8 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           
           onKeyDown={handleKeyDown}
           
-      className="input md:h-[70px] lg:h-[50px] input-bordered w-60 md:w-96 lg:w-80 text-white font-bold lg:p-2 text-[24px] md:text-[35px] lg:text-[17px] text-center pt-3 md:pt-4 lg:pt-2 "
-      placeholder="Type a message"
+          className="input md:h-[70px] lg:h-[50px] input-bordered w-60 md:w-96 lg:w-80 font-bold lg:p-2 text-[24px] md:text-[35px] lg:text-[17px] text-center pt-3 md:pt-4 lg:pt-2 text-white"
+          placeholder="Type a message"
     />
 
     <Tooltip
