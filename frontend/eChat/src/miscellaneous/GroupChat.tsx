@@ -104,7 +104,7 @@ const GroupChat = () => {
               />
               <div>
                 <span className="block text-lg font-semibold">{user?.name}</span>
-                <span className="block text-sm font-bold text-sky-300 text-gray-300">{user?.phone}</span>
+                <span className="block text-sm font-bold text-sky-300">{user?.phone}</span>
               </div>
             </div>
             {index < foundUsers?.length - 1 && (
@@ -125,7 +125,7 @@ const GroupChat = () => {
   
   return (
     <React.Fragment>
-          <motion.div className="fixed left-0 md:left-52 md:-ml-2 flex flex-col gap-3 bg-teal-950 p-2 w-[100%] md:w-[73%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
+          <motion.div className="fixed left-0 md:left-52 md:-ml-2 flex flex-col z-50 gap-3 bg-teal-950 p-2 w-[100%] md:w-[73%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
             
               initial={{ x: '-130%' }}
               animate={{ x: '0%' }}

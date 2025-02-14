@@ -74,7 +74,7 @@ const Sidebar: React.FC = () => {
 
 
   return (
-    <div className='fixed hidden md:block bg-gray-950 text-white'
+    <div className='fixed hidden md:block lg:block bg-gray-950 text-white'
       style={{
         width: '25vw',
         maxWidth: '200px',

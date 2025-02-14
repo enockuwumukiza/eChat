@@ -31,7 +31,7 @@ const NewChat = () => {
 
   return (
     <React.Fragment>
-          <motion.div className="fixed lg:left-52 lg:-ml-2 flex flex-col lg:gap-6 bg-sky-900 p-6 w-[100%] md:w-[100%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
+          <motion.div className="fixed lg:left-52 lg:-ml-2 flex flex-col lg:gap-6 bg-sky-900 p-6 z-50 w-[100%] md:w-[100%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
             
               initial={{ x: '-130%' }}
               animate={{ x: '0%' }}

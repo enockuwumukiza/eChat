@@ -9,7 +9,7 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000","https://echat-fieq.onrender.com"], 
+    origin: ["https://echat-fieq.onrender.com","http://localhost:3000",], 
     methods: ["GET", "POST", "DELETE", "PUT"],
     optionsSuccessStatus: 200,
   },
@@ -53,9 +53,7 @@ export const handleLeaveRoom = (userId: string, roomId: string, socket: Socket) 
 };
 
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
-
-
+ 
   socket.broadcast.emit('user-connected', `New user is online socket_id : ${socket.id} possible user id ${getUserIdFromSocketId(socket?.id)}`);
 
   

@@ -18,6 +18,7 @@ import NotificationModal from "../miscellaneous/NotificationModal";
 
 import Settings from "../components/Settings";
 import { setIsMoreOptionsShown } from "../store/slices/displaySlice";
+import ThemeSwitcher from "../utils/ThemeSwitcher";
 
 const Home: React.FC = () => {
 
@@ -76,7 +77,7 @@ const Home: React.FC = () => {
         {isNotificationShown && <NotificationModal />}
         { isSettingsShown && <Settings/>}
         <ChatPage />
-        {/* { <FoundUsers />} */}
+        <ThemeSwitcher/>
         
       </div>
       

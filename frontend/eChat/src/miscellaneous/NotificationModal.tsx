@@ -51,10 +51,25 @@ const NotificationModal: React.FC = () => {
           className="bg-white rounded-lg p-5 shadow-lg"
           sx={{
             position: "absolute",
-            top: "50%",
-            left: "30%",
+            top: {
+              xs: "50%",
+              sm:'25%',
+              md:'50%',
+              lg:'50%'
+            },
+            left: {
+              xs: '50%',
+              sm:'54%',
+              md:'50%',
+              lg:'30.4%'
+            },
             transform: "translate(-50%, -50%)",
-            width: "90%",
+            width: {
+              xs: '100%',
+              sm:'100%',
+              md:'100%',
+              lg:'90%'
+            },
             maxWidth: 400,
           }}
         >

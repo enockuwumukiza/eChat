@@ -22,6 +22,7 @@ import SimpleHeader from '../components/SimpleHeader';
 import MessageCard from '../utils/MessageCard';
 import PinnedMessage from '../utils/PinnedMessage';
 import MessageSkeleton from '../utils/MessageSkeleton';
+import { setGroupMembers } from '../store/slices/groupSlice';
 
 const ChatPage: React.FC = () => {
 
@@ -38,6 +39,7 @@ const ChatPage: React.FC = () => {
   const currentWindowWidth = useSelector((state: RootState) => state.display.currentWindowWidth);
   const isChatPageShown = useSelector((state: RootState) => state.display.isChatPageShown);
 
+
   
   const isUserInfoShown = useSelector((state: RootState) => state.display.isUserInfoShown);
   const isGroupOptionsShown = useSelector((state: RootState) => state.display.isGroupOptionsShown);
@@ -51,6 +53,8 @@ const ChatPage: React.FC = () => {
 
   const [displayMessages, setDisplayMessages] = useState<any[]>([]);
   const [displayGroupMessages, setDisplayGroupMessages] = useState<any[]>([]);
+
+  
 
   const [isMessageHoveredId, setIsMessageHoveredId] = useState<string | null>(null);
 
@@ -197,6 +201,7 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
       if (groupId) {
         triggerGetGroupMembers(groupId);
+        dispatch(setGroupMembers(members));
       }
   }, [triggerGetGroupMembers, groupId]);
   
@@ -221,7 +226,7 @@ const ChatPage: React.FC = () => {
             {/* Header */}
              
               <div className={`sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-10 md:p-8 lg:p-4 flex justify-between items-center shadow-md`}>
-              <h6 className='absolute  text-sky-300 top-[57%] md:top-[60%] lg:top-14 right-[59%] md:right-[68%] lg:right-[78%] text-[25px] md:text-[33px] lg:text-[16px] '>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
+              <h6 className='absolute  text-sky-300 top-[57%] md:top-[60%] lg:top-14 right-[58%] md:right-[68%] lg:right-[78%] text-[20px] md:text-[33px] lg:text-[16px] '>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
                 <div className="flex justify-start -ml-10 md:-ml-0">
               
              {
@@ -250,7 +255,7 @@ const ChatPage: React.FC = () => {
             className="w-12 h-12 rounded-full mr-3 md:mr-4 lg:mr-0"
             src={ receiverInfo?.profilePicture || '/default-avatar.png'}
             alt="Chat Avatar"
-                    /> : isGroupChat && groupId ? <Group htmlColor=''
+                    /> : isGroupChat && groupId ? <Group htmlColor='white'
                         
                         sx={{
                           fontSize: {
@@ -284,13 +289,13 @@ const ChatPage: React.FC = () => {
               </div>
 
             ) : (
-              <h1 className="text-xl md:text-4xl lg:text-xl font-bold text-white ml-1 mt-2 md:ml-2 md:mb-2 lg:ml-3 lg:mt-3">
+              <h1 className="text-[18px] md:text-[30px] lg:text-[20px] font-bold text-white mt-2 -ml-[10%]  md:ml-[2%] lg:ml-[20%] md:mb-2  lg:mt-3">
                 {receiverInfo?.name.split(' ')[0].split('').length > 10 ? `${receiverInfo?.name.split(' ')[0].slice(0, 8)}...` : receiverInfo?.name.split(' ')[0]} 
               </h1>
             )}
           </div>
         </div>
-        <div className={`flex  absolute right-0 gap-1 sm:gap-1 md:gap-2 lg:gap-4`}>
+        <div className={`flex  absolute -right-[4%] md:right-[0%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
                   {
                     isSingleChat && !isGroupChat &&
 
@@ -368,7 +373,7 @@ const ChatPage: React.FC = () => {
       </div>
 
       {/* Chat Body */}
-              <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4 pb-14">
+              <div className="p-4 bg-gray-900 h-[70%] overflow-y-auto space-y-4 pb-[25%] md:pb-[14%] lg:pb-[7%]">
                 {
                   mesesageLoading && <MessageSkeleton/>
                 }
@@ -458,13 +463,13 @@ const ChatPage: React.FC = () => {
 
           ))
         ) : (
-          isGroupChat && groupId ? <p>No messages available </p>: isSingleChat && receiverInfo ? <p className='text-slate-200'>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>:""
+          isGroupChat && groupId ? <p className='text-slate-200'>No messages available </p>: isSingleChat && receiverInfo ? <p className='text-slate-200'>No messages with <span className="text-teal-500">{receiverInfo?.name}</span> available </p>:""
               ))
               }
       </div>
 
       {/* Message Input */}
-      <div className="p-4 bg-gray-800">
+      <div className="p-0 bg-gray-800">
         <MessageInput  setDisplayMessages={ setDisplayMessages} setDisplayGroupMessages={setDisplayGroupMessages} />
       </div>
     </div>

@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { IconButton } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
@@ -25,6 +27,8 @@ const SignupPage: React.FC = () => {
     const { register, handleSubmit,control, formState: { errors, isSubmitting } } = useForm({
         resolver: yupResolver(schema)
     });
+
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
 
     const onSubmit = async (data: any) => {
@@ -98,14 +102,26 @@ const SignupPage: React.FC = () => {
                           errors.phone && <span className='text-red-500'>{errors.phone.message }</span>
                     }
                   </div>
-                  <div className='form-control'>
+                  <div className='form-control relative'>
                       <label className='label'>
                           <span className='label-text font-semibold text-xl text-white'>Password</span>
                       </label>
-                      <input type={`password`}
+                      <input type={`${showPassword ? 'text':'password'}`}
                           {...register('password')}
                           className={`input input-bordered font-semibold ${ errors.password && 'input-error'}`}
                       />
+                      <IconButton className=""
+                      
+                          sx={{
+                              position: 'absolute',
+                              right: '0%',
+                              bottom:'0%'
+                          }}
+                          onClick={() => setShowPassword(!showPassword)}>
+                          {
+                              showPassword ? <VisibilityOff htmlColor='blue'/> : <Visibility htmlColor='blue'/>
+                          }
+                      </IconButton>
                       {
                           errors.password && <span className='text-red-500'>{errors.password.message }</span>
                     }

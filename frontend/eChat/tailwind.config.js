@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import daisyui from 'daisyui'
+import daisyui from 'daisyui';
 
 export default {
   content: [
@@ -17,10 +17,36 @@ export default {
           '50%': { transform: 'translateY(-10px)' },
         },
       },
-    }
+    },
   },
-  plugins: [
-    daisyui,
-  ],
-}
+  plugins: [daisyui],
 
+  daisyui: {
+    themes: [
+      "light",
+      "dark",
+      "cupcake",
+      "bumblebee",
+      "emerald",
+      "corporate",
+      "synthwave",
+      "retro",
+      "cyberpunk",
+      "valentine",
+      "halloween",
+      "garden",
+      "forest",
+      "aqua",
+      "luxury",
+      "dracula",
+      "cmyk",
+      "autumn",
+      "business",
+      "acid",
+      "lemonade",
+      "night",
+      "coffee",
+      "winter"
+    ],
+  },
+};

@@ -1,10 +1,9 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useLazyGetUsersQuery } from "../store/slices/usersApiSlice";
 import { useLazyGetGroupsQuery } from "../store/slices/groupApiSlice";
 import { RootState } from "../store/store";
-
 import { Divider } from "@mui/material";
 
 import GroupCard from "../excerpts/GroupCard";
@@ -15,11 +14,8 @@ import { setUsers } from "../store/slices/userSlice";
 const Contacts: React.FC = () => {
   const dispatch = useDispatch();
 
-
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
- 
- 
 
   // API hooks
   const [triggerGetUsers, { data: usersData, isLoading }] = useLazyGetUsersQuery();
@@ -27,61 +23,54 @@ const Contacts: React.FC = () => {
 
   useEffect(() => {
     triggerGetUsers(undefined);
-  }, [triggerGetUsers]);
-
-  useEffect(() => {
     triggerGetGroups(undefined);
-  }, [triggerGetGroups]);
+  }, []); // Runs only once when the component mounts
 
   useEffect(() => {
-    dispatch(setGroupData(groupsData));
-  })
-
-  const userList = usersData?.users || [];
-  const groupList = groupsData?.groups || [];
-
-  useEffect(() => {
-    if (userList) {
-      dispatch(setUsers(userList));
+    if (groupsData) {
+      dispatch(setGroupData(groupsData));
     }
-  }, [userList, dispatch]);
+  }, [groupsData, dispatch]);
+
+  useEffect(() => {
+    if (usersData?.users?.length > 0) {
+      dispatch(setUsers(usersData.users));
+    }
+  }, [usersData, dispatch]);
 
   if (isLoading) {
     return (
-      <div className={``}>
-         <div className="absolute left-[30%] top-80">
+      <div className="absolute left-[30%] top-80">
         <div>
           <span className="loading loading-ring loading-lg"></span>
           <motion.div
-            
-            animate={{
-              y:[0,-20,0]
-            }}
+            animate={{ y: [0, -20, 0] }}
             transition={{
               duration: 1,
               repeat: Infinity,
               repeatType: "loop",
-              ease:"easeInOut"
+              ease: "easeInOut",
             }}
           >
             <p className="font-semibold text-xl">Loading, please wait...</p>
           </motion.div>
         </div>
       </div>
-     </div>
-    )
+    );
   }
-  
+
+  const userList = usersData?.users || [];
+  const groupList = groupsData?.groups || [];
 
   return (
-    <div className="">
-      <div
-        className={`fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-56 bg-gray-900 text-gray-50 w-full sm:w-[100%] md:w-[81%] lg:w-[45%] h-[100%] md:max-h-[80%] lg:max-h-[70%] p-10 overflow-y-auto shadow-lg -mt-2 `}
-     
+    <div className="fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-56 bg-gray-900 text-gray-50 w-[100%] sm:w-[100%] md:w-[81%] lg:w-[45%] h-[76%] md:max-h-[100%] lg:max-h-[70%] p-10 overflow-y-auto shadow-lg -mt-2"
+      
+      
+      
     >
       {isSingleChat && !isGroupChat ? (
         userList.length > 0 ? (
-          userList.map((user: any) => (
+          userList.map((user:any) => (
             <React.Fragment key={user._id}>
               <ContactCard user={user} />
               <Divider className="my-4 bg-gray-700" />
@@ -91,7 +80,7 @@ const Contacts: React.FC = () => {
           <div className="text-center text-gray-400">No users found</div>
         )
       ) : groupList.length > 0 ? (
-        groupList.map((group: any) => (
+        groupList.map((group:any) => (
           <React.Fragment key={group._id}>
             <GroupCard group={group} />
             <Divider className="my-4 bg-gray-700" />
@@ -100,7 +89,6 @@ const Contacts: React.FC = () => {
       ) : (
         <div className="text-center text-gray-400">No groups found</div>
       )}
-    </div>
     </div>
   );
 };

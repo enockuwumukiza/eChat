@@ -9,6 +9,8 @@ import groupSlice from './slices/groupSlice';
 import searchSlice from './slices/searchSlice';
 import notificationSlice from './slices/notificationSlice';
 import socketSlice from './slices/socketSlice';
+import themeSlice from './slices/themeSlice'
+
 
 const store = configureStore({
     reducer: {
@@ -20,7 +22,8 @@ const store = configureStore({
         group: groupSlice,
         search: searchSlice,
         socket:socketSlice,
-        notifications:notificationSlice
+        notifications:notificationSlice,
+        theme:themeSlice
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware)
 });

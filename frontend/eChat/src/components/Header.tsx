@@ -79,9 +79,9 @@ const Header: React.FC = () => {
         <React.Fragment>
             <div className={`${Number(currentWindowWidth) > 1280? 'flex' : isChatPageShown ? 'hidden':'flex'}`}>
                 <div className="fixed sm:left-0 md:left-48 lg:left-52 -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-full  sm:w-[110%] md:w-[82%] lg:w-[45%] shadow-lg shadow-gray-800">
-                <div className="flex gap-x-4 sm:gap-x-8 md:gap-x-40 lg:gap-x-70">
-                    <h2 className="text-2xl font-bold text-white">Chats</h2>
-                    <div className="flex gap-3 lg:gap-10">
+                <div className="flex sm:gap-x-3 md:gap-x-40 lg:gap-x-70">
+                    <h2 className="hidden md:flex lg:flex text-2xl font-bold text-white mt-[4%] ">Chats</h2>
+                    <div className="flex gap-1 md:gap-3 lg:gap-10">
                         <Tooltip title="new chat">
                             <IconButton onClick={() => dispatch(setIsNewChatShown(!isNewChatShown))}>
                                 <AddCircle fontSize="large" htmlColor="white" />
@@ -107,7 +107,7 @@ const Header: React.FC = () => {
                             </IconButton>
                         </Tooltip>
                         </div>
-                        <div className='flex md:hidden lg:hidden absolute right-[5%]'>
+                        <div className='flex absolute right-[5%] md:hidden lg:hidden'>
                             <Tooltip title='notifications'>
                                 <IconButton onClick={() => dispatch(setIsNotificationShown(!isNotificationShown))}>
                                     <Notifications htmlColor='white'
@@ -151,9 +151,18 @@ const Header: React.FC = () => {
                         {searchInput && (
                             <IconButton
                                 onClick={() => setSearchInput('')}
-                                className="absolute -right-[70%] md:-right-[78.5%] bottom-12"
+                                className="absolute -right-[66%] md:-right-[78.5%] bottom-12"
                             >
-                                <Cancel fontSize="large" htmlColor="gray" />
+                                    <Cancel
+                                         sx={{
+                                            fontSize: {
+                                                xs: "30px",
+                                                sm: "40px",
+                                                md: "70px",
+                                                lg: "35px",
+                                            },
+                                            }}
+                                        htmlColor="gray" />
                             </IconButton>
                         )}
                     </div>

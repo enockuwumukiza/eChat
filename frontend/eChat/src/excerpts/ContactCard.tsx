@@ -88,29 +88,29 @@ const ContactCard = ({ user }: any) => {
           
         }
         }
-        className={`flex relative justify-between gap-1 md:gap-2 lg:gap-3 p-2 px-1 md:px-2 lg:px-3 w-full bg-gray-${!isGroupChat && isSingleChat && user?._id === receiverInfo?._id ? "950" : "900"} hover:bg-gray-700 transition-all rounded-xl shadow-md cursor-pointer `}
+        className={`flex relative justify-between gap-1 md:gap-2 lg:gap-3 py-2 pr-[1%] pl-[1%] md:pr-[7%] md:pl-[3%] lg:pr-[10%] lg:pl-[2%]  w-full bg-gray-${!isGroupChat && isSingleChat && user?._id === receiverInfo?._id ? "950" : "900"} hover:bg-gray-700 transition-all rounded-xl shadow-md cursor-pointer `}
     >
-        <div className="relative indicator w-24 h-24 sm:w-16 sm:h-16 md:w-24 md:h-24 -ml-4 md:-ml-1 lg:-ml-0 " >
+        <div className="relative indicator w-20 h-20 md:w-24 md:h-24 -ml-4 md:-ml-1 lg:-ml-0 " >
           {
-            isOnline && <span className="indicator-item indicator-start badge badge-primary"></span>
+            isOnline && <span className="absolute left-[15%] top-[5%] md:left-[0%] md:top-[0%] lg:left-[0%] lg:top-[0%] indicator-item indicator-start badge badge-primary"></span>
            }
         <img
-          className="min-w-20 min-h-20  md:w-24 md:h-24 lg:w-32 lg:h32 rounded-full md:rounded-xl object-cover"
+          className="w-20 h-20  md:w-24 md:h-24 lg:w-32 lg:h32 rounded-full md:rounded-xl object-cover"
           src={user.profilePicture || "https://media.istockphoto.com/id/2151914146/photo/headshot-of-excited-young-man.webp?a=1&b=1&s=612x612&w=0&k=20&c=d40Yk2PnZTCBu_sCWc9jonjfOYJjrkdLvyxnp1mRK0I="}
           alt={user.name}
         />
-            <span className={`absolute top-14 md:top-16 left-2 bg-emerald-600 text-white text-sm md:text-xl lg:text-sm font-bold rounded px-1  `}>
+            <span className={`absolute top-12 md:top-16 left-2 bg-emerald-600 text-white text-sm md:text-xl lg:text-sm font-bold rounded px-1  `}>
           {user.name?.charAt(0) + user.name?.charAt(user.name?.indexOf(' ') + 1)}
         </span>
       </div>
-      <div className="flex-1">
-        <div className="flex justify-between items-center">
-          <h2 className="font-semibold text-white text-xl md:text-2xl lg:text-xl">{user?.name}</h2>
-          <span className="text-gray-400 text-[20px]">
+      <div className="flex-1 relative">
+        <div className="flex justify-between gap-2">
+          <span className="absolute left-[5%] font-semibold text-white text-[16px] md:text-2xl lg:text-xl">{user?.name}</span>
+          <span className="absolute -right-[53%] md:-right-[8%] lg:-right-[25%] text-gray-400 text-[16px] pr-[14%] md:pr-[0%] ">
             {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Unknown"}
           </span>
         </div>
-            <p className="text-gray-300 text-[20px] mt-2">
+            <p className="absolute top-[40%] left-[5%] text-gray-300 text-[20px] mt-2">
               {
                 isLoading && <span className='italic font-bold'>Loading...</span>
               }
@@ -119,17 +119,17 @@ const ContactCard = ({ user }: any) => {
                   {
                     latestMessage?.latestMessage?.content?.split('').length > 15 ? latestMessage?.latestMessage?.content?.slice(0,15) + "..." : latestMessage?.latestMessage?.content
                   }
-                </span>: !isLoading && (user?.status?.split("").length > 15 ? user?.status.slice(0,15) + "..." : user?.status) 
+                </span> : !isLoading && (user?.status?.split("").length > 15 ? <span className='text-teal-500 italic text-[18px]'>{user?.status.slice(0, 15)}... </span> : <span>{user?.status}</span>) 
               }
         </p>
       </div>
-      <div className="flex items-center gap-2">
-        <div className="bg-teal-600 text-white font-semibold text-sm px-3 py-1 rounded-full">
+      <div className="flex relative  items-center gap-2">
+        <div className="bg-teal-600 absolute -right-[15%] md:right-[150%] lg:right-[0%] text-white font-semibold text-sm px-3 py-1 rounded-full">
             {
              msgNotifications
           }
         </div>
-        <IconButton>
+        <IconButton className='absolute -right-[100%] md:right-[10%] lg:-right-[80%]'>
           <Check fontSize="medium" className="text-white" />
         </IconButton>
       </div>

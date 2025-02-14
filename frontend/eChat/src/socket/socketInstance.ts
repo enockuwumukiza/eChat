@@ -6,7 +6,7 @@ let socket: Socket | null = null;
 export const socketInstance = ({userId}:any) => {
   
   if (!socket) {
-    socket = io('https://echat-fieq.onrender.com/', {
+    socket = io('https://echat-fieq.onrender.com', {
       auth: {
            token: import.meta.env.VITE_WS_TOKEN
         },

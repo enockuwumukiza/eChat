@@ -346,7 +346,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   
 
   return (
-    <div className={`fixed bottom-0 right-0 flex items-center justify-between md:justify-around lg:justify-around w-full sm:w-[100%] md:w-[100%] lg:w-[41.6%] bg-gradient-to-r from-purple-900 via-green-950 to-teal-950 py-3`}>
+    <div className={`fixed bottom-0 right-0 flex items-center justify-between md:justify-around lg:justify-around w-[100%] md:w-[100%] lg:w-[41.6%] bg-gradient-to-r from-purple-900 via-green-950 to-teal-950 py-3`}>
     {isSingleChat && typingData ? (
       <div className="relative">
         <TypingIndicator name={typerName} />
@@ -381,7 +381,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
     </IconButton>
   </Tooltip>
 
-      <form onSubmit={handleSubmit} className="flex items-center gap-1 md:gap-5 lg:gap-3 px-0">
+      <form onSubmit={handleSubmit} className="flex items-center gap-1 md:gap-5 lg:gap-2 px-0">
        
       <Tooltip
       title="Upload"
@@ -415,7 +415,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           
           onKeyDown={handleKeyDown}
           
-          className="input md:h-[70px] lg:h-[50px] input-bordered w-60 md:w-96 lg:w-80 font-bold lg:p-2 text-[24px] md:text-[35px] lg:text-[17px] text-center pt-3 md:pt-4 lg:pt-2 text-white"
+          className="input md:h-[70px] lg:h-[50px] input-bordered w-[100%] md:w-[100%] lg:w-[60%] font-bold lg:p-2 text-[16px] md:text-[35px] lg:text-[17px] text-center pt-3 md:pt-4 lg:pt-2"
           placeholder="Type a message"
     />
 
