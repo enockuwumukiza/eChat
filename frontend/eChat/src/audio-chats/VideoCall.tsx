@@ -442,7 +442,7 @@ const VideoCall: React.FC = () => {
 
    return (
      <div
-       className={`absolute ${isVideoCallEnabled || caller ? "":"hidden"} z-50 bg-yellow-950 bottom-10 -right-[2%] md:-right-[2%] lg:right-[20%] m-3 w-[100%] md:w-[100%] lg:w-[70%]  flex flex-col items-center justify-between p-10 shadow-xl rounded-xl h-[82%] md:h-[83%] lg:h-[90%]`}
+       className={`absolute ${isVideoCallEnabled || caller ? "":"hidden"} z-50 bg-yellow-950 bottom-10 -right-[2%] md:-right-[2%] lg:right-[20%] m-3 w-[100%] md:w-[100%] lg:w-[70%]  flex flex-col items-center justify-between p-10 shadow-xl rounded-xl h-[87%] md:h-[83%] lg:h-[90%]`}
        
     >
       {/* Header with Close Button */}
@@ -470,19 +470,16 @@ const VideoCall: React.FC = () => {
         </p>
 
       {/* Video Section */}
-      <div className="relative flex flex-col items-center justify-center w-full bg-gradient-to-r from-blue-500 via-purple-600 h-[80%] to-pink-600">
+      <div className="relative flex flex-col items-center justify-center w-full bg-gradient-to-r from-blue-500 via-purple-600 h-[80%] md:h-[90%] lg:h-[80%] to-pink-600">
       {/* Local Video */}
       <video
         ref={localVideoRef}
         autoPlay
         muted={isMuted}
-        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white left-[0%] md:left-[9%] lg:left-[5.4%] top-[65%] md:top-[0%] lg:top-[0%] ${
+        className={`w-[60%] md:w-[30%] lg:w-[25%] max-h-[30%] md:max-h-[25%] lg:max-h-[50%] shadow-2xl rounded-lg border-4 border-white left-[0%] md:left-[4%] lg:left-[5.4%] top-[60%] md:top-[0%] lg:top-[0%] ${
           isCameraOn ? "bg-gray-800 opacity-70" : ""
         } transition-all transform hover:scale-105 absolute top-4 left-4 z-10`}
-        style={{
-          minWidth: "100px",
-          maxHeight: "200px",
-        }}
+        
       >
         {isCameraOn && (
           <div className="flex justify-center items-center w-full h-full bg-black bg-opacity-60 text-white text-lg font-semibold">

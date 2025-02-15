@@ -6,6 +6,7 @@ import { dbConnection } from "./config/dbConfig";
 dotenv.config();
 
 
+
 // Cloudinary configuration
 cloudinary.v2.config({
     cloud_name: process.env.CLOUD_NAME,

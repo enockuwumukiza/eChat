@@ -295,7 +295,7 @@ const ChatPage: React.FC = () => {
             )}
           </div>
         </div>
-        <div className={`flex justify-between absolute -right-[4%] md:right-[0%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
+        <div className={`flex justify-between absolute -right-[3%] md:right-[0%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
                   {
                     isSingleChat && !isGroupChat &&
 
