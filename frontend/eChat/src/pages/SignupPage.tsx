@@ -141,7 +141,7 @@ const SignupPage: React.FC = () => {
                       disabled={isSubmitting}
                       type='submit' className={`btn btn-${isSubmitting ? 'secondary' :'primary'} w-full font-bold`} >
                       {
-                          isSubmitting ? <span className='loading loading-bars loading-lg'></span> : 'Signup'
+                          isSubmitting ? <span className='loading loading-bars loading-lg text-white'></span> : 'Signup'
                       }
                       </button>
                   {

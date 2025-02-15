@@ -5,7 +5,6 @@ import { dbConnection } from "./config/dbConfig";
 
 dotenv.config();
 
-const HOST = '0.0.0.0';
 
 // Cloudinary configuration
 cloudinary.v2.config({
@@ -17,6 +16,5 @@ cloudinary.v2.config({
 // Start the server
 server.listen(PORT,() => {
     dbConnection();
- 
 });
 

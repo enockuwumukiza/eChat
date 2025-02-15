@@ -225,7 +225,7 @@ const ChatPage: React.FC = () => {
           <div className={`fixed ${Number(currentWindowWidth) > 1280 ? "h-full":'h-[120%] -left-4 px-3 md:left-0 md:px-0'}  flex-col right-0 w-[108%] md:w-[100%] lg:w-[41.6%] bg-base-100 shadow-lg cursor-pointer `}>
             {/* Header */}
              
-              <div className={`sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-10 md:p-8 lg:p-4 flex justify-between items-center shadow-md`}>
+              <div className={`sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-10 md:p-8 lg:p-4 flex justify-between items-center shadow-md h-[5%] md:h-[10%] lg:h-[14%] `}>
               <h6 className='absolute  text-sky-300 top-[57%] md:top-[60%] lg:top-14 right-[58%] md:right-[68%] lg:right-[78%] text-[20px] md:text-[33px] lg:text-[16px] '>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
                 <div className="flex justify-start -ml-10 md:-ml-0">
               
@@ -289,8 +289,8 @@ const ChatPage: React.FC = () => {
               </div>
 
             ) : (
-              <h1 className="text-[18px] md:text-[30px] lg:text-[20px] font-bold text-white mt-2 -ml-[10%]  md:ml-[2%] lg:ml-[20%] md:mb-2  lg:mt-3">
-                {receiverInfo?.name.split(' ')[0].split('').length > 10 ? `${receiverInfo?.name.split(' ')[0].slice(0, 8)}...` : receiverInfo?.name.split(' ')[0]} 
+              <h1 className="text-[13px] md:text-[30px] lg:text-[20px] font-bold text-white mt-2 -ml-[10%]  md:ml-[2%] lg:ml-[20%] md:mb-2  lg:mt-3">
+                {receiverInfo?.name.split(' ')[0].split('').length > 8 ? `${receiverInfo?.name.split(' ')[0].slice(0, 8)}...` : receiverInfo?.name.split(' ')[0]} 
               </h1>
             )}
           </div>
@@ -427,9 +427,9 @@ const ChatPage: React.FC = () => {
 
                       
                 {msg?.messageType === 'text' ? generateAnchorTag(msg?.content) : msg?.messageType === 'image' ?
-                  <img src={msg?.fileUrl?.url} />
+                  <img src={msg?.fileUrl?.url} className='w-[300px] h-[250px] md:w-[300px] md:h-[300px] lg:w-[300px] lg:h-[250px] object-cover' />
                  : msg?.messageType === 'audio' ? 
-                          <><audio src={msg?.fileUrl?.url} controls />
+                          <><audio src={msg?.fileUrl?.url} controls className='w-[150px] h-[30px]' />
                           <span className='text-sm italic text-blue-600'>{msg?.fileUrl?.name}</span></>
                   : msg?.messageType === 'video' ? 
                             <><video src={msg?.fileUrl?.url} controls style={{ maxHeight: '200px' }} /> <span className='text-sm mx-w-[20px] italic text-blue-600'>{renameFile(msg?.fileUrl?.name) }</span></>

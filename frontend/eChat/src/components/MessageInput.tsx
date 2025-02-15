@@ -442,7 +442,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           )}
         </IconButton>
       ) : (
-              <IconButton className="p-0" disabled={shouldPlay || shoudlVideoShow} onClick={() => {
+              <IconButton className="p-0" onClick={() => {
                 // setIsRecording(!isRecording);
                 setShouldPlay(!shouldPlay);
                 
@@ -469,7 +469,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           placement="top"
             >
               
-          <IconButton className="right-2 md:right-4 lg:right-6" disabled={shoudlVideoShow || shouldPlay}  onClick={() => setShouldVideoShow(!shoudlVideoShow)}>
+          <IconButton className="right-2 md:right-4 lg:right-6" disabled={shoudlVideoShow}  onClick={() => setShouldVideoShow(!shoudlVideoShow)}>
                 <Videocam htmlColor={shoudlVideoShow ? "red" : "white"}
                   
                   sx={{
@@ -605,7 +605,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
           )
         }
         {shouldPlay &&
-          <VoiceRecorder setAudio={setAudio} isRecording={isRecording} setIsRecording={setIsRecording} audioUrl={audioUrl} setAudioUrl={setAudioUrl} setShouldPlay={setShouldPlay} />
+          <VoiceRecorder setAudio={setAudio} isRecording={isRecording} setIsRecording={setIsRecording} audioUrl={audioUrl} setAudioUrl={setAudioUrl} setShouldPlay={setShouldPlay} shouldPlay={shouldPlay} />
         }
 
         {

@@ -29,7 +29,7 @@ export const renderPreview = (file:any, index:any, removeFile: any) => {
   return (
     <div key={index} className="preview-item relative">
       {fileData.type.startsWith("image/") && (
-        <img src={preview} alt={fileData.name} className="image-preview rounded-lg shadow-md" />
+        <img src={preview} alt={fileData.name} className="image-preview object-cover rounded-lg shadow-md"/>
       )}
       {fileData.type.startsWith("video/") && (
         <video controls className="video-preview rounded-lg shadow-md">

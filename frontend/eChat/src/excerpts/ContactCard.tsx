@@ -88,7 +88,7 @@ const ContactCard = ({ user }: any) => {
           
         }
         }
-        className={`flex relative justify-between gap-1 md:gap-2 lg:gap-3 py-2 pr-[1%] pl-[1%] md:pr-[7%] md:pl-[3%] lg:pr-[10%] lg:pl-[2%] md:-ml-[5%] lg:-ml-[5%] w-[100%] bg-gray-${!isGroupChat && isSingleChat && user?._id === receiverInfo?._id ? "950" : "900"} hover:bg-gray-700 transition-all rounded-xl shadow-md cursor-pointer `}
+        className={`flex w-[100%] md:w-[100%] lg:w-[100%] relative justify-between gap-1 md:gap-2 lg:gap-3 py-2 pr-[1%] pl-[1%] md:pr-[7%] md:pl-[3%] lg:pr-[10%] lg:pl-[2%] md:-ml-[5%] lg:-ml-[5%] bg-gray-${!isGroupChat && isSingleChat && user?._id === receiverInfo?._id ? "950" : "900"} hover:bg-gray-700 transition-all rounded-xl shadow-md cursor-pointer `}
     >
         <div className="relative indicator w-20 h-20 md:w-24 md:h-24 -ml-4 md:-ml-1 lg:-ml-0 " >
           {
@@ -106,7 +106,7 @@ const ContactCard = ({ user }: any) => {
       <div className="flex-1 relative">
         <div className="flex justify-between gap-2">
           <span className="absolute left-[5%] font-semibold text-white text-[16px] md:text-2xl lg:text-xl">{user?.name}</span>
-          <span className="absolute -right-[40%] md:-right-[8%] lg:-right-[25%] text-gray-400 text-[10px] md:text-[16px] lg:text-[16px] pr-[14%] md:pr-[0%] ">
+          <span className="absolute -right-[35%] md:-right-[8%] lg:-right-[25%] text-gray-400 text-[10px] md:text-[16px] lg:text-[16px] pr-[14%] md:pr-[0%] ">
             {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Unknown"}
           </span>
         </div>

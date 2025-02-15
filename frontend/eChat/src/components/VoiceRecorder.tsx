@@ -2,7 +2,7 @@ import  { useState, useRef,useEffect } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import { PlayArrow, Pause,PlayCircle, Stop, Delete } from '@mui/icons-material'; // Material UI icons
 
-const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAudioUrl,setShouldPlay}:{setAudio:any,isRecording:boolean, setIsRecording:any, audioUrl:any, setAudioUrl:any,setShouldPlay:any}) => {
+const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAudioUrl,setShouldPlay, shouldPlay}:{setAudio:any,isRecording:boolean, setIsRecording:any, audioUrl:any, setAudioUrl:any,setShouldPlay:any, shouldPlay:any}) => {
  
   const [isPaused, setIsPaused] = useState(false);
   
@@ -27,6 +27,15 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
     };
   }, []);
 
+  useEffect(() => {
+    if (!shouldPlay) {
+      cancelRecording();
+      setAudio(null);
+    }
+    
+  }, [shouldPlay]);
+
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -46,6 +55,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
         setAudioUrl(audioUrl);
         clearInterval(timerRef.current as NodeJS.Timeout); // Clear timer when recording stops
       };
+
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
@@ -125,6 +135,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
     }
   }
 
+  
 
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -134,8 +145,8 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
 
 
   return (
-    <div className="fixed md:bottom-1 lg:bottom-3 md:right-[28%] lg:right-[8%] flex items-center justify-center w-[70%]  md:w-[60%] lg:w-[30%] md:h-[80px] lg:h-[50px] rounded-lg bg-slate-950">
-      <div className="flex justify-center items-center">
+    <div className="fixed md:bottom-1 lg:bottom-3 right-[27%] md:right-[20%] lg:right-[10%] flex items-center justify-center w-[49%]  md:w-[60%] lg:w-[25%] h-[50px] md:h-[80px] lg:h-[50px] rounded-lg bg-slate-950">
+      <div className="flex gap-1 justify-center items-center">
         {!isRecording && !audioUrl && (
           <Tooltip title="Start recording audio">
             <IconButton
@@ -144,7 +155,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
               disabled={isRecording}
               
             >
-              <span className='font-bold md:text-4xl lg:text-xl'>Click to start recording</span>
+              <span className='font-bold text-[13px] md:text-4xl lg:text-xl'>Click to start recording</span>
             </IconButton>
           </Tooltip>
         )}
@@ -195,7 +206,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                   
                   sx={{
                     fontSize: {
-                      xs: "30px",
+                      xs: "25px",
                       sm: "40px",
                       md: "70px",
                       lg: "35px",
@@ -215,7 +226,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 
                   sx={{
                     fontSize: {
-                      xs: "30px",
+                      xs: "25px",
                       sm: "40px",
                       md: "70px",
                       lg: "35px",
@@ -238,7 +249,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 
                 sx={{
                     fontSize: {
-                      xs: "30px",
+                      xs: "25px",
                       sm: "40px",
                       md: "70px",
                       lg: "35px",
@@ -263,7 +274,7 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
                 
                 sx={{
                     fontSize: {
-                      xs: "30px",
+                      xs: "25px",
                       sm: "40px",
                       md: "70px",
                       lg: "35px",
@@ -277,14 +288,11 @@ const VoiceRecorder = ({ setAudio, isRecording, setIsRecording, audioUrl, setAud
             <source src={audioUrl} type="audio/wav" />
             Your browser does not support the audio element.
           </audio>
-          <div className="flex ">
-            
-          </div>
         </div>
       )}
 
       {isRecording && (
-        <p className="absolute top-[18.4%] right-[80%] text-[25px] md:text-[30px] lg:text-[16px] font-semibold text-green-700">
+        <p className="absolute md:top-[18.4%] lg:top-[30%] right-[80%] text-[16px] md:text-[30px] lg:text-[16px] font-semibold text-green-700">
           {formatTime(recordingTime)}
         </p>
       )}

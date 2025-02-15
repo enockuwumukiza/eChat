@@ -18,7 +18,8 @@ interface IDisplaySlice {
     callerData: any,
     isVideoCallEnabled: boolean,
     currentWindowWidth: number,
-    isSettingsShown:boolean,
+    isSettingsShown: boolean,
+    isThemesShwon:boolean,
 }
 
 const initialState: IDisplaySlice = {
@@ -39,7 +40,8 @@ const initialState: IDisplaySlice = {
     isNotificationShown: false,
     currentWindowWidth: window.innerWidth,
     isChatPageShown: JSON.parse(localStorage.getItem('chatState') || 'true') || window.innerWidth > 1280 ? true : false,
-    isSettingsShown:false
+    isSettingsShown: false,
+    isThemesShwon:false,
 }
 
 
@@ -107,9 +109,12 @@ const displaySlice = createSlice({
         },
         setIsSettingsShown: (state, action: PayloadAction<boolean>) => {
             state.isSettingsShown = action.payload
+        },
+        setIsThemesShown: (state, action: PayloadAction<boolean>) => {
+            state.isThemesShwon = action.payload
         }
     }
 })
 
-export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown,setIsNotificationShown, setIsSingleMessageLoading, setIsAudioCallEnabled, setCallerData,setIsVideoCallEnabled, setCurrentWindowWidth, setIsChatPageShown, setIsSettingsShown } = displaySlice.actions;
+export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown,setIsNotificationShown, setIsSingleMessageLoading, setIsAudioCallEnabled, setCallerData,setIsVideoCallEnabled, setCurrentWindowWidth, setIsChatPageShown, setIsSettingsShown, setIsThemesShown } = displaySlice.actions;
 export default displaySlice.reducer;

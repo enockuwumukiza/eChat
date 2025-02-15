@@ -5,20 +5,24 @@ import {
   Notifications,
   People,
   Settings,
- 
+  Palette,
   LogoutRounded
+
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { IconButton, Tooltip } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
-import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSettingsShown, setIsSingleChat } from '../store/slices/displaySlice';
+import { themes } from '../utils/themes';
+
+import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSettingsShown, setIsSingleChat, setIsThemesShown } from '../store/slices/displaySlice';
 import { RootState } from '../store/store';
 import { useLogoutUserMutation } from '../store/slices/usersApiSlice';
 
 
 import { setGroupId, setGroupInfo } from '../store/slices/groupSlice';
 import { setReceiverInfo } from '../store/slices/messageSlice';
+
 
 const Sidebar: React.FC = () => {
 
@@ -33,10 +37,13 @@ const Sidebar: React.FC = () => {
 
 
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
+  const isThemesShwon = useSelector((state: RootState) => state.display.isThemesShwon);
+  const theme = localStorage.getItem('theme');
 
   const { authUser, logout } = useAuth();
 
-  const [ logoutUser] = useLogoutUserMutation();
+  const [logoutUser] = useLogoutUserMutation();
+  
 
   const handleDiplayContacts:any = () => {
     dispatch(setIsSingleChat(true));
@@ -80,7 +87,7 @@ const Sidebar: React.FC = () => {
         maxWidth: '200px',
         height:'100vh'
     }}>
-      <div className='flex flex-col gap-20 m-2'>
+      <div className='flex flex-col gap-12 m-2'>
         <div className='flex flex-col gap-6'>
         <Tooltip title='messages'>
           <IconButton>
@@ -181,6 +188,16 @@ const Sidebar: React.FC = () => {
                   }}
               />
           </IconButton>
+          </Tooltip>
+
+           <Tooltip title={'Theme'} sx={{
+                fontSize:'40px'
+            }}>
+            <IconButton onClick={() => dispatch(setIsThemesShown(!isThemesShwon))}>
+              {
+                themes?.find((t) => t?.name === theme)?.icon || <Palette />
+              }
+            </IconButton>
           </Tooltip>
       </div>
       </div>

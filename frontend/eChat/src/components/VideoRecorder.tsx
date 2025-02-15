@@ -1,7 +1,7 @@
 import  { useRef, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { IconButton, Tooltip } from '@mui/material';
-import { PlayCircle, Stop, PauseCircle, Cancel, Delete, ReplayCircleFilled } from '@mui/icons-material';
+import { PlayCircle, Stop, PauseCircle, Cancel, Delete, ReplayCircleFilled, CancelRounded } from '@mui/icons-material';
 
 const VideoRecorder = ({setVideo, setShouldVideoShow}:{setVideo:any, setShouldVideoShow:any}) => {
     const [isRecording, setIsRecording] = useState(false);
@@ -154,7 +154,31 @@ const VideoRecorder = ({setVideo, setShouldVideoShow}:{setVideo:any, setShouldVi
                 zIndex: '9999',
                  maxHeight:'100vh'
         }}>
-            <h1 className="text-3xl font-bold text-blue-600">Video Recorder</h1>
+                <div className='flex justify-between gap-20'>
+                    <h1 className="text-3xl font-bold text-blue-600">Video Recorder</h1>
+                    <Tooltip title="Cancle video" placement='top'>
+                        <IconButton onClick={() => {
+                            setShouldVideoShow(false);
+                            cancelRecording();
+                            
+                         }
+
+
+                        }>
+                        <CancelRounded htmlColor='red'
+                            
+                            sx={{
+                                fontSize: {
+                                xs: "30px",
+                                sm: "40px",
+                                md: "70px",
+                                lg: "35px",
+                                },
+                    }}
+                        />
+                </IconButton>
+                    </Tooltip>
+                </div>
 
             <div className="border-4 border-blue-500 rounded-lg overflow-hidden shadow-md">
                 <video ref={previewRef} className="w-full max-w-[500px] bg-black" autoPlay muted></video>

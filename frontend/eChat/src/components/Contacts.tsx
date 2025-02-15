@@ -63,7 +63,7 @@ const Contacts: React.FC = () => {
   const groupList = groupsData?.groups || [];
 
   return (
-    <div className="fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-[22%] md:top-[20%] lg:top-[35%] bg-gray-900 text-gray-50 w-[100%] sm:w-[100%] md:w-[81%] lg:w-[45%] h-[76%] md:max-h-[100%] lg:max-h-[70%] p-10 overflow-y-auto shadow-lg"
+    <div  className="fixed -left-[8%] md:left-[25%] lg:left-[15.13%] top-[19%] md:top-[18%] lg:top-[32%] bg-gray-900 text-gray-50 w-[115%] md:w-[81%] lg:w-[44.3%] h-[100%] md:h-[100%] lg:h-[70%]  overflow-y-auto shadow-lg p-10"
       
       
       
