@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { Modal, Box, Typography, Button, IconButton, Divider } from "@mui/material";
-import { Close, Visibility } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { useAuth } from "../hooks/useAuth";
 import { RootState } from "../store/store";
 import { useSelector,useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ const GroupInfo: FC = () => {
   const dispatch = useDispatch();
   const isGroupInfoShown = useSelector((state: RootState) => state.display.isGroupInfoShown);
   const groupId = useSelector((state: RootState) => state.group.groupId);
-  const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
+
   
   
 
@@ -57,11 +57,6 @@ const GroupInfo: FC = () => {
 
   return (
     <div className="fixed">
-      {authUser && isGroupChat && (
-        <IconButton onClick={handleOpen} sx={{ color: "primary.main" }}>
-          <Visibility fontSize="large" />
-        </IconButton>
-      )}
       <Modal
         open={open}
         onClose={handleClose}

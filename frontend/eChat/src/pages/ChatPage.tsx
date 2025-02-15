@@ -137,7 +137,7 @@ const ChatPage: React.FC = () => {
           if (receiverInfo?._id) {
             setDisplayMessages([]);
             setMessageLoading(true);
-            const response = await axios.get(`http://localhost:5000/api/messages/single/${receiverInfo?._id}`, {
+            const response = await axios.get(`https://echat-fieq.onrender.com/api/messages/single/${receiverInfo?._id}`, {
             withCredentials: true,
             headers: {
             
@@ -170,7 +170,7 @@ const ChatPage: React.FC = () => {
           if (groupId) {
             setDisplayGroupMessages([]);
             setMessageLoading(true);
-            const response = await axios.get(`http://localhost:5000/api/groups/messages/${groupId}`, {
+            const response = await axios.get(`https://echat-fieq.onrender.com/api/groups/messages/${groupId}`, {
             withCredentials: true,
             headers: {
             
@@ -222,7 +222,7 @@ const ChatPage: React.FC = () => {
       <div className={`${Number(currentWindowWidth) > 1280 ? "" : '-left-[4%] '}`} >
       {
         (isSingleChat && receiverInfo) || (isGroupChat && groupId) ? (
-          <div className={`fixed ${Number(currentWindowWidth) > 1280 ? "h-full":'h-[120%] -left-4 px-3 md:left-0 md:px-0'}  flex-col right-0 sm:w-[100%] md:w-[100%] lg:w-[41.6%] bg-base-100 shadow-lg cursor-pointer `}>
+          <div className={`fixed ${Number(currentWindowWidth) > 1280 ? "h-full":'h-[120%] -left-4 px-3 md:left-0 md:px-0'}  flex-col right-0 w-[108%] md:w-[100%] lg:w-[41.6%] bg-base-100 shadow-lg cursor-pointer `}>
             {/* Header */}
              
               <div className={`sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-10 md:p-8 lg:p-4 flex justify-between items-center shadow-md`}>
@@ -295,7 +295,7 @@ const ChatPage: React.FC = () => {
             )}
           </div>
         </div>
-        <div className={`flex  absolute -right-[4%] md:right-[0%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
+        <div className={`flex justify-between absolute -right-[4%] md:right-[0%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
                   {
                     isSingleChat && !isGroupChat &&
 

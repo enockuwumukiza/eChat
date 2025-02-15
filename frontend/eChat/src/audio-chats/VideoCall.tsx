@@ -478,7 +478,7 @@ const VideoCall: React.FC = () => {
         ref={localVideoRef}
         autoPlay
         muted={isMuted}
-        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white -left-[0.6%] md:left-[9%] lg:left-[5.4%] top-[75%] md:top-[0%] lg:top-[0%] ${
+        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white -left-[0.66%] md:left-[9%] lg:left-[5.4%] top-[75%] md:top-[0%] lg:top-[0%] ${
           isCameraOn ? "bg-gray-800 opacity-70" : ""
         } transition-all transform hover:scale-105 absolute top-4 left-4 z-10`}
         style={{

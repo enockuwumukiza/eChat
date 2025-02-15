@@ -1,7 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
-import { Close, Visibility, PersonAdd } from "@mui/icons-material";
-import { useAuth } from "../hooks/useAuth";
+import { Close, PersonAdd } from "@mui/icons-material";
 import { RootState } from "../store/store";
 import { useSelector,useDispatch } from "react-redux";
 import { setIsAddNewMemberShown, setIsGroupInfoShown } from "../store/slices/displaySlice";
@@ -17,7 +16,6 @@ const GroupOptionsModal: FC = () => {
   const groupsData: any = useSelector((state: RootState) => state.group.groupData);
   const isGroupInfoShown = useSelector((state: RootState) => state.display.isGroupInfoShown);
   const isAddNewMemberShown = useSelector((state:RootState) => state.display.isAddNewMemberShown);
-  const { authUser } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -31,11 +29,7 @@ const GroupOptionsModal: FC = () => {
 
   return (
     <div className="absolute">
-      {authUser && (
-        <IconButton className="btn btn-ghost" onClick={handleOpen}>
-          <Visibility className="text-lg" />
-        </IconButton>
-      )}
+     
       <Modal open={open} onClose={handleClose} className="flex items-center justify-center">
         <Box className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 flex flex-col space-y-4">
           <div className="flex justify-between items-center w-full">

@@ -63,7 +63,7 @@ const Contacts: React.FC = () => {
   const groupList = groupsData?.groups || [];
 
   return (
-    <div className="fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-56 bg-gray-900 text-gray-50 w-[100%] sm:w-[100%] md:w-[81%] lg:w-[45%] h-[76%] md:max-h-[100%] lg:max-h-[70%] p-10 overflow-y-auto shadow-lg -mt-2"
+    <div className="fixed sm:left-1 md:left-[25%] lg:left-[15.2%] top-[22%] md:top-[20%] lg:top-[35%] bg-gray-900 text-gray-50 w-[100%] sm:w-[100%] md:w-[81%] lg:w-[45%] h-[76%] md:max-h-[100%] lg:max-h-[70%] p-10 overflow-y-auto shadow-lg"
       
       
       
@@ -73,7 +73,20 @@ const Contacts: React.FC = () => {
           userList.map((user:any) => (
             <React.Fragment key={user._id}>
               <ContactCard user={user} />
-              <Divider className="my-4 bg-gray-700" />
+              <Divider className="" sx={{
+                width: {
+                  xs: '100%',
+                  sm: "100%",
+                  md: '100%',
+                  lg:'100%'
+                },
+                margin: {
+                  xs: '0px 0px',
+                  sm: "0px -24px",
+                  md: '0px -20px',
+                  lg:'0px -23px'
+                }
+              }} />
             </React.Fragment>
           ))
         ) : (

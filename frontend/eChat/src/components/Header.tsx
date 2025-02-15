@@ -30,7 +30,7 @@ const Header: React.FC = () => {
     const notifications = useSelector((state: RootState) => state.notifications.notifications);
       
 
-    const [triggerGetSearchedUsers, { data: usersFound, isLoading }] = useLazySearchUsersQuery();
+    const [triggerGetSearchedUsers, { data: usersFound}] = useLazySearchUsersQuery();
 
     // Debounce the search input value
     const [debouncedSearchInput] = useDebounce(searchInput, 200);
@@ -49,10 +49,6 @@ const Header: React.FC = () => {
         }
     }, [dispatch, debouncedSearchInput]);
 
-
-    if (isLoading) {
-        return <div className='absolute z-50 top-72 left-[50%]'><span className="loading loading-spinner loading-lg"></span>;</div>
-    }
 
     const handleDiplayContacts:any = () => {
         dispatch(setIsSingleChat(true));
@@ -78,7 +74,7 @@ const Header: React.FC = () => {
     return (
         <React.Fragment>
             <div className={`${Number(currentWindowWidth) > 1280? 'flex' : isChatPageShown ? 'hidden':'flex'}`}>
-                <div className="fixed sm:left-0 md:left-48 lg:left-52 -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-full  sm:w-[110%] md:w-[82%] lg:w-[45%] shadow-lg shadow-gray-800">
+                <div className="fixed sm:left-0 md:left-48 lg:left-52 -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-[110%] md:w-[82%] lg:w-[45%] h-[22%] md:h-[20%] lg:h-[35%] shadow-lg shadow-gray-800">
                 <div className="flex sm:gap-x-3 md:gap-x-40 lg:gap-x-70">
                     <h2 className="hidden md:flex lg:flex text-2xl font-bold text-white mt-[4%] ">Chats</h2>
                     <div className="flex gap-1 md:gap-3 lg:gap-10">
@@ -107,7 +103,7 @@ const Header: React.FC = () => {
                             </IconButton>
                         </Tooltip>
                         </div>
-                        <div className='flex absolute right-[5%] md:hidden lg:hidden'>
+                        <div className='flex absolute right-[7%] md:hidden lg:hidden'>
                             <Tooltip title='notifications'>
                                 <IconButton onClick={() => dispatch(setIsNotificationShown(!isNotificationShown))}>
                                     <Notifications htmlColor='white'

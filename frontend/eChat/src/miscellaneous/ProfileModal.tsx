@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
-import { Close, Visibility } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { useAuth } from "../hooks/useAuth";
 import { RootState } from "../store/store";
 import { useSelector } from "react-redux";
@@ -27,11 +27,6 @@ const ProfileModal: FC = () => {
   return (
     <>
           <div className="absolute">
-              {authUser  && (
-        <IconButton className="btn btn-ghost" onClick={handleOpen}>
-          <Visibility className="text-lg" />
-        </IconButton>
-      )}
       <Modal open={open} onClose={handleClose} className="flex items-center justify-center">
         <Box
           className="bg-white rounded-lg shadow-lg w-96 p-6 flex flex-col items-center space-y-4"
