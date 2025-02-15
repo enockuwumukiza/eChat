@@ -442,10 +442,8 @@ const VideoCall: React.FC = () => {
 
    return (
      <div
-       className={`absolute ${isVideoCallEnabled || caller ? "":"hidden"} z-50 bg-yellow-950 bottom-10 -right-[2%] md:-right-[2%] lg:right-[20%] m-3 w-[100%] md:w-[100%] lg:w-[70%]  flex flex-col items-center justify-between p-10 shadow-xl rounded-xl`}
-       style={{
-         height:'90vh'
-       }}
+       className={`absolute ${isVideoCallEnabled || caller ? "":"hidden"} z-50 bg-yellow-950 bottom-10 -right-[2%] md:-right-[2%] lg:right-[20%] m-3 w-[100%] md:w-[100%] lg:w-[70%]  flex flex-col items-center justify-between p-10 shadow-xl rounded-xl h-[82%] md:h-[83%] lg:h-[90%]`}
+       
     >
       {/* Header with Close Button */}
       <div className="flex justify-between items-center w-full">
@@ -478,7 +476,7 @@ const VideoCall: React.FC = () => {
         ref={localVideoRef}
         autoPlay
         muted={isMuted}
-        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white -left-[0.66%] md:left-[9%] lg:left-[5.4%] top-[75%] md:top-[0%] lg:top-[0%] ${
+        className={`w-[50%] md:w-1/4 lg:w-1/4 md:max-w-xs lg:max-w-xs h-auto shadow-2xl rounded-lg border-4 border-white left-[0%] md:left-[9%] lg:left-[5.4%] top-[65%] md:top-[0%] lg:top-[0%] ${
           isCameraOn ? "bg-gray-800 opacity-70" : ""
         } transition-all transform hover:scale-105 absolute top-4 left-4 z-10`}
         style={{

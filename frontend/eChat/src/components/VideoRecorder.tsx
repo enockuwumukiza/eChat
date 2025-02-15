@@ -150,11 +150,11 @@ const VideoRecorder = ({setVideo, setShouldVideoShow}:{setVideo:any, setShouldVi
 
     return (
         <div>
-             <div className="absolute bottom-24 lg:bottom-5 flex flex-col items-center bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-xl p-2 space-y-2 mx-auto w-[100%] lg:w-[110%] left-0 lg:-left-[130%] overflow-y-auto" style={{
+             <div className="absolute bottom-24 lg:bottom-5 flex flex-col items-center bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-xl p-3 md:p-2 lg:p-2 space-y-2 mx-auto w-[98%] md:w-[100%] lg:w-[110%] left-[0.7%] md:left-[0%] lg:-left-[130%] overflow-y-auto" style={{
                 zIndex: '9999',
                  maxHeight:'100vh'
         }}>
-                <div className='flex justify-between gap-20'>
+                <div className='flex justify-between lg:gap-20'>
                     <h1 className="text-3xl font-bold text-blue-600">Video Recorder</h1>
                     <Tooltip title="Cancle video" placement='top'>
                         <IconButton onClick={() => {
@@ -190,34 +190,84 @@ const VideoRecorder = ({setVideo, setShouldVideoShow}:{setVideo:any, setShouldVi
                 <p className="text-gray-500 italic">No video recorded yet</p>
             )}
 
-            <div className="flex space-x-4">
+            <div className="flex lg:space-x-4">
                 <Tooltip title="Start Recording">
                     <IconButton color="success" onClick={startRecording} disabled={isRecording}>
-                        <PlayCircle fontSize="large" />
+                            <PlayCircle
+                                
+                                 sx={{
+                                    fontSize: {
+                                        xs: "30px",
+                                        sm: "40px",
+                                        md: "70px",
+                                        lg: "35px",
+                                    },
+                                }}
+                            />
                     </IconButton>
                 </Tooltip>
 
                 <Tooltip title="Pause Recording">
                     <IconButton color="warning" onClick={pauseRecording} disabled={!isRecording || isPaused}>
-                        <PauseCircle fontSize="large" />
+                            <PauseCircle
+                                
+                                sx={{
+                                    fontSize: {
+                                        xs: "30px",
+                                        sm: "40px",
+                                        md: "70px",
+                                        lg: "35px",
+                                    },
+                                }}
+                            />
                     </IconButton>
                 </Tooltip>
 
                 <Tooltip title="Resume Recording">
                     <IconButton color="primary" onClick={resumeRecording} disabled={!isPaused}>
-                        <ReplayCircleFilled fontSize="large" />
+                            <ReplayCircleFilled
+                                
+                                sx={{
+                                    fontSize: {
+                                        xs: "30px",
+                                        sm: "40px",
+                                        md: "70px",
+                                        lg: "35px",
+                                    },
+                                }}
+                            />
                     </IconButton>
                 </Tooltip>
 
                 <Tooltip title="Stop Recording">
                     <IconButton color="error" onClick={stopRecording} disabled={!isRecording}>
-                        <Stop fontSize="large" />
+                            <Stop
+                                
+                                sx={{
+                                    fontSize: {
+                                        xs: "30px",
+                                        sm: "40px",
+                                        md: "70px",
+                                        lg: "35px",
+                                    },
+                                }}
+                            />
                     </IconButton>
                 </Tooltip>
 
                 <Tooltip title="Cancel Recording">
                     <IconButton color="secondary" onClick={cancelRecording}>
-                        <Cancel fontSize="large" />
+                            <Cancel
+                                
+                                sx={{
+                                    fontSize: {
+                                        xs: "30px",
+                                        sm: "40px",
+                                        md: "70px",
+                                        lg: "35px",
+                                    },
+                                }}
+                            />
                     </IconButton>
                 </Tooltip>
 
@@ -228,7 +278,17 @@ const VideoRecorder = ({setVideo, setShouldVideoShow}:{setVideo:any, setShouldVi
                         disabled={!videoUrl}
                         className={`bg-gray-500 text-white hover:bg-gray-600 ${!videoUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        <Delete fontSize="large" />
+                            <Delete
+                                
+                                sx={{
+                                    fontSize: {
+                                        xs: "30px",
+                                        sm: "40px",
+                                        md: "70px",
+                                        lg: "35px",
+                                    },
+                                }}
+                            />
                     </IconButton>
                 </Tooltip>
             </div>

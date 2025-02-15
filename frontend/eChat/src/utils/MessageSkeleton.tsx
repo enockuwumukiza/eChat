@@ -2,7 +2,7 @@
 
 const MessageSkeleton = () => {
   return (
-    <div className="fixed top-[10%] md:top-[12%] lg:top-[14.1%] flex flex-col right-0 w-[100%] md:w-[100%] lg:w-[41.58%] h-full bg-base-100 shadow-lg p-4 space-y-6">
+    <div className="fixed top-[11%] md:top-[12%] lg:top-[14.1%] flex flex-col right-0 w-[100%] md:w-[100%] lg:w-[41.58%] h-full bg-base-100 shadow-lg p-4 space-y-6">
      
       {/* Sender Skeleton */}
             <div className="chat chat-start flex items-center space-x-4">

@@ -78,9 +78,9 @@ const Header: React.FC = () => {
     return (
         <React.Fragment>
             <div className={`${Number(currentWindowWidth) > 1280? 'flex' : isChatPageShown ? 'hidden':'flex'}`}>
-                <div className="fixed left-[0%] md:left-[26%] lg:left-[15%] -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-[110%] md:w-[77%] lg:w-[45%] h-[19%] md:h-[18%] lg:h-[32%] shadow-lg shadow-gray-800">
+                <div className={`fixed left-[0%] md:left-[26%] lg:left-[15%] -ml-2 flex flex-col gap-3 bg-sky-900 p-5 w-[110%] md:w-[77%] lg:w-[45%] h-[19%] md:h-[18%] lg:h-[32%] shadow-lg shadow-gray-800`}>
                 <div className="flex sm:gap-x-3 md:gap-x-40 lg:gap-x-70">
-                    <h2 className="hidden md:flex lg:flex text-2xl font-bold text-white mt-[4%] ">Chats</h2>
+                    <h2 className="hidden md:block lg:block text-2xl font-bold text-white mt-[4%] ">Chats</h2>
                     <div className="flex gap-1 md:gap-3 lg:gap-10">
                         <Tooltip title="new chat">
                             <IconButton onClick={() => dispatch(setIsNewChatShown(!isNewChatShown))}>
@@ -146,23 +146,23 @@ const Header: React.FC = () => {
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                             type="text"
-                            className="absolute bottom-[35%] input input-bordered md:w-[95%] lg:w-[95%] pl-16 rounded-xl font-semibold text-xl"
+                            className="absolute bottom-[30%] md:bottom-[35%] lg:bottom-[35%] input input-bordered w-[96%] md:w-[95%] lg:w-[95%] pl-16 rounded-xl font-semibold text-xl"
                             onFocus={() => setIsInputFocused(!isInputFocused)}
                         />
                         <IconButton
                             onClick={() => setIsInputFocused(!isInputFocused)}
-                            className="absolute left-[3%] bottom-[18px] md:bottom-[14px] lg:bottom-[16px] cursor-pointer"
+                            className="absolute left-[3%] bottom-[14px] md:bottom-[14px] lg:bottom-[16px] cursor-pointer"
                         >
                             {isInputFocused ? (
-                                <ArrowBack fontSize="large" htmlColor="white" />
+                                <ArrowBack fontSize="large" htmlColor="gray" />
                             ) : (
-                                <Search fontSize="large" htmlColor="white" />
+                                <Search fontSize="large" htmlColor="gray" />
                             )}
                         </IconButton>
                         {searchInput && (
                             <IconButton
                                 onClick={() => setSearchInput('')}
-                                className="absolute -right-[64%] md:-right-[77%] bottom-[18px] md:bottom-[14px] lg:bottom-[16px]"
+                                className="absolute -right-[64%] md:-right-[77%] bottom-[14px] md:bottom-[14px] lg:bottom-[16px]"
                             >
                                     <Cancel
                                          sx={{
