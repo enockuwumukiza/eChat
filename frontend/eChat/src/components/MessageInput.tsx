@@ -74,7 +74,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
 
 
   const [sendSingleMessage, {isLoading, isSuccess}] = useSendSingleMessageMutation();
-  const [sendGroupMessage, { isLoading: isGroupLoading,isSuccess:isGroupSuccess }] = useSendGroupMessageMutation();
+  const [sendGroupMessage, {isSuccess:isGroupSuccess }] = useSendGroupMessageMutation();
 
 
 

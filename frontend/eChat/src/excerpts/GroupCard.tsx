@@ -8,8 +8,6 @@ const GroupCard = ({ group }: any) => {
   const dispatch = useDispatch();
   const groupId: any = useSelector((state: RootState) => state.group.groupId);
 
-   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
-    const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
    
 
 

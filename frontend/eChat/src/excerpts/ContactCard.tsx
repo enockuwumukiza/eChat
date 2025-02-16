@@ -2,9 +2,8 @@ import {memo, useEffect, useState} from 'react'
 import {  IconButton } from "@mui/material";
 import { Check } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setgroupMessageInfo, setReceiverInfo } from '../store/slices/messageSlice';
+import { setReceiverInfo } from '../store/slices/messageSlice';
 import { RootState } from '../store/store';
-import { setGroupId } from '../store/slices/groupSlice';
 import { setCurrentWindowWidth, setIsChatPageShown } from '../store/slices/displaySlice';
 import { useLazyGetLastMessageQuery } from '../store/slices/messagesApiSlice';
 
