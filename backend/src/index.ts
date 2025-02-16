@@ -17,5 +17,6 @@ cloudinary.v2.config({
 // Start the server
 server.listen(PORT,() => {
     dbConnection();
+    
 });
 

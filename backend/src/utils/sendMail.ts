@@ -35,6 +35,7 @@ export async function sendEmail(toMail: string, actionUrl: string, name: string)
       html: htmlContent,
     });
         
+      
         
   } catch (error) {
     console.error(`Failed to send email: ${error}`);

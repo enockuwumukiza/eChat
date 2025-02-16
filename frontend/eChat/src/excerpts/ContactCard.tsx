@@ -80,8 +80,8 @@ const ContactCard = ({ user }: any) => {
         onClick={() => {
           if (isSingleChat && !isGroupChat) {
             dispatch(setReceiverInfo(user));
-            dispatch(setgroupMessageInfo(null));
-            dispatch(setGroupId(null));
+            // dispatch(setgroupMessageInfo(null));
+            // dispatch(setGroupId(null));
             dispatch(setIsChatPageShown(true));
             setMsgNotifications(0);
           }

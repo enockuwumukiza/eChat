@@ -1,6 +1,5 @@
-
 import { Button } from "@mui/material";
-import { Delete} from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 
 
 
@@ -77,3 +76,67 @@ export const renderPreview = (file:any, index:any, removeFile: any) => {
   )
 };
 
+
+export const generateTempMessage = (
+  content: string, 
+  authUser: any, 
+  receiverInfo: any
+) => ({
+  _id: `temp-${Date.now()}`,
+  chat: `chat-${Math.floor(Math.random() * 10000)}`,
+  chatType: "Conversation",
+  content,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  isDeleted: false,
+  isLiked: false,
+  isPinned: false,
+  messageType: "text",
+  reactions: [],
+  readBy: [],
+  receiver: receiverInfo ? { ...receiverInfo, chats: [] } : null,
+  sender: authUser?.user ? { ...authUser.user, chats: [] } : null,
+  status: "sending",
+});
+
+export const generateTempFileMessage = (
+  authUser: any, 
+  receiverInfo: any,
+  file: File
+) => ({
+  _id: `temp-${Date.now()}`,
+  chat: `chat-${Math.floor(Math.random() * 10000)}`,
+  chatType: "Conversation",
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  isDeleted: false,
+  isLiked: false,
+  isPinned: false,
+  messageType: file.type.startsWith("image") ? "image" :
+              file.type.startsWith("video") ? "video" :
+              file.type.startsWith("audio") ? "audio" : "file",
+  reactions: [],
+  readBy: [],
+  receiver: receiverInfo ? { ...receiverInfo, chats: [] } : null,
+  sender: authUser?.user ? { ...authUser.user, chats: [] } : null,
+  status: "sending",
+  fileUrl: {
+    id: `media_files/temp-${Date.now()}`,
+    name: file.name || "temp-file",
+    url: URL.createObjectURL(file),
+  },
+});
+
+export const updateMediaMessagesUI = (
+  setDisplayMessages: any,
+  tempMessage: any,
+  responseMessage?: any
+) => {
+  setDisplayMessages((prevMessages: any[]) =>
+    responseMessage
+      ? prevMessages.map((msg: any) =>
+          msg._id === tempMessage._id ? responseMessage : msg
+        )
+      : [...prevMessages, tempMessage]
+  );
+};

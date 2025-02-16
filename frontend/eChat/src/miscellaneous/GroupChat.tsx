@@ -85,7 +85,7 @@ const GroupChat = () => {
   const DisplayFoundUsers = () => {
     return (
         <div
-          className='fixed left-0 md:left-48 lg:left-52 top-96 md:top-96 lg:top-80 bg-slate-950 text-white w-[100%] md:w-[74%] lg:w-[44.5%] z-10 max-h-[100%] md:max-h-[100%] lg:max-h-[60%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto'
+          className='fixed left-0 md:left-48 lg:left-52 top-72 md:top-96 lg:top-80 bg-slate-950 text-white w-[100%] md:w-[74%] lg:w-[44.5%] z-10 max-h-[100%] md:max-h-[100%] lg:max-h-[60%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto'
           
         style={{
           maxHeight:"60vh"

@@ -18,16 +18,15 @@ const GroupCard = ({ group }: any) => {
     <div
       key={group._id}
       onClick={() => {
-        dispatch(setIsGroupChat(true))
         dispatch(setGroupId(group?._id));
+        dispatch(setIsGroupChat(true))
         dispatch(setIsChatPageShown(true));
 
         dispatch(setGroupInfo(group));
-      // dispatch(setReceiverInfo(null))
           
         
       }}
-      className={`flex items-center gap-5 bg-${isGroupChat && !isSingleChat && group?._id === groupId ? "teal-950":"gray-950"} hover:from-gray-700 hover:via-gray-600 hover:to-gray-700 transition-all duration-300 rounded-xl shadow-lg p-4 cursor-pointer transform hover:scale-105`}
+      className={`flex items-center gap-5 bg-${group?._id === groupId ? "teal-950":"gray-950"} hover:from-gray-700 hover:via-gray-600 hover:to-gray-700 transition-all duration-300 rounded-xl shadow-lg p-4 cursor-pointer transform hover:scale-105`}
     >
       <div className="flex-shrink-0">
         <div

@@ -13,9 +13,8 @@ import { useAuth } from '../hooks/useAuth';
 import { useSocket } from '../hooks/useSocket';
 
 import TypingIndicator from '../utils/TypingIndicator';
-import SendingAnimation from '../utils/SendingAnimation';
 
-import { renderPreview } from '../utils/FileUpload';
+import { renderPreview, generateTempMessage, generateTempFileMessage, updateMediaMessagesUI } from '../utils/FileUpload';
 import VoiceRecorder from './VoiceRecorder'
 import VideoRecorder from './VideoRecorder';
 import messageNotification from '../../public/sounds/message-notification.mp3'
@@ -74,8 +73,8 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   const typerGroupName = useMemo(() => typingGroupData?.authName?.split(' ')[0]?.toUpperCase(), [typingGroupData]);
 
 
-  const [sendSingleMessage, {isLoading}] = useSendSingleMessageMutation();
-  const [sendGroupMessage, { isLoading: isGroupLoading }] = useSendGroupMessageMutation();
+  const [sendSingleMessage, {isLoading, isSuccess}] = useSendSingleMessageMutation();
+  const [sendGroupMessage, { isLoading: isGroupLoading,isSuccess:isGroupSuccess }] = useSendGroupMessageMutation();
 
 
 
@@ -159,6 +158,15 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
     setMessageInput((prev) => prev + emojiObject.emoji);
   }
 
+  const resetStates = () => {
+     setMessageInput('');
+      setSelectedFiles([]);
+      setIsRecording(false);
+      setShouldPlay(false);
+      setAudio(null);
+      setVideo(null);
+      setNormalFile(null);
+  }
   
   const handleFileClick = (fileId:any) => {
     // Access the input element using the name passed to register
@@ -215,75 +223,171 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
 
   const handleSendMessage = async () => {
 
+    let tempFileMessage:any;
+    let tempMessage:any;
+
     const formData = new FormData();
     if (messageInput.trim() !== '') {
+      tempMessage = generateTempMessage(messageInput.trim(), authUser, receiverInfo);
+      resetStates();
       formData.append('content', messageInput.trim());
+      
     }
     
-      if (normalFile) formData.append('normalFile', normalFile);
-      if (audio) formData.append('audio', audio);
-      if (video) formData.append('video', video);
+    if (normalFile) {
+      tempFileMessage = generateTempFileMessage(authUser, receiverInfo, normalFile);
+      resetStates();
+      formData.append('normalFile', normalFile);
+    }
+    if (audio) {
+      tempFileMessage = generateTempFileMessage(authUser, receiverInfo, audio);
+      resetStates();
+      formData.append('audio', audio);
+    }
+    if (video) {
+      tempFileMessage = generateTempFileMessage(authUser, receiverInfo, video);
+      resetStates();
+      formData.append('video', video);
+      
+    }
     if (photo) {
+      tempFileMessage = generateTempFileMessage(authUser, receiverInfo, photo);
+      resetStates();
       formData.append('photo', photo);
+      
+
       
     };
 
     
     try {
 
-      const response = await sendSingleMessage({ receiverId: receiverInfo?._id, data: formData }).unwrap();
-      setDisplayMessages((prev:any) => [...prev, response?.message])
-      setMessageInput('');
-      setSelectedFiles([]);
-      setIsRecording(false);
-      setShouldPlay(false);
-      setAudio(null);
-      setVideo(null);
-      setNormalFile(null);
-      socket.emit('stop-single-typing', { receiverId: receiverInfo?._id });
-     
-        toast.success('Message sent');
       
+      if (tempMessage) {
+        setDisplayMessages((prev: any) => [...prev, tempMessage]);
+      } else if(tempFileMessage) {
+         updateMediaMessagesUI(setDisplayMessages, tempFileMessage);
+      }
+      
+      const response = await sendSingleMessage({ receiverId: receiverInfo?._id, data: formData }).unwrap();
+      // setDisplayMessages((prev: any) => [...prev, response?.message]);
+
+      if (tempMessage) {
+        setDisplayMessages((prev: any) =>
+      prev.map((msg: any) => (msg._id === tempMessage._id ? response.message : msg))
+        );
+        
+      } else if (tempFileMessage) {
+         updateMediaMessagesUI(setDisplayMessages, tempFileMessage, response.message);
+      }
+      
+      
+      socket.emit('stop-single-typing', { receiverId: receiverInfo?._id });
+      resetStates();
     } catch (error: any) {
       toast.error(error?.data?.message || error?.message || 'Error sending message');
     }
   };
 
+ 
+
+  // const handleSendGroupMessage = async () => {
+
+  //   const formData = new FormData();
+  //   if (messageInput.trim() !== '') {
+  //     formData.append('content', messageInput.trim());
+  //   }
+  //     if (normalFile) formData.append('normalFile', normalFile);
+  //     if (audio) formData.append('audio', audio);
+  //     if (video) formData.append('video', video);
+  //   if (photo) {
+  //     formData.append('photo', photo);
+      
+  //   };
+
+  //   try {
+  //     if (formData) {
+  //       const response = await sendGroupMessage({ groupId, data: formData }).unwrap();
+        
+  //       setDisplayGroupMessages((prev:any) => {
+  //         const newMessages = [response.message].filter(
+  //           (msg) => !prev.some((existing:any) => existing._id === msg._id)
+  //         );
+  //         return [...prev, ...newMessages];
+  //       });
+
+
+  //       setMessageInput('');
+  //       setSelectedFiles([]);
+  //       setAudio(null);
+  //       setVideo(null);
+  //       setNormalFile(null);
+      
+  //       socket.emit('stop-group-typing', { groupId });
+  //       toast.success('Message sent');
+  //     }
+  //   } catch (error: any) {
+  //     toast.error(error?.data?.message || error?.message || 'Error sending message');
+  //   }
+  // };
+
+
   const handleSendGroupMessage = async () => {
+
+    let tempFileMessage: any;
+    let tempMessage: any;
 
     const formData = new FormData();
     if (messageInput.trim() !== '') {
+      tempMessage = generateTempMessage(messageInput.trim(), authUser, groupId);
+      resetStates();
       formData.append('content', messageInput.trim());
     }
-      if (normalFile) formData.append('normalFile', normalFile);
-      if (audio) formData.append('audio', audio);
-      if (video) formData.append('video', video);
+
+    if (normalFile) {
+      tempFileMessage = generateTempFileMessage(authUser, groupId, normalFile);
+      resetStates();
+      formData.append('normalFile', normalFile);
+    }
+    if (audio) {
+      tempFileMessage = generateTempFileMessage(authUser, groupId, audio);
+      resetStates();
+      formData.append('audio', audio);
+    }
+    if (video) {
+      tempFileMessage = generateTempFileMessage(authUser, groupId, video);
+      resetStates();
+      formData.append('video', video);
+    }
     if (photo) {
+      tempFileMessage = generateTempFileMessage(authUser, groupId, photo);
+      resetStates();
       formData.append('photo', photo);
-      
-    };
+    }
 
     try {
-      if (formData) {
-        const response = await sendGroupMessage({ groupId, data: formData }).unwrap();
-        
-        setDisplayGroupMessages((prev:any) => {
-          const newMessages = [response.message].filter(
-            (msg) => !prev.some((existing:any) => existing._id === msg._id)
-          );
-          return [...prev, ...newMessages];
-        });
-
-
-        setMessageInput('');
-        setSelectedFiles([]);
-        setAudio(null);
-        setVideo(null);
-        setNormalFile(null);
-      
-        socket.emit('stop-group-typing', { groupId });
-        toast.success('Message sent');
+      // Add temp messages to UI before sending to server
+      if (tempMessage) {
+        setDisplayGroupMessages((prev: any) => [...prev, tempMessage]);
+      } else if (tempFileMessage) {
+        updateMediaMessagesUI(setDisplayGroupMessages, tempFileMessage);
       }
+
+      const response = await sendGroupMessage({ groupId, data: formData }).unwrap();
+
+      // Remove the temporary message after receiving the server response
+      setDisplayGroupMessages((prev: any) => {
+        const updatedMessages = prev.filter((msg: any) => msg._id !== tempMessage?._id && msg._id !== tempFileMessage?._id);
+        const newMessages = [response.message].filter(
+          (msg) => !updatedMessages.some((existing: any) => existing._id === msg._id)
+        );
+        return [...updatedMessages, ...newMessages];
+      });
+
+      resetStates();
+
+      socket.emit('stop-group-typing', { groupId });
+
     } catch (error: any) {
       toast.error(error?.data?.message || error?.message || 'Error sending message');
     }
@@ -307,13 +411,13 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
+ 
     if (isGroupChat) {
       await handleSendGroupMessage();
     } else if(isSingleChat){
       await handleSendMessage();
     }
-    if (msgNotificationRef.current) {
+    if (msgNotificationRef?.current && (isSuccess || isGroupSuccess)) {
       msgNotificationRef.current.src = messageNotification;
       msgNotificationRef.current.play();
     }
@@ -423,23 +527,19 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
       title={messageInput || selectedFiles?.length ? 'Send' : 'Voice note'}
       placement="top"
     >
-      {messageInput || audio || video || selectedFiles?.length > 0 ? (
-        <IconButton type='submit'>
-          {isLoading || isGroupLoading ? (
-            <span className="loading loading-spinner loading-lg"></span>
-          ) : (
-                  <Send htmlColor="white"
-                    
-                    sx={{
-                      fontSize: {
-                        xs: "30px",
-                        sm: "40px",
-                        md: "70px",
-                        lg: "35px",
-                      },
-                    }}
-                  />
-          )}
+      {messageInput?.trim() || audio || video || selectedFiles?.length > 0 && !isLoading ? (
+         <IconButton type='submit' disabled={isLoading} > 
+          <Send htmlColor="white"
+            
+            sx={{
+              fontSize: {
+                xs: "30px",
+                sm: "40px",
+                md: "70px",
+                lg: "35px",
+              },
+            }}
+          />  
         </IconButton>
       ) : (
               <IconButton className="p-0" onClick={() => {
@@ -580,7 +680,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
         }
         {/* file picker */}
         {
-          selectedFiles?.length > 0 && (
+          selectedFiles?.length > 0 && !isLoading && (
             <div className='absolute w-[20%] -top-[600%] -left-30'>
           
            <div className="file-uploader py-10 bg-gray-50 rounded-lg shadow-md max-w-lg mx-auto" style={{
@@ -589,13 +689,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
                 
                 
               }}>
-                <div className=''>
-                  {
-                    isLoading && (
-                     <SendingAnimation/>
-                    )
-                  }
-                </div>
+               
                 <div className="previews mt-4 flex flex-wrap gap-4">
                   {selectedFiles.map((item, index) => renderPreview(item, index, removeFile))}
                 </div>

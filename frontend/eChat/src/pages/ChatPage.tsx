@@ -1,6 +1,6 @@
 import React, { useEffect, memo, useRef, useState } from 'react';
 import axios from 'axios'
-import { Videocam, Search, MoreVertOutlined, Call,Download,DoneAllOutlined,Group, Favorite,ArrowBack } from '@mui/icons-material';
+import { Videocam, MoreVertOutlined, Call,Download,DoneAllOutlined,Done,Group, Favorite,ArrowBack } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Tooltip } from '@mui/material';
 import { RootState } from '../store/store';
@@ -22,7 +22,6 @@ import SimpleHeader from '../components/SimpleHeader';
 import MessageCard from '../utils/MessageCard';
 import PinnedMessage from '../utils/PinnedMessage';
 import MessageSkeleton from '../utils/MessageSkeleton';
-import { setGroupMembers } from '../store/slices/groupSlice';
 
 const ChatPage: React.FC = () => {
 
@@ -50,6 +49,7 @@ const ChatPage: React.FC = () => {
 
 
   const isReceiverOnline = onlineUsers?.includes(receiverInfo?._id);
+
 
   const [displayMessages, setDisplayMessages] = useState<any[]>([]);
   const [displayGroupMessages, setDisplayGroupMessages] = useState<any[]>([]);
@@ -161,6 +161,7 @@ const ChatPage: React.FC = () => {
     )();
 
   }, [receiverInfo?._id]);
+
   
   useEffect(() => {
     (
@@ -201,9 +202,9 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
       if (groupId) {
         triggerGetGroupMembers(groupId);
-        dispatch(setGroupMembers(members));
       }
   }, [triggerGetGroupMembers, groupId]);
+
   
 
   const messagesToDisplay = (isGroupChat && groupId) ? displayGroupMessages : (isSingleChat && receiverInfo?._id) ? displayMessages : [];
@@ -226,7 +227,10 @@ const ChatPage: React.FC = () => {
             {/* Header */}
              
               <div className={`sticky top-0 bg-gradient-to-r from-teal-700 via-teal-600 to-teal-500 p-10 md:p-8 lg:p-4 flex justify-between items-center shadow-md h-[5%] md:h-[10%] lg:h-[14%] `}>
-              <h6 className='absolute  text-sky-300 top-[57%] md:top-[60%] lg:top-14 right-[58%] md:right-[68%] lg:right-[78%] text-[20px] md:text-[33px] lg:text-[16px] '>{isSingleChat &&( isReceiverOnline ? "online":  "offline" )}</h6>
+                {
+                  isSingleChat && !isGroupChat &&
+                  <h6 className='absolute  text-sky-300 top-[57%] md:top-[60%] lg:top-14 right-[58%] md:right-[68%] lg:right-[78%] text-[20px] md:text-[33px] lg:text-[16px] '>{  isReceiverOnline ? "online":  "offline" }</h6>
+              }
                 <div className="flex justify-start -ml-10 md:-ml-0">
               
              {
@@ -269,7 +273,7 @@ const ChatPage: React.FC = () => {
                     /> : ""
           }
           <div>
-            {isGroupChat && !isSingleChat ? (
+            {isGroupChat && !receiverInfo ? (
               <div className="absolute flex gap-1 text-xs md:text-lg text-white items-center">
                 {members?.groupMembers?.members?.slice(0, 3)?.map((member: any, index: any) => (
                   <span 
@@ -295,7 +299,7 @@ const ChatPage: React.FC = () => {
             )}
           </div>
         </div>
-        <div className={`flex justify-between absolute -right-[3%] md:right-[0%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
+        <div className={`flex justify-between absolute -right-[1%] md:right-[5%] lg:right-[0%] gap-1 md:gap-2 lg:gap-4`}>
                   {
                     isSingleChat && !isGroupChat &&
 
@@ -334,21 +338,6 @@ const ChatPage: React.FC = () => {
             </IconButton>
           </Tooltip>
                 }
-          <Tooltip title="Search" placement="top">
-            <IconButton className="hover:bg-teal-800">
-                      <Search htmlColor="white"
-                      
-                        sx={{
-                          fontSize: {
-                            xs: "30px",
-                            sm: "40px",
-                            md: "70px",
-                            lg: "35px",
-                          },
-                        }}
-                      />
-            </IconButton>
-          </Tooltip>
           <Tooltip title="More Options" placement="top">
             <IconButton
               onClick={() => {
@@ -430,7 +419,7 @@ const ChatPage: React.FC = () => {
                   <img src={msg?.fileUrl?.url} className='w-[300px] h-[250px] md:w-[300px] md:h-[300px] lg:w-[300px] lg:h-[250px] object-cover' />
                  : msg?.messageType === 'audio' ? 
                           <><audio src={msg?.fileUrl?.url} controls className='w-[150px] h-[30px]' />
-                          <span className='text-sm italic text-blue-600'>{msg?.fileUrl?.name}</span></>
+                          <span className='text-sm italic text-blue-600'>{msg?.fileUrl?.name?.length > 15 ? msg?.fileUrl?.name.substring(0,15) + '...':msg?.fileUrl?.name}</span></>
                   : msg?.messageType === 'video' ? 
                             <><video src={msg?.fileUrl?.url} controls style={{ maxHeight: '200px' }} /> <span className='text-sm mx-w-[20px] italic text-blue-600'>{renameFile(msg?.fileUrl?.name) }</span></>
                             : <FileLink fileUrl={{ url: msg?.fileUrl?.url }} fileName={msg?.fileUrl?.name} />
@@ -449,7 +438,7 @@ const ChatPage: React.FC = () => {
                 }
               </div>
               <div className="chat-footer text-gray-400 text-xs">
-                {msg?.status === "sent" && msg?.sender?._id === authUser?.user?._id ? <DoneAllOutlined/> : ""}
+                {msg?.status === "sending" && msg?.sender?._id === authUser?.user?._id ? <Done/> : msg?.status === "sent" && msg?.sender?._id === authUser?.user?._id ? <DoneAllOutlined/> : ''}
                     </div>
                     <audio className='hidden' ref={incomingMsgNotificationRef}/>
               <div ref={messageRef}/>
