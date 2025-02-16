@@ -33,7 +33,6 @@ const LoginPage: React.FC = () => {
         try {
             const response = await loginUser({email: data?.email, password: data?.password }).unwrap();
             login(response);
-            toast.success('login successful');
             navigate('/');
 
         } catch (error: any) {
