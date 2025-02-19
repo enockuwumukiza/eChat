@@ -64,8 +64,7 @@ const Sidebar: React.FC = () => {
 
       await logoutUser(undefined);
       logout();
-      toast.success('logout succesful');
-
+    
     } catch (error: any) {
       toast.error(error?.data?.message || error?.message || 'error logging out');
       

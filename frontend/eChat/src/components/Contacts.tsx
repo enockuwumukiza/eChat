@@ -13,12 +13,12 @@ import { setGroupData } from "../store/slices/groupSlice";
 import NoContactsMessage from "../utils/NoContactsMessage";
 
 
-const Contacts: React.FC = () => {
+const Contacts: React.FC<any> = ({  allContacts}:{setAllContacts:any, allContacts:any}) => {
   const dispatch = useDispatch();
 
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
-  const users = useSelector((state: RootState) => state.users?.userContacts);
+
 
   // API hooks
   const [triggerGetUsers, { data: usersData, isLoading }] = useLazyGetUsersQuery();
@@ -74,8 +74,8 @@ const Contacts: React.FC = () => {
       
     >
       {isSingleChat && !isGroupChat ? (
-        users.length > 0 ? (
-          users.map((user:any) => (
+        allContacts.length > 0 ? (
+          allContacts.map((user:any) => (
             <React.Fragment key={user._id}>
               <ContactCard user={user} />
               <Divider className="" sx={{

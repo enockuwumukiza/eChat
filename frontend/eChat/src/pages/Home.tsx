@@ -1,4 +1,4 @@
-import React, { useEffect, useRef} from "react";
+import React, { useEffect, useRef, useState} from "react";
 import { AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
@@ -47,6 +47,8 @@ const Home: React.FC = () => {
   const moreOptionsRef = useRef<HTMLDivElement | null>(null);
   const contactsListRef = useRef<HTMLDivElement | null>(null);
 
+  const [allContacts, setAllContacts] = useState<any[]>([])
+
   useEffect(() => {
       (
         async () => {
@@ -56,6 +58,7 @@ const Home: React.FC = () => {
               withCredentials:true
             });
             if (response?.data?.contacts) {
+              setAllContacts(response?.data?.contacts);
               dispatch(setUserContacts(response?.data?.contacts));
               
             }
@@ -114,7 +117,7 @@ const Home: React.FC = () => {
         {
           isContactsListShown && <div ref={contactsListRef}>
              <AnimatePresence>
-          { isContactsListShown && <ContactsList/>}
+              {isContactsListShown && <ContactsList setAllContacts={setAllContacts } allContacts={allContacts} />}
         </AnimatePresence>
           </div>
         }
@@ -128,10 +131,10 @@ const Home: React.FC = () => {
         <AnimatePresence>
           { isAddNewMemberShown && <AddMemberToGroup/>}
         </AnimatePresence>
-        <AnimatePresence>{isCreateGroupShown && <GroupChat />}</AnimatePresence>
+        <AnimatePresence>{isCreateGroupShown && <GroupChat  />}</AnimatePresence>
         
-        <AnimatePresence>{isAddNewContactShown && <AddNewContact />}</AnimatePresence>
-        {!isNewChatShown && !isCreateGroupShown && <Contacts />}
+        <AnimatePresence>{isAddNewContactShown && <AddNewContact setAllContacts={setAllContacts} allContacts={allContacts}/>}</AnimatePresence>
+        {!isNewChatShown && !isCreateGroupShown && <Contacts allContacts={allContacts}/>}
         {isNotificationShown && <NotificationModal />}
         {isSettingsShown && <Settings />}
         { isReceiverPicShown && <ProfilePic/>}

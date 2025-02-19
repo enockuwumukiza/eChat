@@ -7,17 +7,16 @@ import {
 import { motion } from 'framer-motion'
 import { toast } from 'react-toastify';
 import { useDebounce } from 'use-debounce';
-import { useDispatch } from 'react-redux';
-import { setIsAddNewContactShown } from '../store/slices/displaySlice';
+import { useDispatch} from 'react-redux';
+import { setIsAddNewContactShown, setIsNewChatShown } from '../store/slices/displaySlice';
 import { useLazySearchUsersQuery } from '../store/slices/usersApiSlice';
 
 import { useAddContactsMutation } from '../store/slices/usersApiSlice';
 
-const AddNewContact = () => {
+
+const AddNewContact = ({ setAllContacts, allContacts}:{setAllContacts:any, allContacts:any}) => {
 
   const dispatch = useDispatch();
-
-
 
   const [searchInput, setSearchInput] = useState<string>('');
   const [foundUsers, setFoundUsers] = useState<any[]>([]);
@@ -79,11 +78,16 @@ const AddNewContact = () => {
 
       const contactNames = selectedUsers.map((u) => u?.name);
 
-      await addContacts({ contactNames }).unwrap();
+      const response = await addContacts({ contactNames }).unwrap();
+      
 
+      setAllContacts((prev:any) => (prev?.length > 1 ? [...prev, response?.contacts]: response?.contacts))
       dispatch(setIsAddNewContactShown(false));
-      window.location.href = '/';
-      toast.success("Contacts added successfully");
+      dispatch(setIsNewChatShown(false));
+      
+      console.log('response: ', response);
+      console.log('all contacts: ', allContacts);
+      
     } catch (error: any) {
       console.error("Error adding contacts:", error);
       toast.error(error?.data?.message || error?.message || "Error adding new contact(s)");
@@ -95,7 +99,7 @@ const AddNewContact = () => {
   const DisplayFoundUsers = () => {
     return (
         <div
-          className='fixed left-0 md:left-48 lg:left-52 top-72 md:top-96 lg:top-80 bg-slate-950 text-white w-[100%] md:w-[74%] lg:w-[42%] z-10 max-h-[100%] md:max-h-[100%] lg:max-h-[60%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto'
+          className='fixed left-0 md:left-48 lg:left-52 top-64 md:top-96 lg:top-80 bg-slate-950 text-white w-[100%] md:w-[74%] lg:w-[42%] z-10 max-h-[100%] md:max-h-[100%] lg:max-h-[60%] p-6 rounded-lg shadow-2xl border border-gray-700 overflow-y-auto'
           
         style={{
           maxHeight:"60vh"
@@ -128,10 +132,6 @@ const AddNewContact = () => {
     )
   }
 
-
-  if (isLoading) {
-        return <span className="loading loading-spinner loading-lg"></span>;
-  }
   
   return (
     <React.Fragment>

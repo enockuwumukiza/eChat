@@ -47,11 +47,9 @@ const SignupPage: React.FC = () => {
 
             const response = await registerUser(formData).unwrap();
             login(response);
-            toast.success('signup successful');
             navigate('/');
 
         } catch (error: any) {
-            console.error(`signup failed: ${error?.data}`);
             toast.error(error?.data?.message || error?.message || 'error signing up');
         }
     }
