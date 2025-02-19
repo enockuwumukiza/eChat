@@ -8,13 +8,12 @@ import { motion } from 'framer-motion'
 import { toast } from 'react-toastify';
 import { useDebounce } from 'use-debounce';
 import { useDispatch } from 'react-redux';
-import { setIsCreateGroupShown } from '../store/slices/displaySlice';
+import { setIsAddNewContactShown } from '../store/slices/displaySlice';
 import { useLazySearchUsersQuery } from '../store/slices/usersApiSlice';
-import { useCreateGroupMutation } from '../store/slices/groupApiSlice';
 
+import { useAddContactsMutation } from '../store/slices/usersApiSlice';
 
-
-const GroupChat = () => {
+const AddNewContact = () => {
 
   const dispatch = useDispatch();
 
@@ -22,13 +21,13 @@ const GroupChat = () => {
 
   const [searchInput, setSearchInput] = useState<string>('');
   const [foundUsers, setFoundUsers] = useState<any[]>([]);
-  const [groupName, setGroupName] = useState<string>('');
   const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
 
 
-  const [triggerGetSearchedUsers, { data: userList}] = useLazySearchUsersQuery();
+  const [triggerGetSearchedUsers, { data: userList }] = useLazySearchUsersQuery();
+  
+  const [ addContacts ,{ isLoading }] = useAddContactsMutation();
 
-  const [ createGroup, { isLoading }] = useCreateGroupMutation();
 
     // Debounce the search input value
     const [debouncedSearchInput] = useDebounce(searchInput, 200);
@@ -47,30 +46,16 @@ const GroupChat = () => {
     if (userList?.users) {
       setFoundUsers(userList?.users);
     }
-  },[userList])
+  }, [userList]);
 
 
-  const closeNewGroup = () => {
-        dispatch(setIsCreateGroupShown(false));
-    }
-  
-  const createNewGroup = async () => {
-    try {
 
-      if (!groupName) {
-        toast.error('Group name is required');
-        return;
-      }
-      const memberNames = selectedUsers?.map((u) => u?.name);
-     
-      await createGroup({ name: groupName, memberNames });
-       dispatch(setIsCreateGroupShown(false));
+
+
+  const closeContact = () => {
+    dispatch(setIsAddNewContactShown(false));
     
-      
-    } catch (error:any) {
-      toast.error(error?.data?.message || error?.message)
     }
-  }
     
 
   const addSelectedUser = (user: any) => {
@@ -83,6 +68,29 @@ const GroupChat = () => {
   const removeSelectedUser = (user: any) => {
     setSelectedUsers(selectedUsers?.filter((u: any) => u?._id !== user?._id));
   }
+
+  const handleAddContacts = async () => {
+    
+    try {
+      if (!selectedUsers || selectedUsers.length === 0) {
+        toast.error("Please select at least one contact");
+        return;
+      }
+
+      const contactNames = selectedUsers.map((u) => u?.name);
+
+      await addContacts({ contactNames }).unwrap();
+
+      dispatch(setIsAddNewContactShown(false));
+      window.location.href = '/';
+      toast.success("Contacts added successfully");
+    } catch (error: any) {
+      console.error("Error adding contacts:", error);
+      toast.error(error?.data?.message || error?.message || "Error adding new contact(s)");
+    }
+  };
+
+
 
   const DisplayFoundUsers = () => {
     return (
@@ -121,37 +129,25 @@ const GroupChat = () => {
   }
 
 
+  if (isLoading) {
+        return <span className="loading loading-spinner loading-lg"></span>;
+  }
   
   return (
     <React.Fragment>
-          <motion.div className="fixed left-0 md:left-52 md:-ml-2 flex flex-col z-50 gap-3 bg-teal-950 p-2 w-[100%] md:w-[74%] lg:w-[43.2%] shadow-xl shadow-gray-800 text-white h-full"
+          <motion.div className="fixed left-0 md:left-52 md:-ml-2 flex flex-col z-50 gap-3 bg-sky-600 p-2 w-[100%] md:w-[74%] lg:w-[44.4%] shadow-xl shadow-gray-800 text-white h-full"
             
-              initial={{ x: '-130%' }}
+              initial={{ x: '130%' }}
               animate={{ x: '0%' }}
-              exit={{ x: '-180%' }}
+              exit={{ x: '180%' }}
               transition={{type:'spring', stiffness:100, damping:20}}
       >
         {/* Header */}
-
-        <div>
-          <Input type="text" sx={{
-            fontSize: {
-                        xs: "20px",
-                        sm: "25px",
-                        md: "27px",
-                        lg: "20px",
-            },
-            color:"white"
-          }} placeholder='group name'
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            className='text-xl text-white transition-all' />
-        </div>
         <div className="flex items-center gap-4">
-          <IconButton className="hover:bg-sky-800 transition-all" onClick={closeNewGroup}>
+          <IconButton className="hover:bg-sky-800 transition-all" onClick={closeContact}>
             <Cancel fontSize="large" htmlColor="white" />
           </IconButton>
-          <p className="text-2xl font-semibold">Add group members</p>
+          <p className="text-2xl font-semibold">Add Contact</p>
         </div>
 
         {/* Search Bar */}
@@ -176,20 +172,20 @@ const GroupChat = () => {
         </div>
 
         {
-          selectedUsers?.length > 0 &&
-          <div className='grid bg-emerald-900 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-2 p-2 rounded-3xl overflow-y-auto' style={{
+                  selectedUsers?.length > 0 &&
+                  <div className='grid bg-emerald-900 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-2 p-1 md:p-2 rounded-2xl overflow-y-auto' style={{
           maxHeight:"30vh"
         }}>
           
           {
             selectedUsers.length > 0 && (
               selectedUsers?.map((user: any, index: any) => (
-                <div key={index} className='flex gap-2 bg-sky-800 align-middle rounded-lg'>
-                  <img className='h-10 w-10 object-fill rounded-full' src={user?.profilePicture} alt={user?.name} />
+                <div key={index} className='flex gap-1 md:gap-2 lg:gap-2 bg-sky-800 align-middle rounded-lg'>
+                  <img className='h-7 w-7 md:h-10 md:w-10 lg:h-10 lg:w-10 object-fill rounded-full' src={user?.profilePicture} alt={user?.name} />
                   <span className='mt-1 text-sm'>{ user?.name}</span>
                   <Tooltip title='remove' placement='top'>
                     <IconButton onClick={() => removeSelectedUser(user)}>
-                      <Cancel fontSize='medium' htmlColor='white'/>
+                      <Cancel fontSize='small' htmlColor='white'/>
                     </IconButton>
                   </Tooltip>
                 </div>
@@ -198,13 +194,21 @@ const GroupChat = () => {
           }
          
           {
-            selectedUsers?.length > 1 && <div className='pt-2'>
-                  <button className='btn btn-primary max-w-full ' onClick={createNewGroup} >{ isLoading ? "Creating...":"Create" }</button>
+            selectedUsers?.length > 0 && <div className='pt-2'>
+                  <button className='btn btn-primary max-w-full 
+                  '
+                    onClick={handleAddContacts}
+                  >
+                    {
+                      isLoading ? "Adding...":"Add"
+                    }
+                  </button>
             </div>
           }
         </div>
-        }
 
+
+        }
 
        
         {
@@ -216,4 +220,4 @@ const GroupChat = () => {
   );
 };
 
-export default GroupChat;
+export default AddNewContact;

@@ -139,9 +139,6 @@ const ChatPage: React.FC = () => {
             setMessageLoading(true);
             const response = await axios.get(`https://echat-fieq.onrender.com/api/messages/single/${receiverInfo?._id}`, {
             withCredentials: true,
-            headers: {
-            
-            }
           });
 
            if (response?.data?.messages) {

@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import { getReceiverSocketId, io } from "../socket/socket";
 import { Group } from "../models/group.model";
 import { sendEmail } from "../utils/sendMail";
+import mongoose from 'mongoose'
 
 
 // Register user
@@ -279,4 +280,103 @@ const logoutUser = expressAsyncHandler(async (req: Request, res: Response): Prom
   res.json({ message: 'logged out successfully' });
 });
 
-export { registerUser, loginUser, updateUser,updateUserProfile, deleteUser, logoutUser, getUserById, getAllUsers,searchUsers };
+const addContact = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { contactNames } = req.body;
+
+  if (!contactNames || contactNames.length === 0) {
+    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "Invalid contacts" });
+    return;
+  }
+
+  if (!req.user || !req.user._id) {
+    res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: "Unauthorized: Login to continue" });
+    return;
+  }
+
+  // Fetch the logged-in user
+  const loggedInUser = await User.findById(req.user._id);
+  if (!loggedInUser) {
+    res.status(HttpStatusCodes.NOT_FOUND).json({ error: "User not found" });
+    return;
+  }
+
+  const foundContacts = await User.find({ name: { $in: contactNames } }, "_id");
+
+  if (foundContacts.length === 0) {
+    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "No valid contacts found." });
+    return;
+  }
+
+  // Add contacts while avoiding duplicates
+  const newContactIds: mongoose.Types.ObjectId[] = foundContacts.map((user) => user._id as mongoose.Types.ObjectId);
+
+  // Ensure loggedInUser.contacts is an array before spreading it
+  loggedInUser.contacts = [
+    ...new Set([...(loggedInUser.contacts ?? []), ...newContactIds]),
+  ] as mongoose.Types.ObjectId[];
+
+  await loggedInUser.save();
+
+
+
+  // Populate contacts before sending response
+  const updatedUser = await loggedInUser.populate("contacts");
+
+  res.status(HttpStatusCodes.OK).json({ contacts: updatedUser.contacts });
+});
+
+const getContacts = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
+
+   if (!req.user || !req.user._id) {
+    res.status(HttpStatusCodes.UNAUTHORIZED).json({ error: "Unauthorized: Login to continue" });
+    return;
+  }
+
+  const user = await User.findById(req?.user?._id).populate('contacts');
+
+  res.json({ contacts:user?.contacts });
+})
+
+const removeContact = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { contactId } = req.params;
+
+  if (!contactId) {
+    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "Invalid contact ID" });
+    return;
+  }
+
+  if (!req.user || !req.user._id) {
+    res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: "Unauthorized: Login to continue" });
+    return;
+  }
+
+  // Fetch the logged-in user
+  const loggedInUser = await User.findById(req.user._id);
+  if (!loggedInUser) {
+    res.status(HttpStatusCodes.NOT_FOUND).json({ message: "User not found" });
+    return;
+  }
+
+  if (!Array.isArray(loggedInUser.contacts)) {
+    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "Contacts data is not available" });
+    return;
+  }
+
+  // Find index of the contact
+  const contactIndex = loggedInUser.contacts.findIndex((c) => c.equals(contactId));
+
+  if (contactIndex === -1) {
+    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "You are not associated with that contact ID" });
+    return;
+  }
+
+  // Remove the contact
+  loggedInUser.contacts.splice(contactIndex, 1);
+
+  await loggedInUser.save();
+
+  res.status(HttpStatusCodes.OK).json({ message: "Contact removed successfully", contacts: loggedInUser.contacts });
+});
+
+
+export { registerUser, loginUser, updateUser,updateUserProfile, deleteUser, logoutUser, getUserById, getAllUsers,searchUsers, addContact, getContacts, removeContact };

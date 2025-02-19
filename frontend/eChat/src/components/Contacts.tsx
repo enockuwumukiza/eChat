@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
+import { setUsers } from "../store/slices/userSlice";
 import { useLazyGetUsersQuery } from "../store/slices/usersApiSlice";
 import { useLazyGetGroupsQuery } from "../store/slices/groupApiSlice";
 import { RootState } from "../store/store";
@@ -9,13 +10,15 @@ import { Divider } from "@mui/material";
 import GroupCard from "../excerpts/GroupCard";
 import ContactCard from "../excerpts/ContactCard";
 import { setGroupData } from "../store/slices/groupSlice";
-import { setUsers } from "../store/slices/userSlice";
+import NoContactsMessage from "../utils/NoContactsMessage";
+
 
 const Contacts: React.FC = () => {
   const dispatch = useDispatch();
 
   const isGroupChat = useSelector((state: RootState) => state.display.isGroupChat);
   const isSingleChat = useSelector((state: RootState) => state.display.isSingleChat);
+  const users = useSelector((state: RootState) => state.users?.userContacts);
 
   // API hooks
   const [triggerGetUsers, { data: usersData, isLoading }] = useLazyGetUsersQuery();
@@ -38,6 +41,8 @@ const Contacts: React.FC = () => {
     }
   }, [usersData, dispatch]);
 
+  
+
   if (isLoading) {
     return (
       <div className="absolute left-[30%] top-80">
@@ -59,7 +64,7 @@ const Contacts: React.FC = () => {
     );
   }
 
-  const userList = usersData?.users || [];
+  
   const groupList = groupsData?.groups || [];
 
   return (
@@ -69,8 +74,8 @@ const Contacts: React.FC = () => {
       
     >
       {isSingleChat && !isGroupChat ? (
-        userList.length > 0 ? (
-          userList.map((user:any) => (
+        users.length > 0 ? (
+          users.map((user:any) => (
             <React.Fragment key={user._id}>
               <ContactCard user={user} />
               <Divider className="" sx={{
@@ -90,7 +95,7 @@ const Contacts: React.FC = () => {
             </React.Fragment>
           ))
         ) : (
-          <div className="text-center text-gray-400">No users found</div>
+            <NoContactsMessage/>
         )
       ) : groupList.length > 0 ? (
         groupList.map((group:any) => (

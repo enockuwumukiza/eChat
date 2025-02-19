@@ -169,7 +169,6 @@ const sendGroupMessage = expressAsyncHandler(async (req: Request, res: Response)
     res.status(HttpStatusCodes.CREATED).json({ message, group });
     
   } catch (error) {
-    console.error('Error sending group message:', error);
     res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed to send message' });
   }
 });
@@ -346,7 +345,6 @@ const sendSingleMessage = expressAsyncHandler(async (req: Request, res: Response
     });
 
   } catch (error) {
-    console.error('Error sending single message:', { error, senderId, receiverId });
     res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR).json({
       message: 'Failed to send message.',
     });

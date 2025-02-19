@@ -56,11 +56,34 @@ const VoiceCall: React.FC = () => {
 
 
   const configuration: RTCConfiguration = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "turn:turn.bistri.com:80", username: "homeo", credential: "homeo" },
-    ],
-  };
+
+      iceServers: [
+        { "urls": "stun:stun.l.google.com:19302" },
+         {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80?transport=tcp",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:443",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      {
+        urls: "turns:global.relay.metered.ca:443?transport=tcp",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      ]
+  }
 
   useEffect(() => {
     startLocalStream(); 
@@ -76,13 +99,15 @@ const VoiceCall: React.FC = () => {
 
   const startLocalStream = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true});
         localStream.current = stream;
         if (localAudioRef.current) localAudioRef.current.srcObject = stream;
 
 
       } catch (error) {
-        toast.error("Failed to access microphone. Please check your permissions.");
+        if (isAudioCallEnabled || caller) {
+          toast.error("Failed to access microphone. Please check your permissions.");
+        }
       }
     };
     

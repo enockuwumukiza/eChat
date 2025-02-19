@@ -21,10 +21,10 @@ const groupsSlice = apiSlice.injectEndpoints({
             invalidatesTags: ({ groupId }) => [{ type: 'GroupMembers', id: groupId }], // Invalidate group members
         }),
         removeGroupMember: builder.mutation({
-            query: ({ groupId, data }) => ({
+            query: ({ groupId, memberName }) => ({
                 url: `${GROUP_URL}/remove/${groupId}`,
                 method: 'POST',
-                body: data
+                body: { memberName }
             }),
             invalidatesTags: ({ groupId }) => [{ type: 'GroupMembers', id: groupId }], // Invalidate group members
         }),

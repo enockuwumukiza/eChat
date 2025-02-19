@@ -11,8 +11,9 @@ export interface IUser extends Document {
   profilePicture?: string;
   status: string;
   lastSeen?: Date;
-  chats: mongoose.Types.ObjectId[];
+  chats?: mongoose.Types.ObjectId[];
   isAdmin: boolean;
+  contacts?: mongoose.Types.ObjectId[];
 }
 
 // Mongoose schema
@@ -49,14 +50,20 @@ const userSchema: Schema = new Schema(
       type: String,
       default: "Hey there! I am using eChat",
     },
-    isAdmin: {
-      type:Boolean,
-      default:false
+    about: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default:'active'
     },
     profilePicture: {
       type: String,
       default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
+    contacts:[
+      {
+        type:mongoose.Schema.Types.ObjectId, ref:'User'
+      }
+    ],
     chats: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
     ],

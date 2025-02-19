@@ -7,6 +7,8 @@ import Home from './pages/Home'
 import Loader from './utils/Loader'
 import { useAuth } from './hooks/useAuth'
 import { useListenNotifications } from './hooks/useListenNotifications'
+import WelcomePage from './pages/WelcomePage'
+
 
 const  InternetStatus = lazy(()  => import( './utils/InternetStatus'))
 const  VideoCall = lazy(()  => import( './audio-chats/VideoCall'))
@@ -34,12 +36,11 @@ const App: React.FC = () => {
     <Suspense fallback={<Loader />}>
       <InternetStatus/>
       <Routes>
-        <Route path='/' element={authUser ? <Home />: <Navigate to={'/login'} />} />
+        <Route path='/' element={authUser ? <Home /> : <Navigate to={'/welcome'} />} />
+        <Route path='/welcome' element={ <WelcomePage/> } />
         <Route path='/signup' element={ <SignupPage/> } />
         <Route path='/login' element={<LoginPage />} />
         <Route path='*' element={<NotFoundPage />} />
-        
-      
       </Routes>
       <VoiceCall />
       <VideoCall/>

@@ -33,8 +33,6 @@ const MessageCard = ({msg, id,isGroupChat, isSingleChat,setDisplayGroupMessages,
         setDisplayGroupMessages((prevMessages:any) => prevMessages.filter((msg:any) => msg._id !== id));
       }
 
-      toast.success('message deleted');
-
     } catch (error: any) {
       
       toast.error(error?.data?.message || error?.message || 'error deleting message')

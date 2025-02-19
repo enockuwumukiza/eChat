@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import store from './store/store.tsx'
 import 'react-toastify/dist/ReactToastify.css'
 import 'modern-normalize/modern-normalize.css'
+import "react-phone-input-2/lib/style.css";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

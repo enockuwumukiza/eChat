@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  Chat,
   Forum,
   Notifications,
   People,
   Settings,
   Palette,
-  LogoutRounded
+  LogoutRounded,
+  ManageAccounts
 
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAuth } from '../hooks/useAuth';
 import { themes } from '../utils/themes';
 
-import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSettingsShown, setIsSingleChat, setIsThemesShown } from '../store/slices/displaySlice';
+import { setIsGroupChat, setIsNotificationShown, setIsProfileModalOpen, setIsSettingsShown, setIsSingleChat, setIsThemesShown, setIsContactsListShown } from '../store/slices/displaySlice';
 import { RootState } from '../store/store';
 import { useLogoutUserMutation } from '../store/slices/usersApiSlice';
 
@@ -31,9 +31,9 @@ const Sidebar: React.FC = () => {
   
 
   const isProfileModalOpen = useSelector((state: RootState) => state.display.isProfileModalOpen);
-  const groupsData: any = useSelector((state: RootState) => state.group.groupData);
   const isNotificationShown = useSelector((state: RootState) => state.display.isNotificationShown);
   const isSettingsShown = useSelector((state: RootState) => state.display.isSettingsShown);
+  const isContactsListShown = useSelector((state: RootState) => state.display.isContactsListShown);
 
 
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
@@ -52,16 +52,9 @@ const Sidebar: React.FC = () => {
     dispatch(setGroupInfo(null));
   }
   const handleDisplayGroups:any = () => {
-    if (groupsData?.groups) {
-        dispatch(setIsGroupChat(true));
-        dispatch(setIsSingleChat(false));
-        dispatch(setReceiverInfo(null));
-      
-      }
-       else if(!groupsData?.groups){
-        toast.info("No groups found");
-        return;
-       }
+    dispatch(setIsGroupChat(true));
+    dispatch(setIsSingleChat(false));
+    dispatch(setReceiverInfo(null));
 
     
   }
@@ -89,20 +82,22 @@ const Sidebar: React.FC = () => {
     }}>
       <div className='flex flex-col gap-12 m-2'>
         <div className='flex flex-col gap-6'>
-        <Tooltip title='messages'>
-          <IconButton>
-              <Chat htmlColor='white'
-                
-                sx={{
-                    fontSize: {
-                      xs: "30px",
-                      sm: "40px",
-                      md: "70px",
-                      lg: "35px",
-                    },
-                  }}
-              />
-          </IconButton>
+        <Tooltip title='Contacts'>
+            <IconButton onClick={() => {
+              dispatch(setIsContactsListShown(!isContactsListShown))
+        }}>
+            <ManageAccounts htmlColor='white'
+              
+              sx={{
+                  fontSize: {
+                    xs: "30px",
+                    sm: "40px",
+                    md: "70px",
+                    lg: "35px",
+                  },
+                }}
+            />
+        </IconButton>
         </Tooltip>
         <Tooltip title='groups'>
           <IconButton onClick={handleDisplayGroups}>

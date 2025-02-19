@@ -74,11 +74,35 @@ const VideoCall: React.FC = () => {
   const calleeMediaRecorder = useRef<MediaRecorder | null>(null);
 
   const configuration: RTCConfiguration = {
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" },
-      { urls: "turn:turn.bistri.com:80", username: "homeo", credential: "homeo" },
-    ],
-  };
+
+      iceServers: [
+        { "urls": "stun:stun.l.google.com:19302" },
+         {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:80?transport=tcp",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      {
+        urls: "turn:global.relay.metered.ca:443",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      {
+        urls: "turns:global.relay.metered.ca:443?transport=tcp",
+        username: "f63354cec90be8afccb5daf1",
+        credential: "OpXN8HkDkImk5tGt",
+      },
+      ]
+  }
+
 
   useEffect(() => {
     socket.connect();
@@ -154,7 +178,9 @@ const VideoCall: React.FC = () => {
         localStream.current = stream;
         if (localVideoRef.current) localVideoRef.current.srcObject = stream;
       } catch (error) {
-        toast.error("Failed to access camera and microphone.");
+        if (isVideoCallEnabled || caller) {
+          toast.error("Failed to access camera and microphone.");
+        }
       }
     };
     if (isVideoCallEnabled || caller) {
@@ -383,8 +409,6 @@ const VideoCall: React.FC = () => {
     });
     setIsCallGoingOn(false);
     dispatch(setIsVideoCallEnabled(false));
-
-    toast.info("call ended");
 
     setTimeout(() => {
       window.location.reload();

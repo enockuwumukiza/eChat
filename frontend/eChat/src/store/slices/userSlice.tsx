@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface IUState {
     userInfo: Record<string, any> | null,
-    users:any[]
+    users: any[],
+    userContacts:[]
 }
 
 const initialState: IUState = {
     userInfo: JSON.parse(localStorage.getItem('userInfo') || 'null') || null,
-    users:[]
+    users:[],
+    userContacts:[]
 }
 
 const userSlice = createSlice({
@@ -24,11 +26,14 @@ const userSlice = createSlice({
         },
         setUsers:(state,action:PayloadAction<any>) => {
             state.users = action.payload;
+        },
+        setUserContacts:(state,action:PayloadAction<any>) => {
+            state.userContacts = action.payload;
         }
     }
 })
 
 export const {
-    setCredentials, clearCredentials,setUsers,
+    setCredentials, clearCredentials,setUsers,setUserContacts
 } = userSlice.actions;
 export default userSlice.reducer

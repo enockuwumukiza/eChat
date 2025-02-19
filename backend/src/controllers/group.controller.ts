@@ -222,9 +222,12 @@ const removeMemberFromGroup = expressAsyncHandler(async (req: Request, res: Resp
     try {
 
         const group = await Group.findById(groupId);
-        const memberFound = group?.members.find((member) => member?.userId === req?.user?._id);
+        const memberFound = group?.members.find((member: any) => {
+        return member?.userId.toString() === req?.user?._id.toString();
+      });
 
-        if (memberFound?.role !== 'admin') {
+
+        if (memberFound?.role  !== 'admin') {
                 res.status(401).json({
                 message: 'Only admins can remove members from group!'
             });

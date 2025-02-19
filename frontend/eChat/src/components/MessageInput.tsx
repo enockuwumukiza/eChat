@@ -425,6 +425,13 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
   
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+
+    if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      setMessageInput((prev) => prev + "\n");
+      return;
+    }
+
     if (e.key === "Enter") {
       if (messageInput.trim() !== "") {
         
@@ -444,7 +451,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
         }
         
       }
-    }
+    } 
   };
 
   
@@ -605,7 +612,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
                   type="file"
                     id='normalFile'
                     onChange={(e) => handleFileChange(e, 'normalFile')}
-                  accept=".pdf,.doc,.docx,.txt,.zip"
+                  accept=".pdf,.doc,.docx,.txt,.zip, .ppt, .pptx, .xlsx, .py, .html,.js,.jsx,.ts,.tsx"
                   className="hidden"
                 />
               </div>
@@ -690,7 +697,7 @@ const MessageInput = ({  setDisplayMessages,setDisplayGroupMessages }:{ setDispl
                 
               }}>
                
-                <div className="previews mt-4 flex flex-wrap gap-4">
+                <div className="previews w-full mt-4 flex flex-wrap gap-4">
                   {selectedFiles.map((item, index) => renderPreview(item, index, removeFile))}
                 </div>
               </div>

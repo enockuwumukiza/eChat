@@ -10,6 +10,7 @@ interface IDisplaySlice {
     isGroupInfoShown: boolean,
     isGroupOptionsShown: boolean,
     isUserInfoShown: boolean,
+    isReceiverPicShown: boolean,
     isAddNewMemberShown: boolean,
     isNotificationShown:boolean,
     isSingleMessageLoading: boolean,
@@ -19,11 +20,13 @@ interface IDisplaySlice {
     isVideoCallEnabled: boolean,
     currentWindowWidth: number,
     isSettingsShown: boolean,
-    isThemesShwon:boolean,
+    isThemesShwon: boolean,
+    isAddNewContactShown: boolean,
+    isContactsListShown:boolean,
 }
 
 const initialState: IDisplaySlice = {
-    isGroupChat: JSON.parse(localStorage.getItem('isGroupChat') || 'false') || false,
+    isGroupChat: false,
     isSingleChat: JSON.parse(localStorage.getItem('isSingleChat') || 'true') || true,
     isProfileModalOpen: false,
     isNewChatShown: false,
@@ -41,7 +44,10 @@ const initialState: IDisplaySlice = {
     currentWindowWidth: window.innerWidth,
     isChatPageShown: JSON.parse(localStorage.getItem('chatState') || 'true') || window.innerWidth > 1280 ? true : false,
     isSettingsShown: false,
-    isThemesShwon:false,
+    isThemesShwon: false,
+    isReceiverPicShown: false,
+    isAddNewContactShown: false,
+    isContactsListShown:false,
 }
 
 
@@ -51,7 +57,7 @@ const displaySlice = createSlice({
     reducers: {
         setIsGroupChat: (state, action: PayloadAction<boolean>) => {
             state.isGroupChat = action.payload;
-            localStorage.setItem('isGroupChat', JSON.stringify(action.payload));
+            
         },
         setIsSingleChat: (state, action: PayloadAction<boolean>) => {
             state.isSingleChat = action.payload;
@@ -60,8 +66,14 @@ const displaySlice = createSlice({
         setIsProfileModalOpen: (state, action: PayloadAction<boolean>) => {
             state.isProfileModalOpen = action.payload
         },
+        setIsAddNewContactShown: (state, action: PayloadAction<boolean>) => {
+            state.isAddNewContactShown = action.payload
+        },
         setIsNotificationShown: (state, action: PayloadAction<boolean>) => {
             state.isNotificationShown = action.payload
+        },
+        setIsContactsListShown: (state, action: PayloadAction<boolean>) => {
+            state.isContactsListShown = action.payload
         },
         setIsGroupInfoShown: (state, action: PayloadAction<boolean>) => {
             state.isGroupInfoShown = action.payload
@@ -80,6 +92,9 @@ const displaySlice = createSlice({
         },
         setIsUserInfoShown: (state, action: PayloadAction<boolean>) => {
             state.isUserInfoShown = action.payload
+        },
+        setIsReceiverPicShown: (state, action: PayloadAction<boolean>) => {
+            state.isReceiverPicShown = action.payload
         },
         setIsAddNewMemberShown: (state, action: PayloadAction<boolean>) => {
             state.isAddNewMemberShown = action.payload
@@ -116,5 +131,5 @@ const displaySlice = createSlice({
     }
 })
 
-export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown,setIsNotificationShown, setIsSingleMessageLoading, setIsAudioCallEnabled, setCallerData,setIsVideoCallEnabled, setCurrentWindowWidth, setIsChatPageShown, setIsSettingsShown, setIsThemesShown } = displaySlice.actions;
+export const { setIsGroupChat, setIsSingleChat, setIsProfileModalOpen, setIsNewChatShown, setIsCreateGroupShown, setIsMoreOptionsShown, setIsGroupInfoShown,setIsGroupOptionsShown, setIsUserInfoShown,setIsAddNewMemberShown,setIsNotificationShown, setIsSingleMessageLoading, setIsAudioCallEnabled, setCallerData,setIsVideoCallEnabled, setCurrentWindowWidth, setIsChatPageShown, setIsSettingsShown, setIsThemesShown,setIsReceiverPicShown,setIsAddNewContactShown, setIsContactsListShown } = displaySlice.actions;
 export default displaySlice.reducer;

@@ -3,17 +3,19 @@ import { motion } from 'framer-motion'
 import { RootState } from '../store/store'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import { Settings, Logout, GroupAdd } from '@mui/icons-material'
+import { Settings, Logout, GroupAdd, Person, ManageAccounts } from '@mui/icons-material'
 import { IconButton, CircularProgress } from '@mui/material'
 import { useLogoutUserMutation } from '../store/slices/usersApiSlice'
 import { useAuth } from '../hooks/useAuth'
-import { setIsCreateGroupShown, setIsMoreOptionsShown, setIsSettingsShown } from '../store/slices/displaySlice'
+import { setIsCreateGroupShown, setIsMoreOptionsShown, setIsSettingsShown, setIsProfileModalOpen, setIsContactsListShown } from '../store/slices/displaySlice'
 
 const MoreOptions = () => {
   const { logout } = useAuth()
   const dispatch = useDispatch()
   const isCreateGroupShown = useSelector((state: RootState) => state.display.isCreateGroupShown);
   const isSettingsShown = useSelector((state: RootState) => state.display.isSettingsShown);
+  const isProfileModalOpen = useSelector((state: RootState) => state.display.isProfileModalOpen);
+  const isContactsListShown = useSelector((state: RootState) => state.display.isContactsListShown);
 
   const [logoutUser, { isLoading }] = useLogoutUserMutation()
 
@@ -62,6 +64,35 @@ const MoreOptions = () => {
               marginLeft:"-40px"
             }} />
             <span className='text-white'>Settings</span>
+          </IconButton>
+          {/* Profile Button */}
+          <IconButton className='flex items-center gap-4 text-white font-semibold text-lg px-5 py-3 rounded-md transition duration-300 bg-[#10B981] hover:bg-[#059669] shadow-lg'
+            
+            onClick={() => dispatch(setIsProfileModalOpen(!isProfileModalOpen))}>
+          
+            <Person sx={{
+              color: 'white',
+              fontSize: 30,
+              marginLeft:"-50px"
+            }} />
+            <span className='text-white'>Profile</span>
+          </IconButton>
+
+          <IconButton className='flex items-center gap-4 text-white font-semibold text-lg px-5 py-3 rounded-md transition duration-300 bg-[#10B981] hover:bg-[#059669] shadow-lg'
+            
+            onClick={() => {
+              dispatch(setIsMoreOptionsShown(false));
+              dispatch(setIsContactsListShown(!isContactsListShown));
+
+            }
+            }>
+          
+            <ManageAccounts sx={{
+              color: 'white',
+              fontSize: 30,
+              marginLeft:"-20px"
+            }} />
+            <span className='text-white'>Contacts</span>
           </IconButton>
 
           {/* Logout Button */}

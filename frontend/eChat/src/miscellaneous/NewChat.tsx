@@ -8,7 +8,7 @@ import {
 import { motion } from 'framer-motion'
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import { setIsCreateGroupShown, setIsMoreOptionsShown, setIsNewChatShown } from '../store/slices/displaySlice';
+import { setIsCreateGroupShown, setIsMoreOptionsShown, setIsNewChatShown, setIsAddNewContactShown } from '../store/slices/displaySlice';
 import { useAuth } from '../hooks/useAuth';
 
 
@@ -18,6 +18,7 @@ const NewChat = () => {
 
     const dispatch = useDispatch();
     const isCreateGroupShown = useSelector((state: RootState) => state.display.isCreateGroupShown);
+    const isAddNewContactShown = useSelector((state: RootState) => state.display.isAddNewContactShown);
 
     const closeNewChat = () => {
         dispatch(setIsNewChatShown(false));
@@ -31,7 +32,7 @@ const NewChat = () => {
 
   return (
     <React.Fragment>
-          <motion.div className="fixed lg:left-52 lg:-ml-2 flex flex-col lg:gap-6 bg-sky-900 p-6 z-50 w-[100%] md:w-[100%] lg:w-[45%] rounded-lg shadow-xl shadow-gray-800 text-white h-full"
+          <motion.div className="fixed lg:left-52 lg:-ml-2 flex flex-col lg:gap-6 bg-sky-900 p-6 z-50 w-[100%] md:w-[100%] lg:w-[43.2%] shadow-xl shadow-gray-800 text-white h-full"
             
               initial={{ x: '-130%' }}
               animate={{ x: '0%' }}
@@ -47,18 +48,7 @@ const NewChat = () => {
           </IconButton>
           <p className="text-2xl md:text-3xl lg:text-xl font-semibold">New Chat</p>
         </div>
-
-        {/* Search Bar */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search name or number"
-            className="w-full pl-14 pr-4 py-2 bg-sky-800 rounded-lg text-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
-          />
-          <IconButton className="absolute bottom-12" onClick={closeNewChat}>
-            <ArrowBack fontSize="large" htmlColor="white" />
-          </IconButton>
-        </div>
+  
 
         {/* Options */}
         <div className="flex flex-col gap-4 mt-4">
@@ -72,8 +62,8 @@ const NewChat = () => {
           <Divider className="border-gray-600" />
 
           {/* New Contact */}
-          <div className="flex items-center gap-4 p-3 hover:bg-sky-800 rounded-lg transition-all cursor-pointer">
-            <div className="bg-teal-600 p-3 rounded-full">
+          <div className="flex items-center gap-4 p-3 hover:bg-sky-800 rounded-lg transition-all cursor-pointer" onClick={() => dispatch(setIsAddNewContactShown(!isAddNewContactShown))}>
+            <div className="bg-teal-600 p-3 rounded-full" >
               <PersonAdd fontSize="large" htmlColor="white" />
             </div>
             <span className="text-2xl md:text-3xl lg:text-xl font-semibold">New Contact</span>

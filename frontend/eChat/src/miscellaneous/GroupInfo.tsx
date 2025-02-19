@@ -20,7 +20,7 @@ const GroupInfo: FC = () => {
   
 
   const [triggerGetGroupById, { data: groupData }] = useLazyGetGroupByIdQuery();
-  const [removeGroupMember] = useRemoveGroupMemberMutation();
+  const [removeGroupMember, { isLoading }] = useRemoveGroupMemberMutation();
 
   const { authUser } = useAuth();
   const [open, setOpen] = React.useState(false);
@@ -41,19 +41,16 @@ const GroupInfo: FC = () => {
   }, [isGroupInfoShown]);
 
 
-  const handleRemoveGroupMember = async (member:any) => {
+  const handleRemoveGroupMember = async (memberName:any) => {
     try {
-      await removeGroupMember({ groupId, data: { memberName: member } }).unwrap();
+      await removeGroupMember({ groupId,  memberName }).unwrap();
       dispatch(setIsGroupInfoShown(false));
       setOpen(false);
-      toast.success(`${member} removed successfully!`);
 
     } catch (error:any) {
       toast.error(error?.data?.message || error?.message || 'Error removing member');
     }
   }
-
-  
 
   return (
     <div className="fixed">
@@ -72,8 +69,13 @@ const GroupInfo: FC = () => {
             bgcolor: "background.paper",
             borderRadius: 2,
             boxShadow: 3,
-            width: "80%",
-            maxWidth: 800,
+            width: {
+              xs:'100%',
+              sm: '100%',
+              md: '100%',
+              lg:'60%'
+            },
+
             p: 4,
             display: "flex",
             flexDirection: "column",
@@ -113,8 +115,8 @@ const GroupInfo: FC = () => {
             Group Admin: <strong>{groupData?.group?.groupAdmin?.name || "N/A"}</strong>
           </Typography>
           <Divider sx={{ width: "100%", my: 2 }} />
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "text.primary" }}>
-            Group Members: {groupData?.group?.members?.length || 0}
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "text.primary", margin:'0px 30px' }}>
+            Group Members: {groupData?.group?.members?.length -1  || 0}  + <span className="font-semibold text-sky-200">Admin</span>
           </Typography>
           <div
             style={{
@@ -125,7 +127,7 @@ const GroupInfo: FC = () => {
               gap: 16,
             }}
           >
-            {groupData?.group?.members?.map((member: any) => (
+            {groupData?.group?.members?.filter((m:any) => m?.role !== 'admin').map((member: any) => (
               <div
                 key={member?.userId?._id}
                 style={{
@@ -153,7 +155,7 @@ const GroupInfo: FC = () => {
                   onClick={() => handleRemoveGroupMember(member?.userId?.name)}
                   sx={{ mt: 2, alignSelf: "center" , width:'100px'}}
                 >
-                  Remove
+                  { isLoading ? "Removing..." : "Remove"}
                 </Button>
                   )
                 }

@@ -47,6 +47,21 @@ const usersApiSlice = apiSlice.injectEndpoints({
                 credentials:'include'
             })
         }),
+        addContacts: builder.mutation({
+            query: ({ contactNames }) => ({
+                url: `${USER_URL}/addContacts`,
+                method:'POST',
+                body: { contactNames },
+                credentials:'include'
+            })
+        }),
+        removeContact: builder.mutation({
+            query: ({ contactId }) => ({
+                url: `${USER_URL}/removeContact/${contactId}`,
+                method:'POST',
+                credentials:'include'
+            })
+        }),
         getUsers: builder.query({
             query:() => USER_URL
         }),
@@ -65,6 +80,8 @@ export const {
     useDeleteUserMutation,
     useUpdateUserMutation,
     useUpdateUserProfileMutation,
+    useAddContactsMutation,
+    useRemoveContactMutation,
     useLoginUserMutation,
     useLogoutUserMutation,
     useLazyGetUsersQuery,

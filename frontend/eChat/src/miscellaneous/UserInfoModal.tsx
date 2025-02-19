@@ -4,12 +4,16 @@ import { Close } from "@mui/icons-material";
 import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../store/store";
 import { setReceiverInfo } from "../store/slices/messageSlice";
+import { setIsReceiverPicShown} from "../store/slices/displaySlice";
+
 const UserInfoModal: FC = () => {
 
   const dispatch = useDispatch();
   const isUserInfoShown = useSelector((state: RootState) => state.display.isUserInfoShown);
-  const chattingUser:any = useSelector((state: RootState) => state.message.receiverInfo);
+  const chattingUser: any = useSelector((state: RootState) => state.message.receiverInfo);
+  const isReceiverPicShown = useSelector((state: RootState) => state.display.isReceiverPicShown);
   const [open, setOpen] = React.useState(false);
+  
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -53,8 +57,15 @@ const UserInfoModal: FC = () => {
 
         <Divider className="my-4" />
 
-        <div className="flex flex-col items-center space-y-4">
+        <div className="flex flex-col items-center cursor-pointer space-y-4">
           <Avatar
+            className="cursor-pointer"
+            onClick={() => {
+              dispatch(setIsReceiverPicShown(!isReceiverPicShown));
+              
+            }
+              
+            }
             src={chattingUser?.profilePicture || "/default-avatar.png"}
             alt={chattingUser?.name || "User"}
             sx={{ width: 100, height: 100 }}
