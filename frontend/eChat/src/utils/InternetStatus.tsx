@@ -12,6 +12,7 @@ const InternetStatus = () => {
       // Hide the "You're back online" message after 5 seconds
       setTimeout(() => {
         setShowBackOnlineMessage(false);
+        window.location.reload();
       }, 5000);
     };
 
