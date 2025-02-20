@@ -166,7 +166,7 @@ const Home: React.FC = () => {
         </AnimatePresence>
         <AnimatePresence>{isCreateGroupShown && <GroupChat  />}</AnimatePresence>
         
-        <AnimatePresence>{isAddNewContactShown && <AddNewContact setAllContacts={setAllContacts} allContacts={allContacts}/>}</AnimatePresence>
+        <AnimatePresence>{isAddNewContactShown && <AddNewContact setAllContacts={setAllContacts} />}</AnimatePresence>
         {!isNewChatShown && !isCreateGroupShown && <Contacts allContacts={allContacts}/>}
         {isNotificationShown && <NotificationModal />}
         {isSettingsShown && <Settings />}
