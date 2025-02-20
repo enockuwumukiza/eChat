@@ -14,7 +14,7 @@ import { useLazySearchUsersQuery } from '../store/slices/usersApiSlice';
 import { useAddContactsMutation } from '../store/slices/usersApiSlice';
 
 
-const AddNewContact = ({ setAllContacts, allContacts}:{setAllContacts:any, allContacts:any}) => {
+const AddNewContact = ({ setAllContacts}:{setAllContacts:any}) => {
 
   const dispatch = useDispatch();
 
