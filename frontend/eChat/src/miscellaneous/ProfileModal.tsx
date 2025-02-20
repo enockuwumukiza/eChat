@@ -32,7 +32,7 @@ const ProfileModal: FC = () => {
           className="bg-white rounded-lg shadow-lg w-96 p-6 flex flex-col items-center space-y-4"
         >
           <div className="w-full flex justify-between items-center">
-            <Typography variant="h5" className="font-bold tex-sky-900">
+              <Typography variant="h5" className="font-bold text-sky-500">
               {authUser?.user?.name}
             </Typography>
             <IconButton onClick={handleClose} className="text-gray-500">
@@ -44,10 +44,10 @@ const ProfileModal: FC = () => {
             alt={authUser?.user?.name}
             className="w-36 h-36 rounded-full shadow-md"
                       />
-            <Typography className="text-lg">
+            <Typography className="text-lg text-sky-500">
             Phone: +{authUser?.user?.phone}
           </Typography>
-          <Typography className="text-lg">
+          <Typography className="text-lg text-sky-500">
             Email: {authUser?.user?.email}
           </Typography>
           <Button

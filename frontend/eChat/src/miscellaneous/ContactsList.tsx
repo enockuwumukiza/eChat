@@ -1,14 +1,14 @@
 import React from "react";
-import { motion} from "framer-motion";
+import { motion } from "framer-motion";
 import { IconButton, Avatar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { toast } from "react-toastify";
 import { setUserContacts } from "../store/slices/userSlice";
-
+import { copyToClipboard } from "../utils/copyToClipboard";
+import { toast } from "react-toastify";
 
 import { useRemoveContactMutation } from "../store/slices/usersApiSlice";
 
@@ -19,6 +19,8 @@ import { RootState } from "../store/store";
 const ContactsList: React.FC<any> = ({ setAllContacts, allContacts}:{setAllContacts:any, allContacts:any}) => {
 
   const dispatch = useDispatch();
+
+  const [currentId, setCurrentId] = React.useState(null);
   
   
     
@@ -39,8 +41,9 @@ const ContactsList: React.FC<any> = ({ setAllContacts, allContacts}:{setAllConta
     }
   };
 
+  
   return (
-    <div className="fixed -left-[8%] md:left-[25%] lg:left-[15.13%] top-[22%] md:top-[18%] lg:top-[32%] bg-slate-600 text-gray-50 w-[115%] md:w-[75%] lg:w-[44.3%] h-[100%] md:h-[100%] lg:h-[70%] z-50  overflow-y-auto shadow-lg p-10">
+    <div className="fixed -left-[8%] md:left-[25%] lg:left-[15.13%] top-[22%] md:top-[18%] lg:top-[32%] bg-slate-600 text-gray-50 w-[115%] md:w-[75%] lg:w-[43.2%] h-[100%] md:h-[100%] lg:h-[70%] z-50  overflow-y-auto shadow-lg p-10">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">📇 { allContacts?.length > 0 ? "Contacts":"No Contacts" }</h2>
 
       <motion.div>
@@ -54,12 +57,15 @@ const ContactsList: React.FC<any> = ({ setAllContacts, allContacts}:{setAllConta
             className="flex items-center justify-between p-2 md:p-3 lg:p-4 mb-3 bg-gray-100 rounded-lg shadow-md"
           >
             <div className="flex items-center space-x-0 md:space-x-3 lg:space-x-4">
-              <Avatar className="bg-blue-500 text-white" src={contact?.profilePicture } />
+              <Avatar onDoubleClick={() => copyToClipboard(contact?.profilePicture)} className="bg-blue-500 text-white cursor-pointer" src={contact?.profilePicture}
+                
+                
+              />
               <div className="">
-                <h3 className="text-[13px] md:text-[30px] lg:text-[20px] text-slate-700 font-semibold">{contact?.name}</h3>
-                <p className="text-gray-600 flex items-center text-[13px] md:text-[20px] lg:text-[20px]"><EmailIcon className="mr-2 text-blue-400 "
+                <h3 className="text-[13px] md:text-[30px] lg:text-[20px] text-slate-700 font-semibold cursor-pointer" onDoubleClick={() => copyToClipboard(contact?.name)}>{contact?.name}</h3>
+                <p className="text-gray-600 flex items-center text-[13px] md:text-[20px] lg:text-[20px] cursor-pointer" onDoubleClick={() => copyToClipboard(contact?.email)}><EmailIcon className="mr-2 text-blue-400 "
                 /> {contact.email}</p>
-                <p className="text-gray-600 flex items-center text-[13px] md:text-[20px] lg:text-[20px]"><PhoneIcon className="mr-2 text-green-400" /> +{contact.phone}</p>
+                <p className="text-gray-600 flex items-center text-[13px] md:text-[20px] lg:text-[20px]"><PhoneIcon onDoubleClick={() => copyToClipboard(contact?.phone)} className="mr-2 text-green-400 cursor-pointer" /> +{contact.phone}</p>
               </div>
             </div>
 
@@ -69,13 +75,18 @@ const ContactsList: React.FC<any> = ({ setAllContacts, allContacts}:{setAllConta
                 {contact.about}
               </span>
 
-              <IconButton onClick={() => handleRemoveContact(contact._id)} className="hover:bg-red-100 transition absolute right-[9%] md:right-[0%] lg:right-[0%]">
+              <IconButton onClick={() => {
+                handleRemoveContact(contact._id);
+                setCurrentId(contact._id);
+              }
+                
+              } className="hover:bg-red-100 transition absolute right-[9%] md:right-[0%] lg:right-[0%]">
                 {
-                  isLoading ? "Deleting..." : <DeleteIcon
+                  isLoading && currentId && contact._id === currentId ? <span className="text-[12px] text-sky-300">Deleting..</span>: <DeleteIcon
                      sx={{
                       fontSize: {
-                        xs: "20px",
-                        sm: "20px",
+                        xs: "25px",
+                        sm: "25px",
                         md: "70px",
                         lg: "35px",
                       },

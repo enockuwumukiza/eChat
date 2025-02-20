@@ -50,26 +50,59 @@ const Home: React.FC = () => {
   const [allContacts, setAllContacts] = useState<any[]>([])
 
   useEffect(() => {
-      (
-        async () => {
-  
-          try {
-            const response = await axios.get('https://echat-fieq.onrender.com/api/users/getContacts', {
-              withCredentials:true
-            });
-            if (response?.data?.contacts) {
-              setAllContacts(response?.data?.contacts);
-              dispatch(setUserContacts(response?.data?.contacts));
-              
-            }
-  
-          } catch (error:any) {
-            toast.error(error?.data?.message || error?.message || 'failed to fetch contacts');
-          }
+    (async () => {
+      try {
+        const response = await axios.get('https://echat-fieq.onrender.com/api/users/getContacts', {
+          withCredentials: true
+        });
+
+        if (response?.data?.contacts) {
+          setAllContacts((prev: any) => {
+            const newContacts = Array.isArray(response?.data?.contacts) ? response.data.contacts : [response?.data?.contacts];
+            
+            // Merge existing contacts and new contacts while keeping only unique ones
+            const uniqueContacts = [...prev, ...newContacts].filter(
+              (contact, index, self) =>
+                index === self.findIndex((c) => c._id === contact._id)
+            );
+
+            return uniqueContacts;
+          });
+
+          dispatch(setUserContacts(response?.data?.contacts));
         }
-  
-      )()
-    },[]);
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || error?.message || 'Failed to fetch contacts');
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axios.get('https://echat-fieq.onrender.com/api/users/getContactsMe', {
+          withCredentials: true
+        });
+
+        if (response?.data?.users) {
+          setAllContacts((prev: any) => {
+            const newUsers = Array.isArray(response?.data?.users) ? response.data.users : [response?.data?.users];
+
+            // Merge existing users and new users while keeping only unique ones
+            const uniqueUsers = [...prev, ...newUsers].filter(
+              (user, index, self) =>
+                index === self.findIndex((u) => u._id === user._id)
+            );
+
+            return uniqueUsers;
+          });
+        }
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || error?.message || 'Failed to fetch my people');
+      }
+    })();
+  }, []);
+
 
 
   useEffect(() => {

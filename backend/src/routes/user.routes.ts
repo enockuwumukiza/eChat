@@ -1,6 +1,6 @@
 import express, { Express, } from "express";
 import { verifyToken } from "../middlewares/VerifyToken";
-import { registerUser, loginUser, updateUser, deleteUser, logoutUser, getUserById, getAllUsers, searchUsers, updateUserProfile, addContact, getContacts, removeContact } from "../controllers/user.controller";
+import { registerUser, loginUser, updateUser, deleteUser, logoutUser, getUserById, getAllUsers, searchUsers, updateUserProfile, addContact, getContacts, removeContact, getUsersWhoAddedMe } from "../controllers/user.controller";
 import { uploader } from "../middlewares/uploader";
 
 const userRoutes = express.Router();
@@ -12,6 +12,7 @@ userRoutes.route('/')
 
 userRoutes.post('/addContacts', verifyToken, addContact);
 userRoutes.get('/getContacts', verifyToken, getContacts);
+userRoutes.get('/getContactsMe', verifyToken, getUsersWhoAddedMe);
 userRoutes.post('/login', loginUser);
 userRoutes.post('/logout', logoutUser);
 userRoutes.get('/search', verifyToken, searchUsers);

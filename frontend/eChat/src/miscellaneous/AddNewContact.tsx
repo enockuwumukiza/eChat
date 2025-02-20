@@ -85,9 +85,6 @@ const AddNewContact = ({ setAllContacts, allContacts}:{setAllContacts:any, allCo
       dispatch(setIsAddNewContactShown(false));
       dispatch(setIsNewChatShown(false));
       
-      console.log('response: ', response);
-      console.log('all contacts: ', allContacts);
-      
     } catch (error: any) {
       console.error("Error adding contacts:", error);
       toast.error(error?.data?.message || error?.message || "Error adding new contact(s)");

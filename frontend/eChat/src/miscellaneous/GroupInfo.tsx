@@ -6,7 +6,7 @@ import { RootState } from "../store/store";
 import { useSelector,useDispatch } from "react-redux";
 import { useLazyGetGroupByIdQuery, useRemoveGroupMemberMutation } from "../store/slices/groupApiSlice";
 import { toast} from "react-toastify";
-import { setIsGroupInfoShown } from "../store/slices/displaySlice";
+import { setIsGroupInfoShown, setIsGroupOptionsShown } from "../store/slices/displaySlice";
 import { useProtectGroup } from "../hooks/useProtectGroup";
 
 const GroupInfo: FC = () => {
@@ -24,6 +24,7 @@ const GroupInfo: FC = () => {
 
   const { authUser } = useAuth();
   const [open, setOpen] = React.useState(false);
+  const [currentId, setCurrentId] = React.useState(null);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -45,7 +46,9 @@ const GroupInfo: FC = () => {
     try {
       await removeGroupMember({ groupId,  memberName }).unwrap();
       dispatch(setIsGroupInfoShown(false));
+      dispatch(setIsGroupOptionsShown(false));
       setOpen(false);
+      await triggerGetGroupById(groupId)
 
     } catch (error:any) {
       toast.error(error?.data?.message || error?.message || 'Error removing member');
@@ -152,10 +155,14 @@ const GroupInfo: FC = () => {
                     <Button
                   variant="contained"
                   color="warning"
-                  onClick={() => handleRemoveGroupMember(member?.userId?.name)}
+                      onClick={() => {
+                        handleRemoveGroupMember(member?.userId?.name);
+                        setCurrentId(member?.userId?._id)
+                      }
+                      }
                   sx={{ mt: 2, alignSelf: "center" , width:'100px'}}
                 >
-                  { isLoading ? "Removing..." : "Remove"}
+                  { isLoading && currentId && member?.userId?._id === currentId ? "Removing..." : "Remove"}
                 </Button>
                   )
                 }

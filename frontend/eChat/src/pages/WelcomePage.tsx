@@ -66,8 +66,8 @@ const WelcomePage: React.FC = () => {
         transition={{ duration: 1 }}
         className="text-center"
       >
-        <h1 className="lg:text-6xl font-extrabold tracking-wide mb-4 drop-shadow-lg">Welcome to eChat</h1>
-        <p className="text-lg h-5 md:h-7 lg:h-8 text-[17px] md:text-[23px] lg:text-[20px]">{displayedText}</p>
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wide mb-4 drop-shadow-lg text-sky-400">Welcome to eChat</h1>
+        <p className="text-lg h-5 md:h-7 lg:h-8 text-[17px] md:text-[23px] lg:text-[20px] font-serif">{displayedText}</p>
       </motion.div>
 
       {/* Features Section */}
@@ -92,9 +92,9 @@ const WelcomePage: React.FC = () => {
             }}
             onMouseEnter={() => setHoveredFeature(index)}
             onMouseLeave={() => setHoveredFeature(null)}
-            className="relative flex flex-col items-center bg-white text-black rounded-xl shadow-xl p-6 md:w-[300px] md:h-[300px] lg:w-[200px] lg:h-[200px] cursor-pointer transition-all"
+            className="relative flex flex-col items-center bg-white text-black rounded-xl shadow-xl p-6 w-[310px] md:w-[300px] h-[200px] md:h-[300px] lg:w-[200px] lg:h-[200px] cursor-pointer transition-all"
           >
-            {feature.icon}
+            <div>{feature.icon}</div>
             <h3 className={`transform ${feature?.title === 'Text Messaging'? ' rotate-45 -translate-y-7 md:translate-y-0 lg:trnslate-y-0 -translate-x-7 md:translate-x-0 lg:-translate-x-2 ': feature?.title === 'Voice Notes' ? '-rotate-45 -translate-y-2 md:translate-y-0 lg:translate-y-0' : feature?.title === 'Recorded Videos'? 'rotate-45 -translate-y-5 md:translate-y-0 lg:translate-y-0 -translate-x-5 md:translate-x-0 lg:translate-x-0': feature?.title === 'Audio & Video Calls'? '-rotate-45 -translate-y-7 md:translate-y-0 lg:translate-y-0 translate-x-5 md:translate-0 lg:translate-x-0' :''} mt-4 text-[16px] font-bold top-0`}>{feature.title}</h3>
 
             {/* Hover Card Description */}

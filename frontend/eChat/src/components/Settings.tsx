@@ -5,15 +5,8 @@ import {
   Typography,
   TextField,
   Button,
-  Switch,
-  FormControlLabel,
-  FormGroup,
-  InputLabel,
-  Select,
-  MenuItem,
   Divider,
   IconButton,
-  FormControl,
   Grid,
 } from '@mui/material';
 import {  
@@ -61,15 +54,8 @@ const Settings: React.FC = () => {
 
 
 
-    const [open, setOpen] = useState<boolean>(false);
-    const [profileName, setProfileName] = useState<string>('');
-   
-    const [theme, setTheme] = useState<'light' | 'dark'>('light');
-    const [notifications, setNotifications] = useState<boolean>(true);
-    const [notificationSound, setNotificationSound] = useState<string>('default');
-    const [ringtone, setRingtone] = useState<string>('classic');
-    
-
+  const [open, setOpen] = useState<boolean>(false);
+      
 
     const isSettingsShown = useSelector((state: RootState) => state.display.isSettingsShown);
 
@@ -127,7 +113,8 @@ const Settings: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top:"50%",
+              top: "50%",
+            color:'white',
             left: '50%',
             transform: 'translate(-50%, -50%)',
             bgcolor: 'background.paper',
@@ -172,15 +159,6 @@ const Settings: React.FC = () => {
             Profile Settings
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Display Name"
-                value={profileName}
-                onChange={(e) => setProfileName(e.target.value)}
-                variant="outlined"
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -257,62 +235,6 @@ const Settings: React.FC = () => {
             className="mb-4"
           />
           </div>
-
-          <Divider className="my-4" />
-
-          {/* Appearance Settings */}
-          <Typography variant="body1" className="mb-4 font-semibold text-gray-700">
-            Appearance
-          </Typography>
-          <FormControlLabel
-            control={<Switch checked={theme === 'dark'} onChange={() => setTheme(theme === 'light' ? 'dark' : 'light')} />}
-            label={theme === 'light' ? 'Light Mode' : 'Dark Mode'}
-          />
-
-          <Divider className="my-4" />
-
-          {/* Notification Settings */}
-          <Typography variant="body1" className="mb-4 font-semibold text-gray-700">
-            Notifications
-          </Typography>
-          <FormGroup>
-            <FormControlLabel
-              control={<Switch checked={notifications} onChange={() => setNotifications((prev) => !prev)} />}
-              label={notifications ? "Disable notifications":"Enable notifications"}
-            />
-          </FormGroup>
-
-                  <FormControl fullWidth variant="outlined" style={{
-                    margin:"20px 0px"
-          }}>
-            <InputLabel>Notification Sound</InputLabel>
-            <Select
-              value={notificationSound}
-              onChange={(e) => setNotificationSound(e.target.value)}
-              label="Notification Sound"
-            >
-              <MenuItem value="default">Default</MenuItem>
-              <MenuItem value="beep">Beep</MenuItem>
-              <MenuItem value="chime">Chime</MenuItem>
-              <MenuItem value="alert">Alert</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth variant="outlined" className="" style={{
-                    margin:"20px 0px"
-          }}>
-            <InputLabel>Ringtone</InputLabel>
-            <Select
-              value={ringtone}
-              onChange={(e) => setRingtone(e.target.value)}
-              label="Ringtone"
-            >
-              <MenuItem value="classic">Classic</MenuItem>
-              <MenuItem value="modern">Modern</MenuItem>
-              <MenuItem value="electronic">Electronic</MenuItem>
-            </Select>
-          </FormControl>
-
           <Divider className="my-4" />
 
           <div className="flex justify-end mt-6">

@@ -23,25 +23,26 @@ export const renameFile = (name: string) => {
 export const handleDownload = async (url: string, fileName: string) => {
   try {
     const response = await fetch(url, { mode: 'cors' });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
 
     // Create and trigger a download link
     const anchor = document.createElement('a');
-    anchor.href = url;
+    anchor.href = blobUrl; // Use blobUrl instead of url
     anchor.download = fileName || 'download';
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
 
-    // Release the blob URL
-    URL.revokeObjectURL(blobUrl);
+    // Release the blob URL after a short delay to ensure download starts
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
   } catch (error) {
     console.error('Failed to download the file:', error);
   }
 };
+
 
 /**
  * Component to render a file link with an icon

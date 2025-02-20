@@ -6,7 +6,7 @@ import { useLazySearchUsersQuery } from '../store/slices/usersApiSlice';
 import { useAddGroupMemberMutation } from '../store/slices/groupApiSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import { setIsAddNewMemberShown } from '../store/slices/displaySlice';
+import { setIsAddNewMemberShown, setIsGroupInfoShown, setIsGroupOptionsShown } from '../store/slices/displaySlice';
 import { useGroup } from '../hooks/useGroup';
 
 const AddMemberToGroup = () => {
@@ -57,19 +57,16 @@ const AddMemberToGroup = () => {
       console.log('Response adding member:', JSON.stringify(response));
       handleJoinGroup(response?.data?.newGroup?._id, response?.data?.newGroup?.name, selectedUser?.name);
       
-      toast.success('Member added successfully!');
       setSelectedUser(null);
+      dispatch(setIsAddNewMemberShown(false));
+      dispatch(setIsGroupOptionsShown(false));
+      dispatch(setIsGroupInfoShown(false));
+      
     } catch (error: any) {
-      console.error('Error adding new member:', JSON.stringify(error));
       toast.error(error?.data?.message || error?.message || 'Failed to add member.');
     }
   };
 
-  if (isLoading) {
-    return <div className='flex mx-auto'>
-      <span className='loaing loading-spinner loading-lg'></span>
-    </div>
-  }
 
   console.log(`Selected user: ${JSON.stringify(selectedUser)}`)
   return (
@@ -88,7 +85,7 @@ const AddMemberToGroup = () => {
           placeholder="Search Users"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="w-full mb-6 p-4 rounded-lg bg-white text-gray-800 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full mb-6 p-4 rounded-lg bg-white text-black shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         {loading ? (
@@ -138,7 +135,7 @@ const AddMemberToGroup = () => {
           disabled={!selectedUser}
           className="w-full py-3 bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-semibold disabled:opacity-50 transition-all duration-200"
         >
-          Add Member
+         { isLoading ? "Adding member..." : "Add member"}
         </button>
       </div>
     </Modal>

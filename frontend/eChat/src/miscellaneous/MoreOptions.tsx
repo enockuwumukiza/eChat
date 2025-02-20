@@ -24,10 +24,8 @@ const MoreOptions = () => {
       await logoutUser(undefined)
       logout()
       dispatch(setIsMoreOptionsShown(false))
-      toast.success('Logout successful')
     } catch (error: any) {
       toast.error(error?.data?.message || error?.message || 'Error logging out')
-      console.log(`Error logging out: ${error}`)
     }
   }
 

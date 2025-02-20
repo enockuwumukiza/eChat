@@ -3,6 +3,8 @@ import { Modal, Box, IconButton, Avatar, Tooltip } from "@mui/material";
 import { Close, Download } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { handleDownload } from "../utils/donwloadFiles";
+import { copyToClipboard } from "../utils/copyToClipboard";
 
 const ProfilePic: FC = () => {
   const chattingUser: any = useSelector((state: RootState) => state.message.receiverInfo);
@@ -17,16 +19,6 @@ const ProfilePic: FC = () => {
   }, [isReceiverPicShown]);
 
     const handleClose = () => setOpen(false);
-    
-    const handleDownloadPic = (url:any) => {
-        
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = url|| 'download';
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
-    }
 
   return (
     <Modal open={open} onClose={handleClose} className="flex items-center justify-center">
@@ -40,6 +32,7 @@ const ProfilePic: FC = () => {
 
         {/* Profile Picture */}
         <Avatar
+          onDoubleClick={() => copyToClipboard(chattingUser?.profilePicture)}
           src={chattingUser?.profilePicture || "/default-avatar.png"}
           alt={chattingUser?.name || "User"}
           sx={{ width: 300, height: 300, borderRadius: "20px", boxShadow: "0 10px 20px rgba(0, 0, 0, 0.3)" }}
@@ -49,7 +42,7 @@ const ProfilePic: FC = () => {
         <Tooltip title="Download Profile Picture">
                   <IconButton className="mt-4 text-blue-600 hover:text-blue-800 transition-all duration-300"
                     
-                    onClick={() => handleDownloadPic(chattingUser?.profilePicture)}
+                    onClick={() => handleDownload(chattingUser?.profilePicture,chattingUser?.name)}
                   >
                       <Download
                           sx={{

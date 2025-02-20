@@ -291,7 +291,7 @@ const ChatPage: React.FC = () => {
 
             ) : (
               <h1 className="text-[13px] md:text-[30px] lg:text-[20px] font-bold text-white mt-2 -ml-[10%]  md:ml-[2%] lg:ml-[20%] md:mb-2  lg:mt-3">
-                {receiverInfo?.name.split(' ')[0].split('').length > 8 ? `${receiverInfo?.name.split(' ')[0].slice(0, 8)}...` : receiverInfo?.name.split(' ')[0]} 
+                {receiverInfo?.name?.split(' ')[0].split('').length > 8 ? `${receiverInfo?.name?.split(' ')[0].slice(0, 8)}...` : receiverInfo?.name?.split(' ')[0]} 
               </h1>
             )}
           </div>

@@ -366,7 +366,7 @@ const removeContact = expressAsyncHandler(async (req: Request, res: Response): P
   const contactIndex = loggedInUser.contacts.findIndex((c) => c.equals(contactId));
 
   if (contactIndex === -1) {
-    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "You are not associated with that contact ID" });
+    res.status(HttpStatusCodes.BAD_REQUEST).json({ message: "This contact added you OR You are not associated with that contact ID" });
     return;
   }
 
@@ -378,5 +378,18 @@ const removeContact = expressAsyncHandler(async (req: Request, res: Response): P
   res.status(HttpStatusCodes.OK).json({ message: "Contact removed successfully", contacts: loggedInUser.contacts });
 });
 
+const getUsersWhoAddedMe = expressAsyncHandler(async (req: Request, res: Response): Promise<void> => {
+  
+  if (!req?.user || !req?.user?._id) {
+    res.status(HttpStatusCodes.UNAUTHORIZED).json({ message: "Unauthorized: Login to continue" });
+    return;
+  }
+  const userId = req?.user?._id;
 
-export { registerUser, loginUser, updateUser,updateUserProfile, deleteUser, logoutUser, getUserById, getAllUsers,searchUsers, addContact, getContacts, removeContact };
+  const users = await User.find({ contacts: userId }).select('-password');
+
+  res.status(HttpStatusCodes.OK).json({ users });
+
+})
+
+export { registerUser, loginUser, updateUser,updateUserProfile, deleteUser, logoutUser, getUserById, getAllUsers,searchUsers, addContact, getContacts, removeContact, getUsersWhoAddedMe };

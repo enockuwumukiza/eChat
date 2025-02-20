@@ -3,13 +3,33 @@ import { AddCircleOutline } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { setIsAddNewContactShown } from "../store/slices/displaySlice";
+import { useEffect, useState } from "react";
 
 const NoContactsMessage = () => {
 
   const dispatch = useDispatch();
 
+  const [show, setShow] = useState(false);
+
+
+  useEffect(() => {
+
+    const timerId = setTimeout(() => {
+
+      setShow(true);
+
+    }, 3000);
+    
+    return () => {
+      clearTimeout(timerId);
+    }
+    
+  }, []);
+
   return (
-    <div className="flex justify-center items-center bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 h-[100%] w-[100%] -left-2 ">
+    <>
+      {
+        show ? <div className="flex justify-center items-center bg-gradient-to-r from-purple-950 via-pink-950 to-red-950 h-[100%] w-[100%] -left-2 ">
       <motion.div
         className="text-center text-white rounded-xl shadow-lg bg-opacity-60"
         initial={{ opacity: 0 }}
@@ -47,7 +67,26 @@ const NoContactsMessage = () => {
           </Tooltip>
         </motion.div>
       </motion.div>
-    </div>
+        </div> : (
+            <div className="absolute left-[30%] top-30">
+              <div>
+                <span className="loading loading-ring loading-lg"></span>
+                <motion.div
+                  animate={{ y: [0, -20, 0] }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    ease: "easeInOut",
+                  }}
+                >
+                  <p className="font-semibold text-xl">Loading, please wait...</p>
+                </motion.div>
+              </div>
+            </div>
+    )
+      }
+    </>
   );
 };
 
